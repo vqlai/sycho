@@ -21,12 +21,14 @@ module.exports = {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: { color: '#0088f5' },
 
   /*
   ** Global CSS
   */
   css: [
+    // 项目里要使用的 LESS 文件
+    '@/assets/css/reset.less'
   ],
 
   /*
@@ -40,8 +42,27 @@ module.exports = {
   */
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy',
   ],
+  // proxy: [
+  //   ['/api', { 
+  //     target: 'https://app.sycho.cn',
+  //     changeOrigin: true,
+  //     pathRewrite: {
+  //       '^/api': ''
+  //     }
+  //   }]
+  // ],
+  proxy: {
+    '/api': { 
+      target: 'https://app.sycho.cn',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api': ''
+      }
+    }
+  },
   /*
   ** Axios module configuration
   */
@@ -56,6 +77,7 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+    vendor: ['axios'],
     extend(config, ctx) {
       
     }
