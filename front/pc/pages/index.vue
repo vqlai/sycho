@@ -10,13 +10,13 @@
     <a-list :pagination="pagination" :data-source="listData" item-layout="vertical" size="large" >
       <!-- <div slot="footer"><b>ant design vue</b> footer part</div> -->
       <a-list-item slot="renderItem" slot-scope="item, index" key="item.title">
-        <!-- <img slot="extra" width="272" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"/> -->
+        <img slot="extra" width="272" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"/>
         
         <a-list-item-meta :description="item.description" >
           <a slot="title" :href="item.href">{{ item.title }}</a>
           <!-- <a-avatar slot="avatar" :src="item.avatar" /> -->
         </a-list-item-meta>
-        <!-- {{ item.content }} -->
+        {{ item.content }}
         <template v-for="{type, text} in actions" slot="actions">
           <span :key="type">
             <a-icon :type="type" style="margin-right: 8px" />
