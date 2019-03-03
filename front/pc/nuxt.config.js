@@ -38,6 +38,7 @@ module.exports = {
   */
   plugins: [
     // '~/plugins/axios',
+    { src: '~plugins/axios', ssr: true },
     // 注册antd框架
     { src: '~/plugins/antd.js', ssr: true }
   ],
@@ -55,9 +56,9 @@ module.exports = {
   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
+    prefix: '/api', // 设置接口前缀，没有前缀可以去掉。
     proxy: true,
-    prefix: '/api', // baseURL
-    credentials: true
+    // credentials: true
   },
 
   /*
@@ -66,7 +67,7 @@ module.exports = {
   proxy: {
     '/api': { 
       target: 'https://app.sycho.cn', // 代理地址
-      changeOrigin: true,
+      // changeOrigin: true,
       pathRewrite: {
         '^/api': '', //将 /api 替换掉
       }

@@ -17,5 +17,7 @@ import Icon from 'ant-design-vue/lib/icon'
 import List from 'ant-design-vue/lib/list'
 import Avatar from 'ant-design-vue/lib/avatar'
 import Carousel  from 'ant-design-vue/lib/carousel'
+import Message  from 'ant-design-vue/lib/message'
 
 Vue.use(Button).use(Menu).use(Icon).use(List).use(Avatar).use(Carousel)
+Vue.prototype.$message = Message
