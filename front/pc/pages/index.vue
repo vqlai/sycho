@@ -66,18 +66,18 @@ export default {
   //   console.log(data)
   //   return { data }
   // },
-  asyncData ({$axios}) {
-    return $axios.$get('/api/getLink?currentPage=1&pageSize=10')
-    .then((res) => {
-      console.log(res)
-      console.log(111)
-      // callback(null, { title: res.data.title })
-      return { aData: res.data }
-    }).catch((e) => {
-      // error({ statusCode: 404, message: 'Post not found' })
-      console.log(e)
-    })
-  },
+  // asyncData ({app}) {
+  //   return app.$axios.$get('/api/getLink?currentPage=1&pageSize=10')
+  //   .then((res) => {
+  //     console.log(res)
+  //     console.log(111)
+  //     // callback(null, { title: res.data.title })
+  //     return { aData: res.data }
+  //   }).catch((e) => {
+  //     // error({ statusCode: 404, message: 'Post not found' })
+  //     console.log(e)
+  //   })
+  // },
   // 在asyncData中，不能直接使用this引用，这里引入context是上下文参数，代替了this，
   // 因为在asyncData方法是在组件初始化时调用，所以没法通过this来引用组件实例对象。
   // async asyncData(context){
@@ -86,6 +86,18 @@ export default {
   //   console.log(data)
   //   return {aData: data}
   // },
+   async asyncData ({ store, error }) {
+    console.log(store)
+    let res = await store.dispatch('link', {currentPage:1, pageSize:10}).then(res => {
+      console.log(res)
+    }).catch((error) => {
+      // error({ statusCode: 404, message: 'Post not found' })
+      console.log(error)
+    })
+    return {
+      links: res
+    }
+  },
   data () {
     return { 
       listData,
@@ -109,7 +121,8 @@ export default {
     // this.$axios.$get("/api/getLink?currentPage=1&pageSize=10").then(res=>{
     //   console.log(res)
     // })
-    console.log(this.aData)
+    // console.log(this.aData)
+    // console.log(this.$store)
   },
   methods: {
 

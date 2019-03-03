@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <div class="container"> ©{{ year }}&nbsp;&nbsp;www.sycho.cn </div>
+    <div class="container" @click="testFn"> ©{{ year }}&nbsp;&nbsp;www.sycho.cn </div>
   </footer>
 </template>
 
@@ -10,6 +10,14 @@
     computed: {
       year() {
         return new Date().getFullYear()
+      }
+    },
+    methods: {
+      testFn(){
+        this.$axios.$get("/api/getLink?currentPage=1&pageSize=10").then(res => {
+          console.log(res)
+          this.$message.info(res.msg);
+        })
       }
     }
   }
