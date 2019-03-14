@@ -16,7 +16,7 @@
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import ax from '~/server/ax.js'
+// import ax from '~/server/ax.js'
 
 Vue.use(Vuex)
 
@@ -60,7 +60,7 @@ const store = () => new Vuex.Store({
       context.commit('SET_USER_NAME', 'cisco lai' + params)
     },
     async link(state, params) {
-      return await ax.get('/api/getLink', params)
+      return await this.$axios.$get('https://app.sycho.cn/api/getLink', params)
     }
   }
 })
