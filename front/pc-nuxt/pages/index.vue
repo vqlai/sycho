@@ -86,17 +86,38 @@ export default {
   //   console.log(data)
   //   return {aData: data}
   // },
-   async asyncData ({ store, error }) {
-    console.log(store)
-    let res = await store.dispatch('link', {currentPage:1, pageSize:10}).then(res => {
-      console.log(res)
-    }).catch((error) => {
+  // async asyncData ({ store, error }) {
+  //   // console.log(store)
+  //   let res = await store.dispatch('link', {currentPage:1, pageSize:10}).then(res => {
+  //     console.log(111)
+  //     // callback(null, { title: res.data.title })
+  //     return { aData: res.data }
+  //   }).catch((error) => {
+  //     // error({ statusCode: 404, message: 'Post not found' })
+  //     // console.log(error)
+  //   })
+  //   return {
+  //     links: res
+  //   }
+  // },
+  // fetch({ store, params, error }) {
+  //   return Promise.all([
+  //     store.dispatch('link', {currentPage:1, pageSize:10}).catch(err => {
+  //       error({ statusCode: 404, message: '众里寻他 我已不再' })
+  //     }),
+  //   ])
+  // },
+  asyncData ({app}) {
+    return app.$axios.$get('https://app.sycho.cn/api/getLink?currentPage=1&pageSize=10')
+    .then((res) => {
+      // console.log(res)
+      console.log(111)
+      // callback(null, { title: res.data.title })
+      return { aData: res.data }
+    }).catch((e) => {
       // error({ statusCode: 404, message: 'Post not found' })
-      console.log(error)
+      console.log(e)
     })
-    return {
-      links: res
-    }
   },
   data () {
     return { 
@@ -117,11 +138,11 @@ export default {
     }
   },
   mounted: function () {
-    this.$message.info('This is a normal message');
-    // this.$axios.$get("/api/getLink?currentPage=1&pageSize=10").then(res=>{
-    //   console.log(res)
-    // })
-    // console.log(this.aData)
+    this.$message.info('welcome to sycho');
+    console.log(this.aData)
+    this.$axios.$get("/api/getLink?currentPage=1&pageSize=10").then(res=>{
+      console.log(res)
+    })
     // console.log(this.$store)
   },
   methods: {
