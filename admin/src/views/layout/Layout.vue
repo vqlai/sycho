@@ -23,10 +23,10 @@ export default {
   mixins: [ResizeMixin],
   computed: {
     sidebar() {
-      return this.$store.state.app.sidebar
+      return this.$store.state.sidebar
     },
     device() {
-      return this.$store.state.app.device
+      return this.$store.state.device
     },
     classObj() {
       return {
@@ -46,7 +46,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-  @import "src/styles/mixin.scss";
+  @import "src/assets/css/mixin.scss";
   .app-wrapper {
     @include clearfix;
     position: relative;

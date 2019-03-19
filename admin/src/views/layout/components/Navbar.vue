@@ -22,6 +22,7 @@
 </template>
 
 <script>
+// 头部菜单
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'

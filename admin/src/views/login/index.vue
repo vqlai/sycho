@@ -6,6 +6,7 @@
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
+        <!-- <i class="el-icon-share"></i> -->
         <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
       </el-form-item>
       <el-form-item prop="password">
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
+import { isvalidUsername } from '@/assets/js/validate'
 
 export default {
   name: 'Login',

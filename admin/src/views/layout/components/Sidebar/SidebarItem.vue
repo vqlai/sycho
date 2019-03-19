@@ -1,6 +1,6 @@
 <template>
   <div v-if="!item.hidden" class="menu-wrapper">
-
+    <!-- 无子菜单 -->
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
@@ -8,7 +8,7 @@
         </el-menu-item>
       </app-link>
     </template>
-
+    <!-- 有子菜单 -->
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
         <item :meta="item.meta" />
@@ -26,8 +26,9 @@
 </template>
 
 <script>
+// 侧边栏
 import path from 'path'
-import { isExternal } from '@/utils/validate'
+import { isExternal } from '@/assets/js/validate'
 import Item from './Item'
 import AppLink from './Link'
 
@@ -57,7 +58,7 @@ export default {
   },
   methods: {
     hasOneShowingChild(children = [], parent) {
-      const showingChildren = children.filter(item => {
+      const showingChildren = children.filter( item => {
         if (item.hidden) {
           return false
         } else {

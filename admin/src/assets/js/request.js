@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
-import store from '../store'
-import { getToken } from '@/utils/auth'
+import store from '@/store'
+import { getToken } from '@/assets/js/auth'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api 的 base_url
+  // baseURL: process.env.publicPath, // api 的 base_url
+  baseURL: 'https://easy-mock.com/mock/5950a2419adc231f356a6636/vue-admin"', // api 的 base_url
   timeout: 5000 // 请求超时时间
 })
 
