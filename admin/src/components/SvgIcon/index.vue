@@ -5,6 +5,8 @@
 </template>
 
 <script>
+// 引入iconfont图标js,会在页面body下添加svg标签
+import '@/assets/js/iconfont.js' // iconfont symbol图标样式
 export default {
   name: 'SvgIcon',
   props: {

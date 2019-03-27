@@ -37,7 +37,8 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Dashboard',
-    hidden: true,
+    hidden: false, // 是否隐藏
+    meta: { title: 'Dashboard', icon: 'dashboard' },
     children: [{
       path: 'dashboard',
       component: () => import('@/views/dashboard/index')
@@ -49,6 +50,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/example/table',
     name: 'Example',
+    hidden: false,
     meta: { title: 'Example', icon: 'example' },
     children: [
       {
@@ -143,7 +145,21 @@ export const constantRouterMap = [
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+        // path: 'dashboard',
         meta: { title: 'External Link', icon: 'link' }
+      }
+    ]
+  },
+
+  {
+    path: '/link',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Link',
+        component: () => import('@/views/link/index'),
+        meta: { title: 'Link', icon: 'link' }
       }
     ]
   },
@@ -157,14 +173,14 @@ const router = new Router({
   routes: constantRouterMap
 })
 
-NProgress.configure({ showSpinner: false })// NProgress configuration
+NProgress.configure({ showSpinner: false }) // NProgress configuration
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
     if (to.path === '/login') {
       next({ path: '/' })
-      NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
+      NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
     } else {
       if (store.getters.roles.length === 0) {
         store.dispatch('GetInfo').then(res => { // 拉取用户信息

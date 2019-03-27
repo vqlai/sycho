@@ -1,5 +1,6 @@
 
 <template>
+  <!-- 绑定一个有属性的对象，批量绑定多个属性 -->
   <!-- eslint-disable vue/require-component-is -->
   <component v-bind="linkProps(to)">
     <slot/>
@@ -18,7 +19,7 @@ export default {
   },
   methods: {
     linkProps(url) {
-      if (isExternal(url)) {
+      if (isExternal(url)) { // 用正则匹配http/https网址
         return {
           is: 'a',
           href: url,

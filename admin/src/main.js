@@ -6,13 +6,11 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
-import '@/assets/css/index.scss' // global css
-
 import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import '@/assets/icons' // icon
+import '@/assets/css/index.scss' // global css
 
 /**
  * This project originally used easy-mock to simulate data,
@@ -24,7 +22,11 @@ import '@/assets/icons' // icon
  */
 import '@/assets/mock' // simulation data
 
-Vue.use(ElementUI, { locale })
+import SvgIcon from '@/components/SvgIcon' // svg组件
+Vue.component('svg-icon', SvgIcon) // register globally
+
+// Vue.use(ElementUI, { locale }) // 英文版
+Vue.use(ElementUI) // 中文版
 
 Vue.config.productionTip = false
 

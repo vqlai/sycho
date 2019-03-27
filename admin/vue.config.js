@@ -29,5 +29,5 @@ module.exports = {
   productionSourceMap: false, // 生产环境是否生成 sourceMap 文件
   css: {},
   pluginOptions: {},
-  lintOnSave: false // 是否开启eslint检查
+  lintOnSave: true // 是否开启eslint检查
 }

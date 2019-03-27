@@ -3,24 +3,41 @@ import { Message, MessageBox } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/assets/js/auth'
 
+// let qs = require('qs')
+
 // 创建axios实例
 const service = axios.create({
   // baseURL: process.env.publicPath, // api 的 base_url
+  // baseURL: process.env.NODE_ENV === 'production' ? '' : '/api', // 开发使用代理,注意后台有没有基础路径
   baseURL: 'https://easy-mock.com/mock/5950a2419adc231f356a6636/vue-admin"', // api 的 base_url
-  timeout: 5000 // 请求超时时间
+  timeout: 5000, // 请求超时时间
+  headers: {}
 })
 
 // request拦截器
 service.interceptors.request.use(
   config => {
-    if (store.getters.token) {
+    if(store.getters.token){
       config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
     }
+    // if(
+    //   config.method === 'post' ||
+    //   config.method === 'put' ||
+    //   config.method === 'delete' ||
+    //   config.method === 'patch'
+    // ){
+    //   config.data = qs.stringify(config.data)
+    // }
     return config
   },
   error => {
     // Do something with request error
     console.log(error) // for debug
+    Message({
+      message: error.message,
+      type: 'error',
+      duration: 5 * 1000
+    })
     Promise.reject(error)
   }
 )
@@ -55,6 +72,7 @@ service.interceptors.response.use(
           })
         })
       }
+      // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject('error')
     } else {
       return response.data
