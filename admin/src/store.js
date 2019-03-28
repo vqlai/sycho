@@ -71,11 +71,14 @@ const store = new Vuex.Store({
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
+        // (username, userInfo.password)
+        // debugger
+        login({ username: username, password: userInfo.password }).then(response => {
           const data = response.data
           setToken(data.token)
           commit('SET_TOKEN', data.token)
-          resolve()
+          console.log(data)
+          resolve(data)
         }).catch(error => {
           reject(error)
         })
@@ -90,6 +93,7 @@ const store = new Vuex.Store({
           if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.roles)
           } else {
+            // eslint-disable-next-line prefer-promise-reject-errors
             reject('getInfo: roles must be a non-null array !')
           }
           commit('SET_NAME', data.name)

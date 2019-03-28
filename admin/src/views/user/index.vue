@@ -1,5 +1,5 @@
 <template>
-  <div class="link">
+  <div class="user">
     <el-row type="flex" justify="space-between" class="header">
       <el-col :span="4"><el-input placeholder="请输入内容" v-model="searchText" clearable> </el-input> </el-col>
       <el-col :span="4">
@@ -14,7 +14,7 @@
       </el-col>
       <el-col :span="16">
         <el-button type="primary" icon="el-icon-search" round>搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" round  @click="dialogVisible = true">新增</el-button>
+        <el-button type="primary" icon="el-icon-plus" round>新增</el-button>
       </el-col>
     </el-row>
     <el-row class="content">
@@ -43,23 +43,10 @@
           <el-table-column
             fixed="right"
             label="操作"
-            width="160">
+            width="100">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handleClick(scope.row)" >查看</el-button>
+              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
               <el-button type="text" size="small">编辑</el-button>
-              <el-popover
-                ref="popover{{scope.$index}}"
-                placement="top"
-                width="160"
-                v-model="scope.row.visible">
-                <p>这是一段内容这是一段内容确定删除吗？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button type="text" size="mini" @click="scope.row.visible = false">取消</el-button>
-                  <el-button type="primary" size="mini" @click="scope.row.visible = false">确定</el-button>
-                </div>
-                <el-button slot="reference" type="text" size="small" style="margin-left: 10px;">删除</el-button>
-              </el-popover>
-              <!-- <el-button slot="reference" type="text" size="small" v-popover:popover{{scope.$index}} style="margin-left: 10px;">删除</el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -74,35 +61,12 @@
         </el-pagination>
       </el-col>
     </el-row>
-    <el-dialog
-      :title="dialogType === 1 ? '新增' : '编辑'"
-      :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleBeforeClose">
-      <div class="add" v-if="dialogType === 1">
-        <el-form ref="form" :model="addForm" label-width="80px">
-          <el-form-item label="活动名称">
-            <el-input v-model="addForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="活动区域">
-            <el-select v-model="addForm.region" placeholder="请选择活动区域" style="display: block;">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleComfirm">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
   export default {
-    name: 'linkPage',
+    name: 'user',
     data(){
       return {
         searchText: '',
@@ -126,26 +90,17 @@
         tableData: [{
           date: '2016-05-02',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄',
-          visible: false
+          address: '上海市普陀区金沙江路 1518 弄'
         }, {
           date: '2016-05-04',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄',
-          visible: false
+          address: '上海市普陀区金沙江路 1517 弄'
         }, {
           date: '2016-05-01',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄',
-          visible: false
+          address: '上海市普陀区金沙江路 1519 弄'
         }],
-        currentPage: 1,
-        dialogVisible: false,
-        dialogType: 1,
-        addForm: {
-          name: '',
-          region: ''
-        }
+        currentPage: 1
       }
     },
     methods: {
@@ -157,13 +112,6 @@
       },
       handleClick(row) {
         console.log(row)
-      },
-      handleBeforeClose(){
-        console.log('close')
-        this.dialogVisible = false
-      },
-      handleComfirm(){
-        console.log('comfirm')
       }
     },
   }
@@ -171,7 +119,7 @@
 
 <style rel="stylesheet/scss" lang="scss" scoped>
   $bg: #fff;
-  .link {
+  .user{
     padding: 10px;
     .header{
       padding: 10px;
@@ -182,7 +130,6 @@
     }
     .content{
       padding: 10px;
-      // min-height: 600px;
       background-color: $bg;
     }
     .el-pagination{

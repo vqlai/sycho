@@ -4,7 +4,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/en' // lang i18n
+// import locale from 'element-ui/lib/locale/lang/en' // lang i18n 英文语言包
 
 import App from './App.vue'
 import router from './router'
@@ -20,7 +20,7 @@ import '@/assets/css/index.scss' // global css
  * it will intercept your request, so you won't see the request in the network.
  * If you remove `../mock` it will automatically request easy-mock data.
  */
-import '@/assets/mock' // simulation data
+// import '@/assets/mock' // simulation data
 
 import SvgIcon from '@/components/SvgIcon' // svg组件
 Vue.component('svg-icon', SvgIcon) // register globally

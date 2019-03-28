@@ -14,7 +14,7 @@ module.exports = {
     proxy: {
       // 配置开发代理
       '/api': {
-        target: 'https://app.sycho.cn', // 代理线上wap接口
+        target: 'https://app.sycho.cn/api/', // 代理线上wap接口
         // target: 'https://m-test.purcotton.com/', // 代理测试wap接口
         // target: 'https://app.purcotton.com/',  // 代理线上app端接口
         // target: 'https://app-test.purcotton.com/', // 代理测试app接口

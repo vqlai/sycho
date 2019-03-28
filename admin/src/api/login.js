@@ -1,15 +1,24 @@
-import request from '@/assets/js/request'
+import request from '@/api/request'
 
-export function login (username, password) {
-  return request({
-    url: '/user/login',
+// 登录
+export async function login(data) {
+  return await request({
+    url: '/login',
     method: 'post',
-    data: {
-      username,
-      password
-    }
+    data: { ...data }
   })
 }
+
+// export function login (username, password) {
+//   return request({
+//     url: '/user/login',
+//     method: 'post',
+//     data: {
+//       username,
+//       password
+//     }
+//   })
+// }
 
 export function getInfo (token) {
   return request({

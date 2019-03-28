@@ -1,4 +1,4 @@
-import request from '@/assets/js/request'
+import request from '@/api/request'
 
 export function getList (params) {
   return request({

@@ -19,7 +19,8 @@ module.exports = {
     "space-before-function-paren": 0,
     "keyword-spacing": 0,
     "space-before-blocks": 0,
-    "indent": 0
+    "indent": 0,
+    "no-return-await": 0
   },
   parserOptions: {
     parser: 'babel-eslint'

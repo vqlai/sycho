@@ -152,6 +152,19 @@ export const constantRouterMap = [
   },
 
   {
+    path: '/tag',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Tag',
+        component: () => import('@/views/tag/index'),
+        meta: { title: 'Tag', icon: 'tag' }
+      }
+    ]
+  },
+
+  {
     path: '/link',
     component: Layout,
     children: [
@@ -160,6 +173,19 @@ export const constantRouterMap = [
         name: 'Link',
         component: () => import('@/views/link/index'),
         meta: { title: 'Link', icon: 'link' }
+      }
+    ]
+  },
+
+  {
+    path: '/user',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'User',
+        component: () => import('@/views/user/index'),
+        meta: { title: 'User', icon: 'user' }
       }
     ]
   },
@@ -182,20 +208,21 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
     } else {
-      if (store.getters.roles.length === 0) {
-        store.dispatch('GetInfo').then(res => { // 拉取用户信息
-          next()
-        }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
-          })
-        })
-      } else {
+      // if (store.getters.roles.length === 0) {
+      //   store.dispatch('GetInfo').then(res => { // 拉取用户信息
+      //     next()
+      //   }).catch((err) => {
+      //     store.dispatch('FedLogOut').then(() => {
+      //       Message.error(err || 'Verification failed, please login again')
+      //       next({ path: '/' })
+      //     })
+      //   })
+      // } else {
         next()
-      }
+      // }
     }
   } else {
+    // 无token未登录
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
