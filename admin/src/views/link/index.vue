@@ -43,23 +43,33 @@
           <el-table-column
             fixed="right"
             label="操作"
-            width="160">
+            width="180">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handleClick(scope.row)" >查看</el-button>
-              <el-button type="text" size="small">编辑</el-button>
+              <el-button type="text" size="small" icon="el-icon-view" @click="handleClick(scope.row)" >查看</el-button>
+              <el-button type="text" size="small" icon="el-icon-edit">编辑</el-button>
+              <!-- <el-popover trigger="click" placement="left-start">
+                <p>确定要删除 <span class="sf-red">{{ scope.row.name }}</span> 吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click.native.prevent="$refs.page.click()">取消</el-button>
+                  <el-button size="mini" type="primary" @click.native.prevent="handleOperationButtonClick(scope.row)">确定</el-button>
+                </div>
+                <el-button slot="reference" type="text" size="small">删除</el-button>
+              </el-popover> -->
+              <!-- title="确定删除？" -->
               <el-popover
                 ref="popover{{scope.$index}}"
                 placement="top"
                 width="160"
+                trigger="click"
                 v-model="scope.row.visible">
-                <p>这是一段内容这是一段内容确定删除吗？</p>
+                <p>确定{{scope.$index}}删除吗？</p>
                 <div style="text-align: right; margin: 0">
-                  <el-button type="text" size="mini" @click="scope.row.visible = false">取消</el-button>
+                  <el-button type="text" size="mini" @click="doCancle(scope)">取消</el-button>
                   <el-button type="primary" size="mini" @click="scope.row.visible = false">确定</el-button>
                 </div>
-                <el-button slot="reference" type="text" size="small" style="margin-left: 10px;">删除</el-button>
+                <el-button slot="reference" type="text" size="small" icon="el-icon-delete" style="margin-left: 10px;" 
+                @click="doDelete(scope)">删除</el-button>
               </el-popover>
-              <!-- <el-button slot="reference" type="text" size="small" v-popover:popover{{scope.$index}} style="margin-left: 10px;">删除</el-button> -->
             </template>
           </el-table-column>
         </el-table>
@@ -164,6 +174,15 @@
       },
       handleComfirm(){
         console.log('comfirm')
+      },
+      doCancle(scope){
+        console.log(scope)
+        console.log(this.tableData[scope.$index])
+        this.$set(this.tableData[scope.$index], 'visible', false)
+        console.log(this.tableData)
+      },
+      doDelete(scope){
+        this.$set(this.tableData[scope.$index], 'visible', true)
       }
     },
   }
