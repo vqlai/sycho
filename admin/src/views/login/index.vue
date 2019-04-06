@@ -6,7 +6,7 @@
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
+        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="请输入用户名" clearable/>
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -17,8 +17,9 @@
           v-model="loginForm.password"
           name="password"
           auto-complete="on"
-          placeholder="password"
-          @keyup.enter.native="handleLogin" />
+          placeholder="请输入密码"
+          @keyup.enter.native="handleLogin"
+          clearable/>
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
         </span>
@@ -36,14 +37,19 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/assets/js/validate'
+// import { isvalidUsername } from '@/assets/js/validate'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+      // if (!isvalidUsername(value)) {
+      //   callback(new Error('请输入正确的用户名'))
+      // } else {
+      //   callback()
+      // }
+      if(!value){
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
@@ -57,8 +63,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '4371639'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

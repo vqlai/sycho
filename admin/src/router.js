@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-// import store from '@/store'
+import store from '@/store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-// import { Message } from 'element-ui'
-import { getToken } from '@/assets/js/auth' // getToken from cookie
+import { Message } from 'element-ui'
+import { getToken } from '@/assets/js/auth' // getToken from localstroge
 
 /* Layout */
 import Layout from '@/views/layout/Layout'
@@ -89,9 +89,9 @@ export const constantRouterMap = [
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+        path: 'https://www.sycho.cn',
         // path: 'dashboard',
-        meta: { title: 'External Link', icon: 'link' }
+        meta: { title: 'sycho Link', icon: 'link' }
       }
     ]
   },
@@ -216,18 +216,20 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
     } else {
-      // if (store.getters.roles.length === 0) {
-      //   store.dispatch('GetInfo').then(res => { // 拉取用户信息
-      //     next()
-      //   }).catch((err) => {
-      //     store.dispatch('FedLogOut').then(() => {
-      //       Message.error(err || 'Verification failed, please login again')
-      //       next({ path: '/' })
-      //     })
-      //   })
-      // } else {
+      // 路由跳转前判断用户角色是否为空拉取用户信息
+      // vuex一刷新数据就被清空，这次每次刷新页面就会调用后台接口
+      if (!store.getters.name) {
+        store.dispatch('GetUserInfo').then(res => { // 拉取用户信息
+          next()
+        }).catch((err) => {
+          store.dispatch('FedLogOut').then(() => {
+            Message.error(err || 'Verification failed, please login again')
+            next({ path: '/' })
+          })
+        })
+      } else {
         next()
-      // }
+      }
     }
   } else {
     // 无token未登录

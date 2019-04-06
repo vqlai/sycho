@@ -1,0 +1,30 @@
+{
+  "name": "sycho-koa2-node-server",
+  "version": "v2.0.0",
+  "description": "koa2-node-server for sycho api",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "koa2",
+    "node",
+    "server",
+    "mongodb",
+    "sycho"
+  ],
+  "author": "vqlai",
+  "license": "ISC",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "@koa/cors": "^3.0.0",
+    "koa-multer": "^1.0.2",
+    "koa-router": "^7.4.0",
+    "koa-static": "^4.0.3",
+    "md5": "^2.2.1",
+    "mongoose": "^5.2.22"
+  }
+}

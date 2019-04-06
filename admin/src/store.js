@@ -1,22 +1,23 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout, GetUserInfo, addUser } from '@/api/login'
+import { getLink, addLink, editLink, deleteLink } from '@/api/link'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
-import Cookies from 'js-cookie'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
     sidebar: {
-      opened: !+Cookies.get('sidebarStatus'),
+      opened: !+localStorage.getItem('sidebarStatus'),
       withoutAnimation: false
     },
     device: 'desktop',
-    token: getToken(),
+    token: getToken(), // 每次登录会更新，每次拿token会从localstroge里取出
     name: '',
     avatar: '',
-    roles: []
+    role: '',
+    desc: ''
   },
   getters: {
     sidebar: state => state.sidebar,
@@ -24,20 +25,21 @@ const store = new Vuex.Store({
     token: state => state.token,
     avatar: state => state.avatar,
     name: state => state.name,
-    roles: state => state.roles
+    role: state => state.role,
+    desc: state => state.desc
   },
   mutations: {
     TOGGLE_SIDEBAR: state => {
       if (state.sidebar.opened) {
-        Cookies.set('sidebarStatus', 1)
+        localStorage.setItem('sidebarStatus', 1)
       } else {
-        Cookies.set('sidebarStatus', 0)
+        localStorage.setItem('sidebarStatus', 0)
       }
       state.sidebar.opened = !state.sidebar.opened
       state.sidebar.withoutAnimation = false
     },
     CLOSE_SIDEBAR: (state, withoutAnimation) => {
-      Cookies.set('sidebarStatus', 1)
+      localStorage.setItem('sidebarStatus', 1)
       state.sidebar.opened = false
       state.sidebar.withoutAnimation = withoutAnimation
     },
@@ -53,8 +55,11 @@ const store = new Vuex.Store({
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
-    SET_ROLES: (state, roles) => {
-      state.roles = roles
+    SET_ROLE: (state, role) => {
+      state.role = role
+    },
+    SET_DESC: (state, desc) => {
+      state.desc = desc
     }
   },
   actions: {
@@ -75,9 +80,9 @@ const store = new Vuex.Store({
         // debugger
         login({ username: username, password: userInfo.password }).then(response => {
           const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
           console.log(data)
+          setToken(data.token) // 把token存在cookie
+          commit('SET_TOKEN', data.token) // token也存在vuex
           resolve(data)
         }).catch(error => {
           reject(error)
@@ -86,33 +91,31 @@ const store = new Vuex.Store({
     },
 
     // 获取用户信息
-    GetInfo({ commit, state }) {
+    GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', data.roles)
-          } else {
+        // state.token
+        GetUserInfo().then(res => {
+          // const data = response.data
+          // if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+          //   commit('SET_ROLES', data.roles)
+          // } else {
+          //   // eslint-disable-next-line prefer-promise-reject-errors
+          //   reject('getInfo: roles must be a non-null array !')
+          // }
+          // commit('SET_NAME', data.name)
+          // commit('SET_AVATAR', data.avatar)
+          // resolve(response)
+          console.log(res)
+          if (res.success) {
+            commit('SET_NAME', res.data.username)
+            commit('SET_ROLE', res.data.role)
+            commit('SET_DESC', res.data.desc)
+            commit('SET_AVATAR', res.data.avatar)
+          }else{
             // eslint-disable-next-line prefer-promise-reject-errors
-            reject('getInfo: roles must be a non-null array !')
+            reject('getUserInfo: user must be a non-null object !')
           }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
-    // 登出
-    LogOut({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
-          resolve()
+          resolve(res)
         }).catch(error => {
           reject(error)
         })
@@ -126,7 +129,76 @@ const store = new Vuex.Store({
         removeToken()
         resolve()
       })
-    }
+    },
+
+    GetLink({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getLink(params).then(res => {
+          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    AddLink({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        addLink(params).then(res => {
+          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    EditLink({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        editLink(params).then(res => {
+          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    DeleteLink({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        deleteLink(params).then(res => {
+          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    AddUser({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        addUser(params).then(res => {
+          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    // 登出 废弃（jwt无需服务端退出，前端清空token即可）
+    LogOut({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        logout(state.token).then(() => {
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          removeToken()
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
   }
 })
 

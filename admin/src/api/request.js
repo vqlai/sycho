@@ -27,7 +27,8 @@ service.interceptors.request.use(
       config.method === 'delete' ||
       config.method === 'patch'
     ){
-      config.data = qs.stringify(config.data)
+      // 注意上传文件不能用qs
+      config.data = config.headers['Content-Type'] === 'multipart/form-data' ? config.data : qs.stringify(config.data)
     }
     // debugger
     return config

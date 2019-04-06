@@ -1,7 +1,8 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">name:{{ name }}</div>
-    <div class="dashboard-text">roles:<span v-for="role in roles" :key="role">{{ role }}</span></div>
+    <div class="dashboard-text">role:{{role}}</div>
+    <div class="dashboard-text">desc:{{desc}}</div>
   </div>
 </template>
 
@@ -10,10 +11,16 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
+  created(){
+    // this.$store.dispatch('GetInfo').then(res => {
+    //   console.log(res)
+    // })
+  },
   computed: {
     ...mapGetters([
       'name',
-      'roles'
+      'role',
+      'desc'
     ])
   }
 }
