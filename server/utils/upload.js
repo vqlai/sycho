@@ -12,7 +12,7 @@ let storage = multer.diskStorage({
 		// 路径前面不能为/，否则会去找绝对路径
 		if(typeof file != 'undefined'){
 			let path = './static/upload/default'
-			if (req.url == '/api/addAndUpload'){
+			if (req.url == '/api/addAndUpload' || req.url == '/api/editAndUpload'){
 				path = './static/upload/avatar'
 			}else if(req.url == '/api/article/release'){
 				path = './static/upload/article'

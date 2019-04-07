@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { login, logout, GetUserInfo, addUser } from '@/api/login'
-import { getLink, addLink, editLink, deleteLink } from '@/api/link'
+import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } from '@/api/user'
+import { getLinks, addLink, editLink, deleteLink } from '@/api/link'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
 
 Vue.use(Vuex)
@@ -131,9 +131,9 @@ const store = new Vuex.Store({
       })
     },
 
-    GetLink({ commit }, params) {
+    GetLinks({ commit }, params) {
       return new Promise((resolve, reject) => {
-        getLink(params).then(res => {
+        getLinks(params).then(res => {
           console.log(res)
           resolve(res)
         }).catch(error => {
@@ -167,7 +167,16 @@ const store = new Vuex.Store({
     DeleteLink({ commit }, params) {
       return new Promise((resolve, reject) => {
         deleteLink(params).then(res => {
-          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    GetUsers({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getUsers(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -178,7 +187,26 @@ const store = new Vuex.Store({
     AddUser({ commit }, params) {
       return new Promise((resolve, reject) => {
         addUser(params).then(res => {
-          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    EditUser({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        editUser(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    DeleteUser({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        deleteUser(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)

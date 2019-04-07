@@ -4,7 +4,7 @@ const { handleSuccess, handleError } = require('../utils/handle')
 // 获取参数，get通过ctx.query;post通过ctx.request.body
 class linkController {
   // 根据搜索条件获取链接列表
-  static async getLink(ctx){
+  static async getLinks(ctx){
     console.log(ctx.query)
     console.log(ctx.query.currentPage)
     let currentPage = parseInt(ctx.query.currentPage)
@@ -89,7 +89,8 @@ class linkController {
         name,
         type,
         desc,
-        url
+        url,
+        createTime: new Date().getTime()
       })
       let result = await link.save().catch((err) => {
         ctx.throw(500, '服务器内部错误-addLink错误！')

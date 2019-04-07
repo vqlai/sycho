@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between" class="header">
       <el-col :span="4"><el-input placeholder="请输入内容" v-model="queryName" clearable> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="queryType" placeholder="请选择权限类型" clearable>
+        <el-select v-model="queryRole" placeholder="请选择权限类型" clearable>
           <el-option
             v-for="item in userType"
             :key="item.value"
@@ -21,28 +21,58 @@
       <el-col :span="24">
         <el-table
           :data="tableData"
+          v-loading="loading"
           border
-          height="560"
+          max-height="680"
           stripe
+          fit
           highlight-current-row
+          :default-sort = "{prop: 'createTime', order: 'descending'}"
           style="width: 100%">
           <el-table-column
-            prop="date"
-            label="日期"
+            type="index"
+            label="序号"
+            align="center"
+            width="50">
+          </el-table-column>
+          <el-table-column
+            prop="username"
+            label="用户名"
+            align="center"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="name"
-            label="姓名"
+            prop="role"
+            label="角色类型"
+            :formatter="formatterRole"
+            align="center"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="address"
-            label="地址">
+            prop="avatar"
+            label="头像"
+            align="center"
+            width="280">
+              <template slot-scope="scope">
+                <img style="width: auto;max-height:80px;" :src="'http://localhost:3002/'+scope.row.avatar" alt="">
+              </template>
+          </el-table-column>
+          <el-table-column
+            prop="desc"
+            align="center"
+            label="角色描述">
+          </el-table-column>
+          <el-table-column
+            prop="createTime"
+            sortable
+            :formatter="formatterTime"
+            align="center"
+            label="创建时间">
           </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
+            align="center"
             width="160">
             <template slot-scope="scope">
               <el-button type="text" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
@@ -50,14 +80,16 @@
             </template>
           </el-table-column>
         </el-table>
+        <!-- @prev-click="handlePrevClick"
+        @next-click="handleNextClick" -->
         <el-pagination
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
+          :page-sizes="[10, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </el-col>
     </el-row>
@@ -66,14 +98,20 @@
       :visible.sync="dialogVisible"
       width="30%"
       :close-on-click-modal="false">
-      <el-form ref="userForm" :model="userForm" :rules="userFormRules" label-width="80px">
-        <el-form-item label="用户名" required prop="username">
+      <el-form
+        ref="userForm"
+        :model="userForm"
+        :rules="userFormRules"
+        status-icon
+        label-width="80px"
+        :close-on-click-modal="false">
+        <el-form-item label="用户名" required prop="username" autocomplete="off">
           <el-input v-model="userForm.username" placeholder="请输入用户名" clearable></el-input>
         </el-form-item>
-        <el-form-item label="密码" required prop="curPwd" v-if="dialogType === 1">
+        <el-form-item label="密码" required prop="curPwd" v-if="dialogType === 1" autocomplete="off">
           <el-input v-model="userForm.curPwd" type="password" placeholder="请输入密码" clearable></el-input>
         </el-form-item>
-        <el-form-item label="原始密码" required prop="prePwd" v-if="dialogType === 2">
+        <el-form-item label="原始密码" required prop="prePwd" v-if="dialogType === 2" autocomplete="off">
           <el-input v-model="userForm.prePwd" type="password" placeholder="请输入密码" clearable></el-input>
         </el-form-item>
         <el-form-item label="新密码" required prop="newPwd" v-if="dialogType === 2">
@@ -96,7 +134,7 @@
         <el-form-item label="描述" required prop="desc">
           <el-input v-model="userForm.desc" placeholder="请输入描述" clearable></el-input>
         </el-form-item>
-        <el-form-item label="头像" required>
+        <el-form-item label="头像">
           <div class="upload-box">
             <!-- :disabled="false"
             :http-request="handleUpload"
@@ -106,7 +144,7 @@
             :on-remove="handleAvatarRemove"
             list-type="picture-card"
             :file-list="fileList"
-            :class="{'hidden': hiddenUploadBtn}"-->
+            :class="{'hidden': hiddenUploadBtn}" class="avatar" -->
             <el-upload
               action=""
               :auto-upload="true"
@@ -114,7 +152,11 @@
               accept=".jpg, .jpeg, .png"
               :limit="1"
               :before-upload="beforeAvatarUpload">
-              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <div v-if="imageUrl" :class="['avatar-box',{'hover': imgHover}]"
+                @mouseenter="imgHover = true"
+                @mouseleave="imgHover = false">
+                <img :src="imageUrl" class="avatar">
+              </div>
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
             <ul class="upload-tip">
@@ -137,6 +179,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     name: 'user',
     data(){
@@ -157,8 +200,10 @@
           callback(new Error('请再次输入密码'))
         } else if (value.length < 6){
           callback(new Error('密码不能少于6位'))
-        } else if (value !== this.userForm.curPwd) {
-          callback(new Error('两次输入密码不一致!'))
+        } else if (value !== this.userForm.curPwd && this.dialogType === 1) {
+          callback(new Error('两次密码输入不一致!'))
+        } else if (value !== this.userForm.newPwd && this.dialogType === 2) {
+          callback(new Error('两次密码输入不一致!'))
         } else {
           callback()
         }
@@ -166,19 +211,19 @@
       return {
         queryName: '',
         userType: [{
-          value: '4',
+          value: 4,
           label: '全部'
         }, {
-          value: '3',
+          value: 3,
           label: '用户'
         }, {
-          value: '2',
+          value: 2,
           label: '管理员'
         }, {
-          value: '1',
+          value: 1,
           label: '超级管理员'
         }],
-        queryType: '',
+        queryRole: '',
         tableData: [],
         userForm: {
           id: undefined,
@@ -187,7 +232,8 @@
           prePwd: '',
           newPwd: '',
           surePwd: '',
-          role: '',
+          role: undefined,
+          desc: ''
         },
         userFormRules: {
           username: [
@@ -227,45 +273,153 @@
         fileObj: null,
         avatarImgUrl: '', // 预览图片路径
         avatarVisible: false, // 预览图片弹窗
-        imageUrl: ''
+        imageUrl: '',
+        imgHover: false
       }
     },
+    created(){
+      this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
+    },
     methods: {
+      handleImgFocus(){
+        this.imgHover = true
+      },
+      formatterRole(row, column, cellValue, index){
+        if(cellValue === 1){
+          return '超级管理员'
+        }else if(cellValue === 2){
+          return '管理员'
+        }else if(cellValue === 3){
+          return '用户'
+        }
+      },
+      formatterTime(row, column, cellValue, inde){
+        return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
+      },
+      _getUsers(params){
+        this.loading = true
+        this.$store.dispatch('GetUsers', params).then(res => {
+          if(res.success){
+            this.tableData = [...res.data.list]
+            this.total = res.data.pagination.total
+            this.pageSize = res.data.pagination.pageSize
+            this.currentPage = res.data.pagination.currentPage
+          }else{
+            this.$message(res.msg)
+          }
+        }).then(() => {
+          this.loading = false
+        })
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
+        this.pageSize = val
+        this._getUsers({ currentPage: 1, pageSize: this.pageSize })
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`)
+        this.currentPage = val
+        this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
       },
       handleClick(row) {
         console.log(row)
       },
-      handleSearch(){},
+      handleSearch(){
+        this._getUsers({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryRole: this.queryRole })
+      },
       handleAdd(){
+        this.userForm.username = ''
+        this.userForm.curPwd = ''
+        this.userForm.prePwd = ''
+        this.userForm.newPwd = ''
+        this.userForm.surePwd = ''
+        this.userForm.role = ''
+        this.userForm.desc = ''
         this.imageUrl = ''
+        this.$nextTick(() => {
+          this.$refs['userForm'].clearValidate()
+        })
         this.dialogType = 1
         this.dialogVisible = true
       },
-      handleEdit(row){},
-      handleDelete(row){},
+      handleEdit(row){
+        console.log(row)
+        this.userForm.id = row._id
+        this.userForm.username = row.username
+        this.userForm.curPwd = ''
+        this.userForm.prePwd = ''
+        this.userForm.newPwd = ''
+        this.userForm.surePwd = ''
+        this.userForm.role = Number(row.role)
+        this.userForm.desc = row.desc
+        this.imageUrl = `http://localhost:3002/${row.avatar}`
+        this.$nextTick(() => {
+          this.$refs['userForm'].clearValidate()
+        })
+        this.dialogType = 2
+        this.dialogVisible = true
+      },
+      handleDelete(row){
+        this.$store.dispatch('DeleteUser', row._id).then(res => {
+          if(res.success){
+            this.$message({
+              message: res.msg,
+              type: 'success'
+            })
+            this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
+          }else{
+            this.$message({
+              message: res.msg,
+              type: 'error'
+            })
+          }
+        })
+      },
       handleFormComfirm(){
         this.$refs.userForm.validate((valid) => {
           if (valid) {
             let formData = new FormData()
-            if (this.fileObj) {
-              // console.log(this.fileObj)
-              formData.append('file', this.fileObj)
-            }
+            formData.append('file', this.fileObj)
             formData.append('username', this.userForm.username)
-            formData.append('password', this.userForm.curPwd)
+            formData.append('surePwd', this.userForm.surePwd)
             formData.append('role', this.userForm.role)
             formData.append('desc', this.userForm.desc)
             // 注意输出formData只能通过get方式
-            console.log(formData.get('file'))
-            console.log(formData.get('username'))
-            this.$store.dispatch('AddUser', formData).then(res => {
-              console.log(res)
-            })
+            // console.log(formData.get('file'))
+            // console.log(formData.get('username'))
+            if(this.dialogType === 1){
+              // if (this.fileObj) {
+              //   formData.append('file', this.fileObj)
+              // }else{
+              //   this.$message({ message: '请选择头像', type: 'warning' })
+              //   return
+              // }
+              formData.append('curPwd', this.userForm.curPwd)
+              this.$store.dispatch('AddUser', formData).then(res => {
+                if(res.success){
+                  this.fileObj = null // 清空上传图片
+                  this.dialogVisible = false
+                  this.$message({ message: res.msg, type: 'success' })
+                  this._getUsers({ currentPage: 1, pageSize: this.pageSize })
+                }else{
+                  this.$message({ message: res.msg, type: 'error' })
+                }
+              })
+            }else if(this.dialogType === 2){
+              formData.append('id', this.userForm.id)
+              formData.append('prePwd', this.userForm.prePwd)
+              formData.append('newPwd', this.userForm.newPwd)
+              this.$store.dispatch('EditUser', formData).then(res => {
+                if(res.success){
+                  this.fileObj = null // 清空上传图片
+                  this.dialogVisible = false
+                  this.$message({ message: res.msg, type: 'success' })
+                  this._getUsers({ currentPage: 1, pageSize: this.pageSize })
+                }else{
+                  this.$message({ message: res.msg, type: 'error' })
+                }
+              })
+            }
           }
         })
       },
@@ -330,6 +484,9 @@
     .content{
       padding: 10px;
       background-color: $bg;
+      .el-table{
+        // min-height: 560px;
+      }
     }
     .el-pagination{
       padding: 10px 0;
@@ -338,11 +495,11 @@
     .upload-box{
       display: flex;
       justify-content: space-between;
-      &.hidden{
-        /deep/ .el-upload {
-          display: none;
-        }
-      }
+      // &.hidden{
+      //   /deep/ .el-upload {
+      //     display: none;
+      //   }
+      // }
       /deep/ .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
@@ -361,10 +518,25 @@
         line-height: 100px;
         text-align: center;
       }
-      .avatar {
-        width: 100px;
-        height: 100px;
-        display: block;
+      .avatar-box{
+        position: relative;
+        &.hover{
+          ::after{
+            content: ' ';
+            position: absolute;
+            top:0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10;
+            background: rgba($color: #000000, $alpha: .5)
+          }
+        }
+        .avatar {
+          width: 100px;
+          height: 100px;
+          display: block;
+        }
       }
       ul.upload-tip{
         list-style-type: none;

@@ -12,16 +12,6 @@ import store from './store'
 
 import '@/assets/css/index.scss' // global css
 
-/**
- * This project originally used easy-mock to simulate data,
- * but its official service is very unstable,
- * and you can build your own service if you need it.
- * So here I use Mock.js for local emulation,
- * it will intercept your request, so you won't see the request in the network.
- * If you remove `../mock` it will automatically request easy-mock data.
- */
-// import '@/assets/mock' // simulation data
-
 import SvgIcon from '@/components/SvgIcon' // svg组件
 Vue.component('svg-icon', SvgIcon) // register globally
 

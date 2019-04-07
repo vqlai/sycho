@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
 	role: {type: Number}, // 用户权限 1为超级管理员 2为管理员 3为普通用户
 	desc: { type: String }, // 用户描述
 	avatar: {type: String}, // 用户头像
-	createTime: {type: Date, default: Date.now} // 因为类型是Date，无法保存时间戳
+	createTime: { type: String, required: true} // 因为类型是Date, 无法保存时间戳, 废弃Date类型
 })
 
 // mongoose 会自动把表名变成复数

@@ -9,7 +9,6 @@ let qs = require('qs')
 const service = axios.create({
   // baseURL: process.env.publicPath, // api 的 base_url
   baseURL: process.env.NODE_ENV === 'production' ? '' : '/api', // 开发使用代理,注意后台有没有基础路径
-  // baseURL: 'https://easy-mock.com/mock/5950a2419adc231f356a6636/vue-admin"', // api 的 base_url
   timeout: 5000, // 请求超时时间
   headers: {}
 })

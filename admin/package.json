@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "element-ui": "^2.7.0",
-    "mockjs": "^1.0.1-beta3",
+    "moment": "^2.24.0",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "vue": "^2.6.6",

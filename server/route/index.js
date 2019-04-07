@@ -19,7 +19,7 @@ const config = require('../config'),
 router.post('/login', U.login);
 router.post('/addUser', checkToken, U.addUser);
 router.get('/getUserInfo', checkToken, U.getUserInfo);
-router.get('/getUserList', checkToken, U.getUserList);
+router.get('/getUsers', checkToken, U.getUsers);
 router.delete('/deleteUser/:id', checkToken, U.deleteUser);
 // router.get('/getAllUser', checkToken, U.getAllUser);
 // upload.single('file')这里面的file是上传空间的name<input type="file" name="file"/> 
@@ -28,7 +28,7 @@ router.post('/addAndUpload', checkToken, upload.single('file'), U.addAndUpload);
 router.put('/editAndUpload', checkToken, upload.single('file'), U.editAndUpload);
 
 // 链接管理 checkToken,
-router.get('/getLink', L.getLink)
+router.get('/getLinks', L.getLinks)
 router.post('/addLink', checkToken, L.addLink)
 router.put('/editLink', checkToken, L.editLink)
 router.delete('/deleteLink/:id', checkToken, L.deleteLink)

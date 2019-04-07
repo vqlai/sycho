@@ -29,6 +29,15 @@ export async function GetUserInfo () {
   })
 }
 
+// 获取用户列表
+export async function getUsers(params) {
+  return await request({
+    url: '/getUsers',
+    method: 'get',
+    params: { ...params }
+  })
+}
+
 // 新增用户
 // 注意上传文件不能用...运算符
 export async function addUser(data) {
@@ -37,6 +46,23 @@ export async function addUser(data) {
     url: '/addAndUpload',
     method: 'post',
     data: data
+  })
+}
+
+export async function editUser(data) {
+  return await request({
+    headers: { 'Content-Type': 'multipart/form-data' },
+    url: '/editAndUpload',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除用户
+export async function deleteUser(data) {
+  return await request({
+    url: `/deleteUser/${data}`,
+    method: 'delete',
   })
 }
 

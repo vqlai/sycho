@@ -75,7 +75,7 @@ class userController{
 	}
 
 	// 根据搜索条件获取用户，默认获取用户列表
-	static async getUserList(ctx){
+	static async getUsers(ctx){
 		let currentPage = parseInt(ctx.query.currentPage)
 		let pageSize = parseInt(ctx.query.pageSize)
 		console.log(ctx.query)
@@ -91,9 +91,10 @@ class userController{
 	    ]
     }
     // 权限查询
-    if (['1', '2', '3'].includes(ctx.query.queryAuth)) {
-      querys.auth = parseInt(ctx.query.queryAuth)
-    }
+    if (['1', '2', '3'].includes(ctx.query.queryRole)) {
+      querys.role = parseInt(ctx.query.queryRole)
+		}
+		// 如何将密码去除在返回到前端？
 		if(currentPage && pageSize){
 			result = await User
 				// .find({'username': new RegExp(ctx.query.queryName)}) // 模糊搜索
@@ -144,16 +145,21 @@ class userController{
 		// ctx.req是使用multer上传插件封装的请求参数
 		console.log(ctx.req.file)
 		console.log(ctx.req.body)
-		const { username, password, role, desc } = ctx.req.body
+		const { username, curPwd, surePwd, role, desc } = ctx.req.body
 		const file = ctx.req.file
 		if(!username){
 			handleError({ ctx, msg: '用户名不能为空！' })
 			if(file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
 			return false
 		}
-		if(!password){
+		if (!curPwd){
 			handleError({ ctx, msg: '密码不能为空！' })
 			if(file) fs.unlinkSync(file.path)
+			return false
+		}
+		if (curPwd != surePwd) {
+			handleError({ ctx, msg: '两次密码输入不一致！' })
+			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
 			return false
 		}
 		if (!role){
@@ -176,10 +182,11 @@ class userController{
 		if(oneUser === null){
 			const user = new User({
 				username,
-				password: md5(password),
+				password: md5(curPwd),
 				role: parseInt(role),
 				desc: desc,
-				avatar: file ? `upload/avatar/${file.filename}` : ''
+				avatar: file ? `upload/avatar/${file.filename}` : 'upload/avatar/default.png',
+				createTime: new Date().getTime()
 			})
 			let result = await user.save().catch((err) => {
 				ctx.throw(500, '服务器内部错误-addUser错误！')
@@ -198,7 +205,7 @@ class userController{
 	static async editAndUpload(ctx){
 		console.log(ctx.req.file)
 		console.log(ctx.req.body)
-		const { id, auth, oldPwd, newPwd, comfirmPwd } = ctx.req.body
+		const { id, username, role, desc, prePwd, newPwd, surePwd } = ctx.req.body
 		const file = ctx.req.file
 		let oneUser = await User
 			.findOne({ '_id': id })
@@ -207,29 +214,78 @@ class userController{
 				ctx.throw(500, '服务器内部错误-findOneUser错误！')
 			})
 		// console.log(oneUser)
-		if (oneUser.password != md5(oldPwd)){
+		if (!username) {
+			handleError({ ctx, msg: '用户名不能为空！' })
+			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+			return false
+		}
+		let aUser = await User
+			.findOne({ 'username': username })
+			.exec() // 执行sql语句
+			.catch(err => {
+				ctx.throw(500, '服务器内部错误-findOneUser错误！')
+			})
+		console.log(aUser)
+		if (aUser != null){
+			handleError({ ctx, msg: '用户名已存在' })
+			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+			return false
+		}
+		if (!prePwd) {
+			handleError({ ctx, msg: '原始密码不能为空' })
+			if (file) fs.unlinkSync(file.path)
+			return false
+		}
+		if (oneUser.password != md5(prePwd)){
 			handleError({ ctx, msg: '原始密码输入有误！' })
 			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
 			return false
 		}
-		if (newPwd != comfirmPwd) {
-			handleError({ ctx, msg: '新密码与确认密码输入不一致！' })
+		if (!newPwd) {
+			handleError({ ctx, msg: '新密码不能为空' })
+			if (file) fs.unlinkSync(file.path)
+			return false
+		}
+		if (newPwd == prePwd) {
+			handleError({ ctx, msg: '新密码不能与原始密码相同' })
+			if (file) fs.unlinkSync(file.path)
+			return false
+		}
+		if (!surePwd) {
+			handleError({ ctx, msg: '确认密码不能为空' })
+			if (file) fs.unlinkSync(file.path)
+			return false
+		}
+		if (newPwd != surePwd) {
+			handleError({ ctx, msg: '新密码两次输入不一致！' })
 			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
 			return false
 		}
+		if (!role) {
+			handleError({ ctx, msg: '角色没有分配！' })
+			if (file) fs.unlinkSync(file.path)
+			return false
+		}
+		if (!desc) {
+			handleError({ ctx, msg: '角色描述不能为空！' })
+			if (file) fs.unlinkSync(file.path)
+			return false
+		}
 		let result = await User.findByIdAndUpdate(id, {
+			username,
 			password: md5(newPwd),
-			auth,
+			role,
+			desc,
 			avatar: file ? `upload/avatar/${file.filename}` : oneUser.avatar
 		}, { new: true })
 			.exec() // 执行查询，并将查询结果传入回调函数,可以传人一个函数，会返回成为一个完整的 promise 对象
 			.catch((err) => {
 				ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!');
 			})
-		handleSuccess({
-			ctx, msg: '修改成功！',
-			data: result
-		})
+		// 有新图片上传 更新完毕后将老图删除
+		console.log(file.path)
+		if (file) fs.unlinkSync(`static/${oneUser.avatar}`)
+		handleSuccess({ ctx, msg: '修改成功！', data: result })
 	}
 
 	// 用户退出 （前端直接退，无需后台退出）
@@ -250,7 +306,10 @@ class userController{
 			.catch(err => {
 				ctx.throw(500, '服务器内部错误-deleteUser错误！')
 			})
-		if (result) handleSuccess({ ctx, msg: '删除成功！', data: result })
+		if (result) {
+			if (result.avatar) fs.unlinkSync(`./static/${result.avatar}`) // 删除头像
+			handleSuccess({ ctx, msg: '删除成功！', data: result })
+		}
 		else handleError({ ctx, msg: '删除失败！' })
 	}
 

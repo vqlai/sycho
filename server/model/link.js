@@ -5,7 +5,7 @@ const linkSchema = new mongoose.Schema({
   type: { type: String, required: true },
   desc: { type: String, required: true },
   url: { type: String, required: true }, 
-  createTime: { type: Date, default: Date.now } // 因为类型是Date，无法保存时间戳
+  createTime: { type: String, required: true } // 因为类型是Date，无法保存时间戳,废弃Date类型
 })
 
 // mongoose 会自动把表名变成复数

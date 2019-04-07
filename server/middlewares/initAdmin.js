@@ -20,7 +20,8 @@ module.exports = async(ctx, next) => {
 				password,
 				role,
 				desc,
-				avatar
+				avatar,
+				createTime: new Date().getTime()
 			})
 			await user.save().catch(err => {
 				ctx.throw(500, '服务器内部错误-存储管理员数据错误！')

@@ -20,42 +20,49 @@
     <el-row class="content">
       <el-col :span="24">
         <el-table
-           v-loading="loading"
+          v-loading="loading"
           :data="tableData"
           border
           height="560"
           stripe
+          fit
           highlight-current-row
           :default-sort = "{prop: 'name'}"
           style="width: 100%">
           <el-table-column
             type="index"
             label="序号"
+            align="center"
             width="50">
           </el-table-column>
           <el-table-column
             prop="name"
             label="名称"
             sortable
+            align="center"
             width="180">
           </el-table-column>
           <el-table-column
             prop="desc"
             label="类型"
+            align="center"
             width="180">
           </el-table-column>
           <el-table-column
             prop="url"
+            align="center"
             label="链接">
           </el-table-column>
           <el-table-column
             prop="createTime"
             :formatter="formatterTime"
+            align="center"
             label="创建时间">
           </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
+            align="center"
             width="150">
             <template slot-scope="scope">
               <el-button type="text" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
@@ -90,10 +97,10 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 30, 50, 100]"
           :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
+          :total="total"
+          :page-sizes="[10, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </el-col>
     </el-row>
@@ -103,17 +110,18 @@
       width="30%"
       :close-on-click-modal="false"
       @close="handleDialogClose">
-      <el-form ref="linkForm" :model="linkForm" :rules="linkFormRules" label-width="80px">
+      <el-form ref="linkForm" :model="linkForm" :rules="linkFormRules" label-width="80px" status-icon>
         <el-form-item label="名称" required prop="name">
           <el-input v-model="linkForm.name" placeholder="请输入链接名称" clearable></el-input>
         </el-form-item>
         <el-form-item label="类型" required prop="type">
           <el-select v-model="linkForm.type" placeholder="请选择链接类型" style="display: block;" clearable>
             <el-option
-              v-for="item in linkType"
+              v-for="(item, index) in linkType"
               :key="item.value"
               :label="item.label"
-              :value="item.value">
+              :value="item.value"
+              v-show="index !== 0 ">
             </el-option>
           </el-select>
         </el-form-item>
@@ -131,12 +139,17 @@
 </template>
 
 <script>
+  import moment from 'moment'
+
   export default {
     name: 'linkPage',
     data(){
       return {
         queryName: '',
         linkType: [{
+          value: 0,
+          label: '全部'
+        }, {
           value: 1,
           label: '技术'
         }, {
@@ -174,16 +187,17 @@
       }
     },
     created(){
-      this._getLink({ currentPage: this.currentPage, pageSize: this.pageSize })
+      this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
     },
     mounted(){
     },
     methods: {
-      formatterTime(){
+      formatterTime(row, column, cellValue, inde){
+        return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
       },
-      _getLink(params){
+      _getLinks(params){
         this.loading = true
-        this.$store.dispatch('GetLink', params).then(res => {
+        this.$store.dispatch('GetLinks', params).then(res => {
           // console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
@@ -199,16 +213,16 @@
       },
       handleSizeChange(val) {
         this.pageSize = val
-        this._getLink({ currentPage: 1, pageSize: this.pageSize })
+        this._getLinks({ currentPage: 1, pageSize: this.pageSize })
         // console.log(`每页 ${val} 条`)
       },
       handleCurrentChange(val) {
         this.currentPage = val
-        this._getLink({ currentPage: this.currentPage, pageSize: this.pageSize })
+        this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
         // console.log(`当前页: ${val}`)
       },
       handleSearch(){
-        this._getLink({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryType: this.queryType })
+        this._getLinks({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryType: this.queryType })
       },
       handleAdd(){
         this.linkForm.id = ''
@@ -243,7 +257,7 @@
               message: res.msg,
               type: 'success'
             })
-            this._getLink({ currentPage: this.currentPage, pageSize: this.pageSize })
+            this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
           }else{
             this.$message({
               message: res.msg,
@@ -279,7 +293,7 @@
               this.$store.dispatch('AddLink', params).then(res => {
                 console.log(res)
                 if(res.success){
-                  this._getLink({ currentPage: 1, pageSize: this.pageSize })
+                  this._getLinks({ currentPage: 1, pageSize: this.pageSize })
                   this.dialogVisible = false
                   this.$message({
                     message: res.msg,
@@ -297,7 +311,7 @@
               this.$store.dispatch('EditLink', params).then(res => {
                 console.log(res)
                 if(res.success){
-                  this._getLink({ currentPage: 1, pageSize: this.pageSize })
+                  this._getLinks({ currentPage: 1, pageSize: this.pageSize })
                   this.dialogVisible = false
                   this.$message({
                     message: res.msg,
@@ -336,6 +350,9 @@
       padding: 10px;
       // min-height: 600px;
       background-color: $bg;
+      /deep/ .el-table{
+        overflow-y: scroll;
+      }
     }
     .el-pagination{
       padding: 10px 0;

@@ -2,9 +2,9 @@ import request from '@/api/request'
 
 // 传参方式: post方式用 data: {...data} ，get方式用 params: {...params}
 // 获取链接列表
-export function getLink(params) {
+export function getLinks(params) {
   return request({
-    url: '/getLink',
+    url: '/getLinks',
     method: 'get',
     params: { ...params }
   })

@@ -5,7 +5,7 @@ const articleSchema = new mongoose.Schema({
 	type: {type: Number}, // 文章类型
 	// tag: {type: String}, // 文章标签
 	content: {type: String, required: true},
-	createTime: {type: Date, default: Date.now} // 因为类型是Date，无法保存时间戳
+	createTime: { type: String, default: new Date().getTime() } // 因为类型是Date，无法保存时间戳,废弃Date类型
 })
 
 // mongoose 会自动把表名变成复数
