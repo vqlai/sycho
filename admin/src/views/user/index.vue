@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between" class="header">
       <el-col :span="4"><el-input placeholder="请输入内容" v-model="queryName" clearable> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="queryRole" placeholder="请选择权限类型" clearable>
+        <el-select v-model="queryRole" placeholder="请选择权限类型" style="display: block;" clearable>
           <el-option
             v-for="item in userType"
             :key="item.value"
@@ -54,7 +54,7 @@
             align="center"
             width="280">
               <template slot-scope="scope">
-                <img style="width: auto;max-height:80px;" :src="'http://localhost:3002/'+scope.row.avatar" alt="">
+                <img style="width: auto;max-width: 100%;max-height:80px;" :src="'http://localhost:3002/'+scope.row.avatar" alt="">
               </template>
           </el-table-column>
           <el-table-column
@@ -152,10 +152,14 @@
               accept=".jpg, .jpeg, .png"
               :limit="1"
               :before-upload="beforeAvatarUpload">
-              <div v-if="imageUrl" :class="['avatar-box',{'hover': imgHover}]"
-                @mouseenter="imgHover = true"
-                @mouseleave="imgHover = false">
-                <img :src="imageUrl" class="avatar">
+              <div v-if="avatarImgUrl" :class="['avatar-box',{'hover': avatarImgHover}]"
+                @mouseenter="avatarImgHover = true"
+                @mouseleave="avatarImgHover = false">
+                <img :src="avatarImgUrl" class="avatar">
+                <div v-if="avatarImgHover" class="imgHoverBtns">
+                  <i class="el-icon-zoom-in" @click.stop="avatarVisible=true"></i>
+                  <i class="el-icon-delete" @click.stop="handleRemoveAvatar"></i>
+                </div>
               </div>
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -164,8 +168,10 @@
               <li>每个文件大小不超过 500kb。</li>
               <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
             </ul>
-            <el-dialog :visible.sync="avatarVisible" width="30%" append-to-body>
-              <img width="100%" :src="avatarImgUrl" alt="">
+            <el-dialog :visible.sync="avatarVisible" width="35%" append-to-body>
+              <div style="text-align: center;">
+                <img :src="avatarImgUrl" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
+              </div>
             </el-dialog>
           </div>
         </el-form-item>
@@ -271,18 +277,17 @@
         dialogVisible: false,
         dialogType: 1,
         fileObj: null,
-        avatarImgUrl: '', // 预览图片路径
+        avatarImgUrl: '', // 头像路径
         avatarVisible: false, // 预览图片弹窗
-        imageUrl: '',
-        imgHover: false
+        avatarImgHover: false
       }
     },
     created(){
       this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
     },
     methods: {
-      handleImgFocus(){
-        this.imgHover = true
+      handleRemoveAvatar(){
+        this.avatarImgUrl = ''
       },
       formatterRole(row, column, cellValue, index){
         if(cellValue === 1){
@@ -335,7 +340,7 @@
         this.userForm.surePwd = ''
         this.userForm.role = ''
         this.userForm.desc = ''
-        this.imageUrl = ''
+        this.avatarImgUrl = ''
         this.$nextTick(() => {
           this.$refs['userForm'].clearValidate()
         })
@@ -352,7 +357,7 @@
         this.userForm.surePwd = ''
         this.userForm.role = Number(row.role)
         this.userForm.desc = row.desc
-        this.imageUrl = `http://localhost:3002/${row.avatar}`
+        this.avatarImgUrl = `http://localhost:3002/${row.avatar}`
         this.$nextTick(() => {
           this.$refs['userForm'].clearValidate()
         })
@@ -360,19 +365,27 @@
         this.dialogVisible = true
       },
       handleDelete(row){
-        this.$store.dispatch('DeleteUser', row._id).then(res => {
-          if(res.success){
-            this.$message({
-              message: res.msg,
-              type: 'success'
-            })
-            this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
-          }else{
-            this.$message({
-              message: res.msg,
-              type: 'error'
-            })
-          }
+        this.$confirm('此操作将删除该行, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DeleteUser', row._id).then(res => {
+            if(res.success){
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
+            }else{
+              this.$message({
+                message: res.msg,
+                type: 'error'
+              })
+            }
+          })
+        }).catch(() => {
+          console.log('取消删除')
         })
       },
       handleFormComfirm(){
@@ -438,7 +451,7 @@
         reader.onloadend = e => {
           // console.log(e)
           file.url = reader.result
-          this.imageUrl = file.url
+          this.avatarImgUrl = file.url
           this.fileObj = file
           // console.log(this.fileObj)
         }
@@ -464,7 +477,7 @@
       // },
       // handleAvatarSuccess(res, file) {
       //   console.log(file)
-      //   this.imageUrl = URL.createObjectURL(file.raw)
+      //   this.avatarImgUrl = URL.createObjectURL(file.raw)
       // },
     },
   }
@@ -521,7 +534,7 @@
       .avatar-box{
         position: relative;
         &.hover{
-          ::after{
+          &::after{
             content: ' ';
             position: absolute;
             top:0;
@@ -530,6 +543,22 @@
             bottom: 0;
             z-index: 10;
             background: rgba($color: #000000, $alpha: .5)
+          }
+          .imgHoverBtns{
+            position: absolute;
+            top:0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 11;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            i{
+              color: #fff;
+              font-size: 18px;
+              padding: 0 4px;
+            }
           }
         }
         .avatar {

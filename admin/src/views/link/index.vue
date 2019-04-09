@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between" class="header">
       <el-col :span="4"><el-input placeholder="请输入内容" v-model="queryName" clearable> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="queryType" placeholder="请选择链接类型" clearable>
+        <el-select v-model="queryType" placeholder="请选择链接类型"  style="display: block;" clearable>
           <el-option
             v-for="item in linkType"
             :key="item.value"
@@ -67,28 +67,19 @@
             <template slot-scope="scope">
               <el-button type="text" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
               <el-button type="text" size="small" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
-              <!-- <el-popover trigger="click" placement="left-start">
-                <p>确定要删除 <span class="sf-red">{{ scope.row.name }}</span> 吗？</p>
-                <div style="text-align: right; margin: 0">
-                  <el-button size="mini" type="text" @click.native.prevent="$refs.page.click()">取消</el-button>
-                  <el-button size="mini" type="primary" @click.native.prevent="handleOperationButtonClick(scope.row)">确定</el-button>
-                </div>
-                <el-button slot="reference" type="text" size="small">删除</el-button>
-              </el-popover> -->
-              <!-- title="确定删除？" -->
               <!-- <el-popover
                 ref="popover{{scope.$index}}"
                 placement="top"
                 width="160"
                 trigger="click"
+                title="确定删除？"
                 v-model="scope.row.visible">
                 <p>确定{{scope.$index}}删除吗？</p>
                 <div style="text-align: right; margin: 0">
-                  <el-button type="text" size="mini" @click="doCancle(scope)">取消</el-button>
+                  <el-button type="text" size="mini" @click="scope.row.visible = false">取消</el-button>
                   <el-button type="primary" size="mini" @click="scope.row.visible = false">确定</el-button>
                 </div>
-                <el-button slot="reference" type="text" size="small" icon="el-icon-delete" style="margin-left: 10px;"
-                @click="doDelete(scope)">删除</el-button>
+                <el-button slot="reference" type="text" size="small" icon="el-icon-delete" style="margin-left: 10px;">删除</el-button>
               </el-popover> -->
             </template>
           </el-table-column>
@@ -201,6 +192,10 @@
           // console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
+            for(let item of this.tableData){
+              item.visible = false
+            }
+            console.log(this.tableData)
             this.total = res.data.pagination.total
             this.pageSize = res.data.pagination.pageSize
             this.currentPage = res.data.pagination.currentPage
@@ -251,19 +246,27 @@
         })
       },
       handleDelete(row){
-        this.$store.dispatch('DeleteLink', row._id).then(res => {
-          if(res.success){
-            this.$message({
-              message: res.msg,
-              type: 'success'
-            })
-            this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
-          }else{
-            this.$message({
-              message: res.msg,
-              type: 'error'
-            })
-          }
+        this.$confirm('此操作将删除该行, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DeleteLink', row._id).then(res => {
+            if(res.success){
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
+            }else{
+              this.$message({
+                message: res.msg,
+                type: 'error'
+              })
+            }
+          })
+        }).catch(() => {
+          console.log('取消删除')
         })
       },
       handleDialogClose(){

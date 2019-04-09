@@ -1,5 +1,5 @@
 <template>
-  <div class="tag">
+  <div class="list">
     <el-row type="flex" justify="space-between" class="header">
       <el-col :span="4"><el-input placeholder="请输入内容" v-model="searchText" clearable> </el-input> </el-col>
       <el-col :span="4">
@@ -66,7 +66,7 @@
 
 <script>
   export default {
-    name: 'tag',
+    name: 'list',
     data(){
       return {
         searchText: '',
@@ -103,6 +103,9 @@
         currentPage: 1
       }
     },
+    created(){},
+    mounted(){},
+    destroyed(){},
     methods: {
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
@@ -114,12 +117,13 @@
         console.log(row)
       }
     },
+    components: {}
   }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   $bg: #fff;
-  .tag{
+  .list{
     padding: 10px;
     .header{
       padding: 10px;

@@ -46,14 +46,37 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/tag',
+    path: '/article',
+    component: Layout,
+    redirect: '/article/list',
+    name: 'Article',
+    hidden: false,
+    meta: { title: 'Article', icon: 'article' },
+    children: [
+      {
+        path: 'list',
+        name: 'List',
+        component: () => import('@/views/article/list'),
+        meta: { title: 'List', icon: 'article-list' }
+      },
+      {
+        path: 'edit',
+        name: 'Edit',
+        component: () => import('@/views/article/edit'),
+        meta: { title: 'Edit', icon: 'article-edit' }
+      }
+    ]
+  },
+
+  {
+    path: '/message',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Tag',
-        component: () => import('@/views/tag/index'),
-        meta: { title: 'Tag', icon: 'tag' }
+        name: 'Message',
+        component: () => import('@/views/message/index'),
+        meta: { title: 'Message', icon: 'message' }
       }
     ]
   },
@@ -80,6 +103,19 @@ export const constantRouterMap = [
         name: 'User',
         component: () => import('@/views/user/index'),
         meta: { title: 'User', icon: 'user' }
+      }
+    ]
+  },
+
+  {
+    path: '/tag',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Tag',
+        component: () => import('@/views/tag/index'),
+        meta: { title: 'Tag', icon: 'tag' }
       }
     ]
   },

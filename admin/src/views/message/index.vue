@@ -1,5 +1,5 @@
 <template>
-  <div class="tag">
+  <div class="message">
     <el-row type="flex" justify="space-between" class="header">
       <el-col :span="4"><el-input placeholder="请输入内容" v-model="searchText" clearable> </el-input> </el-col>
       <el-col :span="4">
@@ -66,7 +66,7 @@
 
 <script>
   export default {
-    name: 'tag',
+    name: 'message',
     data(){
       return {
         searchText: '',
@@ -117,9 +117,9 @@
   }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   $bg: #fff;
-  .tag{
+  .message{
     padding: 10px;
     .header{
       padding: 10px;
