@@ -1,23 +1,86 @@
 <template>
   <div class="edit">
-    <quillEditor></quillEditor>
+    <div class="v-container">
+      <div class="v-header">
+        <el-row>
+          <el-input
+            placeholder="请输入标题"
+            v-model="input10"
+            clearable>
+          </el-input>
+        </el-row>
+        <el-row type="flex" align="middle">
+          <el-col :span="8">作者：<el-input placeholder="请输入作者" v-model="input10" clearable style="width: 80%;"> </el-input></el-col>
+          <el-col :span="8">发布时间：<el-date-picker v-model="value1" type="date" placeholder="请选择日期" style="display: inline-block;width:80%;"> </el-date-picker></el-col>
+        </el-row>
+      </div>
+      <div class="v-body">
+        <el-row>
+          <!-- bidirectional data binding（双向数据绑定） -->
+          <quill-editor v-model="content"
+                        ref="quillEditorObj"
+                        :options="editorOption"
+                        @blur="onEditorBlur($event)"
+                        @focus="onEditorFocus($event)"
+                        @ready="onEditorReady($event)">
+          </quill-editor>
+
+          <!-- Or manually control the data synchronization（或手动控制数据流） -->
+          <!-- <quill-editor :content="content"
+                        :options="editorOption"
+                        @change="onEditorChange($event)">
+          </quill-editor> -->
+        </el-row>
+      </div>
+      <div class="v-footer">
+        <el-row>
+          <el-button type="primary">发布</el-button>
+          <el-button type="success">草稿</el-button>
+        </el-row>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import 'quill/dist/quill.core.css'
   import 'quill/dist/quill.snow.css'
-  import 'quill/dist/quill.bubble.css'
+  // import 'quill/dist/quill.bubble.css'
   import { quillEditor } from 'vue-quill-editor'
   export default {
     name: 'edit',
     data(){
-      return {}
+      return {
+        content: '<h2>I am Example</h2>',
+        editorOption: {
+          // some quill options
+        }
+      }
+    },
+    computed: {
+      editor() {
+        return this.$refs.quillEditorObj.quill
+      }
     },
     created(){},
     mounted(){},
     destroyed(){},
-    methods: {},
+    methods: {
+      onEditorBlur(quill) {
+        console.log('editor blur!', quill)
+        console.log(this.content)
+      },
+      onEditorFocus(quill) {
+        console.log('editor focus!', quill)
+      },
+      onEditorReady(quill) {
+        console.log('editor ready!', quill)
+      },
+      onEditorChange({ quill, html, text }) {
+        console.log('editor change!', quill, html, text)
+        this.content = html
+      }
+    },
     components: {
       quillEditor
     }
@@ -27,8 +90,21 @@
 <style lang="scss" scoped>
   .edit{
     padding: 10px;
-    .quill-editor{
+    .v-container{
+      padding: 5px 10px;
       background: #fff;
+      .el-row{
+        padding: 5px 0;
+      }
+      .v-footer{
+        text-align: right;
+      }
+    }
+    .quill-editor{
+      // /deep/ .ql-editor{
+      //   max-height: 600px;
+      //   overflow-y: scroll;
+      // }
     }
   }
 </style>
