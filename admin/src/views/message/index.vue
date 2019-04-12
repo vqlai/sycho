@@ -28,17 +28,21 @@
           style="width: 100%">
           <el-table-column
             prop="date"
-            label="日期"
+            label="序号"
             width="180">
           </el-table-column>
           <el-table-column
             prop="name"
-            label="姓名"
+            label="留言内容"
             width="180">
           </el-table-column>
           <el-table-column
             prop="address"
-            label="地址">
+            label="用户名">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="留言时间">
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -47,6 +51,7 @@
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="text" size="small" icon="el-icon-view">查看</el-button>
               <el-button type="text" size="small" icon="el-icon-edit">编辑</el-button>
+              <el-button type="text" size="small" icon="el-icon-edit">回复</el-button>
             </template>
           </el-table-column>
         </el-table>

@@ -28,17 +28,41 @@
           style="width: 100%">
           <el-table-column
             prop="date"
-            label="日期"
+            label="序号"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="name"
-            label="姓名"
+            label="标题"
             width="180">
+            <template slot-scope="{row}">
+              <router-link :to="'/example/edit/'+row.id" class="link-type">
+                <span>{{ row.name }}</span>
+              </router-link>
+            </template>
           </el-table-column>
           <el-table-column
             prop="address"
-            label="地址">
+            label="作者">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="创建时间">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="发布时间">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="点赞数">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="脚踩数">
+          </el-table-column>
+          <el-table-column
+            prop="address"
+            label="浏览数">
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -135,6 +159,10 @@
     .content{
       padding: 10px;
       background-color: $bg;
+      .link-type, .link-type:focus {
+        color: #337ab7;
+        cursor: pointer;
+      }
     }
     .el-pagination{
       padding: 10px 0;
