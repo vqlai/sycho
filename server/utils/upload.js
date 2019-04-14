@@ -12,7 +12,8 @@ let storage = multer.diskStorage({
 		// 路径前面不能为/，否则会去找绝对路径
 		if(typeof file != 'undefined'){
 			let path = './static/upload/default'
-			if (req.url == '/api/addAndUpload' || req.url == '/api/editAndUpload'){
+			// 根据请求url将头像放到不同文件夹下
+			if (req.url.includes('UploadUser')){
 				path = './static/upload/avatar'
 			}else if(req.url == '/api/article/release'){
 				path = './static/upload/article'

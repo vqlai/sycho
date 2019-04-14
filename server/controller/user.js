@@ -141,7 +141,7 @@ class userController{
 
 
 	// 新增用户&图片上传 （注意：接口需要有返回，否则响应404）
-	static async addAndUpload(ctx){
+	static async addAndUploadUser(ctx){
 		// ctx.req是使用multer上传插件封装的请求参数
 		console.log(ctx.req.file)
 		console.log(ctx.req.body)
@@ -202,7 +202,7 @@ class userController{
 	}
 
 	// 编辑用户&修改图片
-	static async editAndUpload(ctx){
+	static async editAndUploadUser(ctx){
 		console.log(ctx.req.file)
 		console.log(ctx.req.body)
 		const { id, username, role, desc, prePwd, newPwd, surePwd } = ctx.req.body
@@ -284,7 +284,20 @@ class userController{
 			})
 		// 有新图片上传 更新完毕后将老图删除
 		console.log(file.path)
-		if (file) fs.unlinkSync(`static/${oneUser.avatar}`)
+		if (file) {
+			// 先读取头像看是否存在,确保头像不存在的去删除的异常
+			fs.readFile(`static/${oneUser.avatar}`, (err, data)=>{
+				// 读取文件失败/错误
+				if (err) {
+					// throw err;
+					console.log(err)
+				} else {
+					// 读取文件成功
+					console.log(data);
+					fs.unlinkSync(`static/${oneUser.avatar}`)
+				}
+			})
+		}
 		handleSuccess({ ctx, msg: '修改成功！', data: result })
 	}
 
@@ -307,7 +320,21 @@ class userController{
 				ctx.throw(500, '服务器内部错误-deleteUser错误！')
 			})
 		if (result) {
-			if (result.avatar) fs.unlinkSync(`./static/${result.avatar}`) // 删除头像
+			// fs.unlinkSync(`./static/${result.avatar}`) // 删除头像
+			if (result.avatar){
+				// 先读取头像看是否存在
+				fs.readFile(`static/${result.avatar}`, (err, data) => {
+					// 读取文件失败/错误
+					if (err) {
+						// throw err;
+						console.log(err)
+					}else{
+						// 读取文件成功
+						console.log(data);
+						fs.unlinkSync(`static/${result.avatar}`)
+					}
+				})
+			} 
 			handleSuccess({ ctx, msg: '删除成功！', data: result })
 		}
 		else handleError({ ctx, msg: '删除失败！' })

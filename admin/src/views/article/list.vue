@@ -46,6 +46,10 @@
           </el-table-column>
           <el-table-column
             prop="address"
+            label="状态">
+          </el-table-column>
+          <el-table-column
+            prop="address"
             label="创建时间">
           </el-table-column>
           <el-table-column
@@ -56,10 +60,10 @@
             prop="address"
             label="点赞数">
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             prop="address"
             label="脚踩数">
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             prop="address"
             label="浏览数">

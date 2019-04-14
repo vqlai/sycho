@@ -10,8 +10,10 @@
           </el-input>
         </el-row>
         <el-row type="flex" align="middle">
-          <el-col :span="8">作者：<el-input placeholder="请输入作者" v-model="input10" clearable style="width: 80%;"> </el-input></el-col>
-          <el-col :span="8">发布时间：<el-date-picker v-model="value1" type="date" placeholder="请选择日期" style="display: inline-block;width:80%;"> </el-date-picker></el-col>
+          <el-col :span="4">作者：<el-input placeholder="请输入作者" v-model="input10" clearable style="width: 75%;"> </el-input></el-col>
+          <el-col :span="4">点赞数：<el-input-number v-model="num1" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number> </el-col>
+          <el-col :span="4">浏览数：<el-input-number v-model="num1" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number> </el-col>
+          <el-col :span="5">发布时间：<el-date-picker v-model="value1" type="date" placeholder="请选择日期"> </el-date-picker></el-col>
         </el-row>
       </div>
       <div class="v-body">

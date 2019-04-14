@@ -54,8 +54,9 @@ let config = {
 	// 	password: 'v901815Q'
 	// },
 	app: {
-		port: process.env.PORT || 3002, // server端口
-		routerBaseApi: '/api' // 接口基础路径
+		ip: process.env.ip,
+		port: process.env.PORT || 1008, // server端口
+		routerBaseApi: '/v1' // 接口基础路径
 	}
 }
 

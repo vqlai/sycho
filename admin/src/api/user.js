@@ -39,11 +39,11 @@ export async function getUsers(params) {
 }
 
 // 新增用户
-// 注意上传文件不能用...运算符
+// 注意上传文件不能用...运算符,要设置文件类型头部
 export async function addUser(data) {
   return await request({
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: '/addAndUpload',
+    url: '/addAndUploadUser',
     method: 'post',
     data: data
   })
@@ -52,7 +52,7 @@ export async function addUser(data) {
 export async function editUser(data) {
   return await request({
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: '/editAndUpload',
+    url: '/editAndUploadUser',
     method: 'put',
     data: data
   })

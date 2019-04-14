@@ -11,9 +11,13 @@ import router from './router'
 import store from './store'
 
 import '@/assets/css/index.scss' // global css
+import config from '@/assets/js/config.js'
 
 import SvgIcon from '@/components/SvgIcon' // svg组件
 Vue.component('svg-icon', SvgIcon) // register globally
+
+// 注册全局函数和全局常量,在vue页面之间用this即可访问
+Vue.prototype.reUrl = config.reUrl
 
 // Vue.use(ElementUI, { locale }) // 英文版
 Vue.use(ElementUI) // 中文版

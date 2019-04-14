@@ -37,6 +37,12 @@
           </el-table-column>
           <el-table-column
             prop="username"
+            label="昵称"
+            align="center"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="username"
             label="用户名"
             align="center"
             width="180">
@@ -54,7 +60,7 @@
             align="center"
             width="280">
               <template slot-scope="scope">
-                <img style="width: auto;max-width: 100%;max-height:80px;" :src="'http://localhost:3002/'+scope.row.avatar" alt="">
+                <img style="width: auto;max-width: 100%;max-height:80px;" :src="reUrl+scope.row.avatar" alt="">
               </template>
           </el-table-column>
           <el-table-column
@@ -357,7 +363,7 @@
         this.userForm.surePwd = ''
         this.userForm.role = Number(row.role)
         this.userForm.desc = row.desc
-        this.avatarImgUrl = `http://localhost:3002/${row.avatar}`
+        this.avatarImgUrl = `${this.reUrl}${row.avatar}`
         this.$nextTick(() => {
           this.$refs['userForm'].clearValidate()
         })

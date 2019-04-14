@@ -41,6 +41,9 @@ app.use(router.routes()).use(router.allowedMethods())
 // 前端访问时可以省略static这个目录
 app.use(serve(__dirname + '/static'))
 
-app.listen(config.app.port, ()=>{
-	console.log('The server is running at http://localhost:' +config.app.port)
+// (port, hostname[, callback])
+app.listen(config.app.port, '127.0.0.1', ()=>{
+	// console.log(process.env)
+	// console.log('The server is running at http://localhost:' +config.app.port)
+	console.log(`The server is running at http://127.0.0.1:${config.app.port}`)
 })

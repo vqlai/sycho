@@ -24,8 +24,8 @@ router.delete('/deleteUser/:id', checkToken, U.deleteUser);
 // router.get('/getAllUser', checkToken, U.getAllUser);
 // upload.single('file')这里面的file是上传空间的name<input type="file" name="file"/> 
 // upload.single设置单文件上传
-router.post('/addAndUpload', checkToken, upload.single('file'), U.addAndUpload);
-router.put('/editAndUpload', checkToken, upload.single('file'), U.editAndUpload);
+router.post('/addAndUploadUser', checkToken, upload.single('file'), U.addAndUploadUser);
+router.put('/editAndUploadUser', checkToken, upload.single('file'), U.editAndUploadUser);
 
 // 链接管理 checkToken,
 router.get('/getLinks', L.getLinks)

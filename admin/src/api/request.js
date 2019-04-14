@@ -8,7 +8,7 @@ let qs = require('qs')
 // 创建axios实例
 const service = axios.create({
   // baseURL: process.env.publicPath, // api 的 base_url
-  baseURL: process.env.NODE_ENV === 'production' ? '' : '/api', // 开发使用代理,注意后台有没有基础路径
+  baseURL: process.env.NODE_ENV === 'production' ? '/v1' : '/api/v1', // 开发使用代理,注意后台有没有基础路径(注意：api是给代理替换，v1是后台的基础路径)
   timeout: 5000, // 请求超时时间
   headers: {}
 })

@@ -1,7 +1,7 @@
 module.exports = async (ctx, next) => {
 	// cors跨域拦截器 3100-server 3200-admin 3300-front
 	const allowedOrigins = ['http://localhost:3001', 'http://localhost:3002', 'http://127.0.0.1:3001', 'https://127.0.0.1:3001',
-		'http://www.sycho.cn', 'https://www.sycho.cn', 'http://m.sycho.cn', 'https://m.sycho.cn'];
+		'http://www.sycho.cn', 'https://www.sycho.cn', 'http://m.sycho.cn', 'https://m.sycho.cn', 'http://app.sycho.cn', 'https://app.sycho.cn'];
 	const origin = ctx.request.headers.origin || '';
 	if (allowedOrigins.includes(origin) || origin.includes('localhost')) {
 		ctx.set('Access-Control-Allow-Origin', origin);
