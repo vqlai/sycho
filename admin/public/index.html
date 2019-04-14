@@ -3,12 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>admin</title>
+    <!-- webpackConfig.name获取到package.json里的name值 -->
+    <title><%= webpackConfig.name %></title>
   </head>
   <body>
     <div id="app"></div>
+    <script src="<%= BASE_URL %>static/tinymce4.7.5/tinymce.min.js"></script>
     <!-- built files will be auto injected -->
   </body>
 </html>
