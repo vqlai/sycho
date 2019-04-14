@@ -10,9 +10,9 @@ class linkController {
     let currentPage = parseInt(ctx.query.currentPage)
     let pageSize = parseInt(ctx.query.pageSize)
     let queryName = ctx.query.queryName
-    let queryType = ctx.query.queryType
-    if (currentPage <= 0) currentPage = 1
+    let queryType = parseInt(ctx.query.queryType)
     let result = null, total = 0
+    if (currentPage <= 0) currentPage = 1
     // 组合搜索内容
     const querys = {}
     // 名字查询
@@ -22,9 +22,10 @@ class linkController {
       ]
     }
     // 权限查询
-    if (['1', '2', '3', '4'].includes(queryType)) {
-      querys.type = parseInt(queryType)
-    }
+    // if (['1', '2', '3', '4'].includes(queryType)) {
+    //   querys.type = parseInt(queryType)
+    // }
+    if (queryType) { querys.type = queryType }
     result = await Link
       .find(querys) // 模糊搜索
       .sort({ 'createTime': -1 }) // 排序，-1为倒序

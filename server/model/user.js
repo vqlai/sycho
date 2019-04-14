@@ -2,11 +2,11 @@ const mongoose = require('mongoose')
 // const Schema = mongoose.Schema
 
 const userSchema = new mongoose.Schema({
-	username: {type: String, required: true},
-	password: {type: String, required: true},
-	role: {type: Number}, // 用户权限 1为超级管理员 2为管理员 3为普通用户
+	username: { type: String, required: true },
+	password: { type: String, required: true },
+	role: { type: Number }, // 用户权限 1为超级管理员 2为管理员 3为普通用户
 	desc: { type: String }, // 用户描述
-	avatar: {type: String}, // 用户头像
+	avatar: { type: String }, // 用户头像
 	createTime: { type: String, required: true} // 因为类型是Date, 无法保存时间戳, 废弃Date类型
 })
 

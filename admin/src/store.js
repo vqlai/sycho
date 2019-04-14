@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } from '@/api/user'
 import { getLinks, addLink, editLink, deleteLink } from '@/api/link'
+import { getArticleById, getArticles, addArticle, editArticle, deleteArticle } from '@/api/article'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
 
 Vue.use(Vuex)
@@ -131,10 +132,60 @@ const store = new Vuex.Store({
       })
     },
 
+    GetArticleById({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getArticleById(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    GetArticles({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getArticles(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    AddArticle({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        addArticle(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    EditArticle({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        editArticle(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    DeleteArticle({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        deleteArticle(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
     GetLinks({ commit }, params) {
       return new Promise((resolve, reject) => {
         getLinks(params).then(res => {
-          console.log(res)
+          // console.log(res)
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -145,7 +196,7 @@ const store = new Vuex.Store({
     AddLink({ commit }, params) {
       return new Promise((resolve, reject) => {
         addLink(params).then(res => {
-          console.log(res)
+          // console.log(res)
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -156,7 +207,7 @@ const store = new Vuex.Store({
     EditLink({ commit }, params) {
       return new Promise((resolve, reject) => {
         editLink(params).then(res => {
-          console.log(res)
+          // console.log(res)
           resolve(res)
         }).catch(error => {
           reject(error)

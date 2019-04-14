@@ -1,7 +1,8 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
+    <!-- :default-active="$route.path" -->
     <el-menu
-      :default-active="$route.path"
+      :default-active="activeMenu"
       :collapse="isCollapse"
       :background-color="variables.menuBg"
       :text-color="variables.menuText"
@@ -27,6 +28,15 @@ export default {
     ]),
     routes() {
       return this.$router.options.routes
+    },
+    activeMenu() {
+      const route = this.$route
+      const { meta, path } = route
+      // if set path, the sidebar will highlight the path you set
+      if (meta.activeMenu) {
+        return meta.activeMenu
+      }
+      return path
     },
     variables() {
       return variables

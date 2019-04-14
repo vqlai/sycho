@@ -58,12 +58,17 @@ export const constantRouterMap = [
         name: 'List',
         component: () => import('@/views/article/list'),
         meta: { title: 'List', icon: 'article-list' }
-      },
-      {
-        path: 'edit',
+      }, {
+        path: 'create',
+        name: 'Create',
+        component: () => import('@/views/article/create'),
+        meta: { title: 'Create', icon: 'article-edit' }
+      }, {
+        path: 'edit/:id',
         name: 'Edit',
+        hidden: true,
         component: () => import('@/views/article/edit'),
-        meta: { title: 'Edit', icon: 'article-edit' }
+        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list' }
       }
     ]
   },

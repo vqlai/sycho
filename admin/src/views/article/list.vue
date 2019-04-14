@@ -1,11 +1,11 @@
 <template>
   <div class="list">
     <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入内容" v-model="searchText" clearable> </el-input> </el-col>
+      <el-col :span="4"><el-input placeholder="请输入标题" v-model="queryTitle" clearable> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="searchValue" placeholder="请选择" style="display: block;" clearable>
+        <el-select v-model="queryType" placeholder="请选择文章类别" style="display: block;" clearable>
           <el-option
-            v-for="item in searchType"
+            v-for="item in articleTypes"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -13,13 +13,14 @@
         </el-select>
       </el-col>
       <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round>搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" round>新增</el-button>
+        <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
+        <!-- <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button> -->
       </el-col>
     </el-row>
     <el-row class="content">
       <el-col :span="24">
         <el-table
+          v-loading="loading"
           :data="tableData"
           border
           height="560"
@@ -27,54 +28,69 @@
           highlight-current-row
           style="width: 100%">
           <el-table-column
-            prop="date"
+            type="index"
             label="序号"
+            align="center"
             width="180">
           </el-table-column>
           <el-table-column
             label="标题"
+            align="center"
             width="180">
             <template slot-scope="{row}">
-              <router-link :to="'/example/edit/'+row.id" class="link-type">
-                <span>{{ row.name }}</span>
+              <router-link :to="'/article/edit/'+row._id" class="link-type">
+                <span>{{ row.title }}</span>
               </router-link>
             </template>
           </el-table-column>
           <el-table-column
-            prop="address"
+            prop="author"
+            align="center"
             label="作者">
           </el-table-column>
           <el-table-column
-            prop="address"
+            prop="type"
+            :formatter="formatType"
+            align="center"
+            label="类型">
+          </el-table-column>
+          <el-table-column
+            prop="likeNum"
+            align="center"
+            label="点赞数">
+          </el-table-column>
+          <el-table-column
+            prop="lookNum"
+            align="center"
+            label="浏览数">
+          </el-table-column>
+          <!-- <el-table-column
+            prop="status"
             label="状态">
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
-            prop="address"
-            label="创建时间">
-          </el-table-column>
-          <el-table-column
-            prop="address"
+            prop="releaseTime"
+            align="center"
             label="发布时间">
           </el-table-column>
           <el-table-column
-            prop="address"
-            label="点赞数">
+            prop="createTime"
+            align="center"
+            :formatter="formatTime"
+            label="创建时间">
           </el-table-column>
           <!-- <el-table-column
             prop="address"
             label="脚踩数">
           </el-table-column> -->
           <el-table-column
-            prop="address"
-            label="浏览数">
-          </el-table-column>
-          <el-table-column
             fixed="right"
             label="操作"
+            align="center"
             width="180">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small" icon="el-icon-view">查看</el-button>
-              <el-button type="text" size="small" icon="el-icon-edit">编辑</el-button>
+              <el-button type="text" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
+              <el-button type="text" size="small" icon="el-icon-edit" @click="handleDelete(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -93,57 +109,90 @@
 </template>
 
 <script>
+  import moment from 'moment'
+  import data from '@/assets/js/data'
   export default {
     name: 'list',
     data(){
+      let articleTypes = data.articleTypes
       return {
-        searchText: '',
-        searchType: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        searchValue: '',
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }],
-        currentPage: 1
+        queryTitle: '',
+        articleTypes,
+        queryType: '',
+        tableData: [],
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+        loading: false,
       }
     },
-    created(){},
+    created(){
+      this._getArticles({ currentPage: this.currentPage, pageSize: this.pageSize })
+    },
     mounted(){},
     destroyed(){},
     methods: {
+      formatTime(row, column, cellValue, inde){
+        return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
+      },
+      formatType(row, column, cellValue, inde){
+        return this.articleTypes[cellValue].label
+      },
+      _getArticles(params){
+        this.loading = true
+        this.$store.dispatch('GetArticles', params).then(res => {
+          if(res.success){
+            this.tableData = [...res.data.list]
+            this.total = res.data.pagination.total
+            this.pageSize = res.data.pagination.pageSize
+            this.currentPage = res.data.pagination.currentPage
+          }else{
+            this.$message(res.msg)
+          }
+        }).then(() => {
+          this.loading = false
+        })
+      },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
+        this.pageSize = val
+        this._getArticles({ currentPage: 1, pageSize: this.pageSize })
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
+        this.currentPage = val
+        this._getArticles({ currentPage: this.currentPage, pageSize: this.pageSize })
       },
-      handleClick(row) {
+      handleSearch(){
+        this._getArticles({ currentPage: 1, pageSize: this.pageSize, queryTitle: this.queryTitle, queryType: this.queryType })
+      },
+      handleEdit(row) {
         console.log(row)
-      }
+        this.$router.push({ path: `/article/edit/${row._id}` })
+      },
+      handleDelete(row) {
+        console.log(row)
+        this.$confirm('此操作将删除该行, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DeleteArticle', row._id).then(res => {
+            if(res.success){
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this._getArticles({ currentPage: this.currentPage, pageSize: this.pageSize })
+            }else{
+              this.$message({
+                message: res.msg,
+                type: 'error'
+              })
+            }
+          })
+        }).catch(() => {
+          console.log('取消删除')
+        })
+      },
     },
     components: {}
   }

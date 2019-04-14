@@ -78,6 +78,8 @@ class userController{
 	static async getUsers(ctx){
 		let currentPage = parseInt(ctx.query.currentPage)
 		let pageSize = parseInt(ctx.query.pageSize)
+		let queryName = ctx.query.queryName
+		let queryRole = parseInt(ctx.query.queryRole)
 		console.log(ctx.query)
 		// console.log(ctx.query.queryName)
 		if(currentPage <= 0) currentPage = 1
@@ -85,15 +87,13 @@ class userController{
 		// 组合搜索
     const querys = {}
     // 名字查询
-    if(ctx.query.queryName){
+    if(queryName){
     	querys['$or'] = [ 
-	      { 'username': {$regex: ctx.query.queryName} } // 使用正则模糊搜索
+	      { 'username': {$regex: queryName} } // 使用正则模糊搜索
 	    ]
     }
     // 权限查询
-    if (['1', '2', '3'].includes(ctx.query.queryRole)) {
-      querys.role = parseInt(ctx.query.queryRole)
-		}
+    if (queryRole) { querys.role = queryRole }
 		// 如何将密码去除在返回到前端？
 		if(currentPage && pageSize){
 			result = await User

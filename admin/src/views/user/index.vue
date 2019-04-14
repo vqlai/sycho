@@ -5,7 +5,7 @@
       <el-col :span="4">
         <el-select v-model="queryRole" placeholder="请选择权限类型" style="display: block;" clearable>
           <el-option
-            v-for="item in userType"
+            v-for="item in userTypes"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -129,7 +129,7 @@
         <el-form-item label="角色" required prop="role">
           <el-select v-model="userForm.role" placeholder="请选择角色权限类型" style="display: block;" clearable>
             <el-option
-              v-for="(item, index) in userType"
+              v-for="(item, index) in userTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value"
@@ -192,10 +192,11 @@
 
 <script>
   import moment from 'moment'
+  import data from '@/assets/js/data'
   export default {
     name: 'user',
     data(){
-      var checkPwd = (rule, value, callback) => {
+      let checkPwd = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'))
         } else if (value.length < 6){
@@ -207,7 +208,7 @@
           callback()
         }
       }
-      var checkPwd2 = (rule, value, callback) => {
+      let checkPwd2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'))
         } else if (value.length < 6){
@@ -220,21 +221,10 @@
           callback()
         }
       }
+      let userTypes = data.userTypes
       return {
         queryName: '',
-        userType: [{
-          value: 4,
-          label: '全部'
-        }, {
-          value: 3,
-          label: '用户'
-        }, {
-          value: 2,
-          label: '管理员'
-        }, {
-          value: 1,
-          label: '超级管理员'
-        }],
+        userTypes,
         queryRole: '',
         tableData: [],
         userForm: {

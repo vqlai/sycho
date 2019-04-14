@@ -1,0 +1,186 @@
+<template>
+  <div class="create">
+    <div class="v-container">
+      <div class="v-header">
+        <el-row> <el-input placeholder="请输入标题" v-model="title" clearable> </el-input> </el-row>
+        <el-row type="flex" align="middle">
+          <el-col :span="4">作者：<el-input placeholder="请输入作者" v-model="author" clearable style="width: 75%;"> </el-input></el-col>
+          <el-col :span="4">分类：
+            <el-select v-model="type" clearable placeholder="请选择文章类别">
+              <el-option
+                v-for="item in articleTypes"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                v-show="item.value !== 0">
+              </el-option>
+            </el-select>
+          </el-col>
+          <el-col :span="4">点赞数：<el-input-number v-model="likeNum" @change="handleChange" :min="0" :max="100000000" label="请输入点赞数"></el-input-number> </el-col>
+          <el-col :span="4">浏览数：<el-input-number v-model="lookNum" @change="handleChange" :min="0" :max="100000000" label="请输入浏览数"></el-input-number> </el-col>
+          <el-col :span="5">发布时间：<el-date-picker v-model="releaseTime" type="datetime" placeholder="请选择日期" :editable="false" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker></el-col>
+        </el-row>
+      </div>
+      <div class="v-body">
+        <el-row>
+          <!-- bidirectional data binding（双向数据绑定） -->
+          <!-- <quill-editor v-model="content"
+                        ref="quillEditorObj"
+                        :options="editorOption"
+                        @blur="onEditorBlur($event)"
+                        @focus="onEditorFocus($event)"
+                        @ready="onEditorReady($event)">
+          </quill-editor> -->
+
+          <!-- Or manually control the data synchronization（或手动控制数据流） -->
+          <!-- <quill-editor :content="content"
+                        :options="editorOption"
+                        @change="onEditorChange($event)">
+          </quill-editor> -->
+          <tinymce v-model="content" :height="500"></tinymce>
+        </el-row>
+      </div>
+      <div class="v-footer">
+        <el-row>
+          <el-button type="primary" @click="handleRelease">发布</el-button>
+          <!-- <el-button type="success" @click="handleDraft">草稿</el-button> -->
+        </el-row>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  // import 'quill/dist/quill.core.css'
+  // import 'quill/dist/quill.snow.css'
+  // import 'quill/dist/quill.bubble.css'
+  // import { quillEditor } from 'vue-quill-editor'
+  import tinymce from '@/components/Tinymce'
+  import data from '@/assets/js/data'
+  export default {
+    name: 'create',
+    data(){
+      let articleTypes = data.articleTypes
+      return {
+        title: '',
+        author: '',
+        type: '',
+        likeNum: 0,
+        lookNum: 0,
+        releaseTime: '',
+        content: '<h2>I am Example</h2>',
+        articleTypes,
+        // editorOption: {
+        //   // some quill options
+        // }
+      }
+    },
+    computed: {
+      // editor() {
+      //   return this.$refs.quillEditorObj.quill
+      // }
+    },
+    created(){},
+    mounted(){},
+    destroyed(){},
+    methods: {
+      // onEditorBlur(quill) {
+      //   console.log('editor blur!', quill)
+      //   console.log(this.content)
+      // },
+      // onEditorFocus(quill) {
+      //   console.log('editor focus!', quill)
+      // },
+      // onEditorReady(quill) {
+      //   console.log('editor ready!', quill)
+      // },
+      // onEditorChange({ quill, html, text }) {
+      //   console.log('editor change!', quill, html, text)
+      //   this.content = html
+      // },
+      handleChange(){},
+      handleRelease(){
+        if(this.checkArticle()){
+          // console.log(this.title.trim())
+          // console.log(this.content)
+          // console.log(this.likeNum)
+          // console.log(this.type)
+          let params = {
+            title: this.title,
+            author: this.author,
+            type: this.type,
+            likeNum: this.likeNum,
+            lookNum: this.lookNum,
+            releaseTime: this.releaseTime,
+            content: this.content
+          }
+          // console.log(params)
+          this.$store.dispatch('AddArticle', params).then(res => {
+            console.log(res)
+            if(res.success){
+              this.$message({ message: '发布成功！', type: 'success' })
+              setTimeout(() => {
+                this.$router.push({ path: '/article/list' })
+              }, 500)
+            }else{
+              this.$message({ message: res.msg, type: 'error' })
+            }
+          })
+        }
+      },
+      checkArticle(){
+        if(!this.title.trim()){
+          this.$message({ message: '请输入标题', type: 'error' })
+          return false
+        }else if(!this.author.trim()){
+          this.$message({ message: '请输入作者', type: 'error' })
+          return false
+        }else if(!this.type){
+          this.$message({ message: '请选择文章类型', type: 'error' })
+          return false
+        }else if(typeof this.likeNum === 'undefined'){
+          this.$message({ message: '请输入点赞数', type: 'error' })
+          return false
+        }else if(typeof this.lookNum === 'undefined'){
+          this.$message({ message: '请输入浏览数', type: 'error' })
+          return false
+        }else if(!this.releaseTime){
+          this.$message({ message: '请选择发布时间', type: 'error' })
+          return false
+        }else if(!this.content.trim()){
+          this.$message({ message: '请输入文章内容', type: 'error' })
+          return false
+        }else{
+          return true
+        }
+      },
+      // handleDraft(){},
+    },
+    components: {
+      // quillEditor,
+      tinymce
+    }
+  }
+</script>
+
+<style lang="scss" scoped>
+  .create{
+    padding: 10px;
+    .v-container{
+      padding: 5px 10px;
+      background: #fff;
+      .el-row{
+        padding: 5px 0;
+      }
+      .v-footer{
+        text-align: right;
+      }
+    }
+    .quill-editor{
+      // /deep/ .ql-editor{
+      //   max-height: 600px;
+      //   overflow-y: scroll;
+      // }
+    }
+  }
+</style>

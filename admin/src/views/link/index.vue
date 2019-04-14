@@ -5,7 +5,7 @@
       <el-col :span="4">
         <el-select v-model="queryType" placeholder="请选择链接类型"  style="display: block;" clearable>
           <el-option
-            v-for="item in linkType"
+            v-for="item in linkTypes"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -108,11 +108,11 @@
         <el-form-item label="类型" required prop="type">
           <el-select v-model="linkForm.type" placeholder="请选择链接类型" style="display: block;" clearable>
             <el-option
-              v-for="(item, index) in linkType"
+              v-for="(item, index) in linkTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value"
-              v-show="index !== 0 ">
+              v-show="index !== 0">
             </el-option>
           </el-select>
         </el-form-item>
@@ -131,25 +131,15 @@
 
 <script>
   import moment from 'moment'
+  import data from '@/assets/js/data'
 
   export default {
     name: 'linkPage',
     data(){
+      let linkTypes = data.linkTypes
       return {
         queryName: '',
-        linkType: [{
-          value: 0,
-          label: '全部'
-        }, {
-          value: 1,
-          label: '技术'
-        }, {
-          value: 2,
-          label: '生活'
-        }, {
-          value: 3,
-          label: '购物'
-        }],
+        linkTypes,
         queryType: '',
         linkForm: {
           id: undefined,
@@ -159,13 +149,15 @@
         },
         linkFormRules: {
           name: [
-            { required: true, message: '请输入链接名称', trigger: 'blur' }
+            { required: true, message: '请输入链接名称', trigger: 'blur' },
+            { required: true, message: '请输入链接名称', trigger: 'change' }
           ],
           type: [
             { required: true, message: '请选择链接类型', trigger: 'change' }
           ],
           url: [
-            { required: true, message: '请输入链接地址', trigger: 'blur' }
+            { required: true, message: '请输入链接地址', trigger: 'blur' },
+            { required: true, message: '请输入链接地址', trigger: 'change' }
           ]
         },
         tableData: [],
@@ -280,7 +272,7 @@
           if (valid) {
             // console.log(this.$refs.linkForm)
             let desc = ''
-            for(let item of this.linkType){
+            for(let item of this.linkTypes){
               if(item.value === this.linkForm.type){
                 desc = item.label
               }
