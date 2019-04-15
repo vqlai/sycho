@@ -12,7 +12,17 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="16">
+      <el-col :span="8">
+        <el-select v-model="queryTag" placeholder="请选择文章标签" style="display: block;" clearable>
+          <el-option
+            v-for="item in articleTags"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="8">
         <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
         <!-- <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button> -->
       </el-col>
@@ -31,12 +41,13 @@
             type="index"
             label="序号"
             align="center"
-            width="180">
+            width="60">
           </el-table-column>
           <el-table-column
             label="标题"
             align="center"
-            width="180">
+            show-overflow-tooltip
+            width="280">
             <template slot-scope="{row}">
               <router-link :to="'/article/edit/'+row._id" class="link-type">
                 <span>{{ row.title }}</span>
@@ -55,6 +66,14 @@
             label="类型">
           </el-table-column>
           <el-table-column
+            prop="tag"
+            :formatter="formatTag"
+            align="center"
+            width="280"
+            show-overflow-tooltip
+            label="标签">
+          </el-table-column>
+          <el-table-column
             prop="likeNum"
             align="center"
             label="点赞数">
@@ -71,13 +90,15 @@
           <el-table-column
             prop="releaseTime"
             align="center"
-            label="发布时间">
+            label="发布时间"
+            width="160">
           </el-table-column>
           <el-table-column
             prop="createTime"
             align="center"
             :formatter="formatTime"
-            label="创建时间">
+            label="创建时间"
+            width="160">
           </el-table-column>
           <!-- <el-table-column
             prop="address"
@@ -87,7 +108,7 @@
             fixed="right"
             label="操作"
             align="center"
-            width="180">
+            width="140">
             <template slot-scope="scope">
               <el-button type="text" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
               <el-button type="text" size="small" icon="el-icon-edit" @click="handleDelete(scope.row)">删除</el-button>
@@ -115,10 +136,13 @@
     name: 'list',
     data(){
       let articleTypes = data.articleTypes
+      let articleTags = data.articleTags
       return {
         queryTitle: '',
         articleTypes,
         queryType: '',
+        articleTags,
+        queryTag: '',
         tableData: [],
         currentPage: 1,
         pageSize: 10,
@@ -137,6 +161,16 @@
       },
       formatType(row, column, cellValue, inde){
         return this.articleTypes[cellValue].label
+      },
+      formatTag(row, column, cellValue, inde){
+        let arr = cellValue.split(',')
+        console.log(arr)
+        let arr2 = []
+        for(let item of arr){
+          console.log(this.articleTags[parseInt(item)])
+          arr2.push(this.articleTags[parseInt(item)].label)
+        }
+        return arr2.join()
       },
       _getArticles(params){
         this.loading = true

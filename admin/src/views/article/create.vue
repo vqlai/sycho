@@ -4,8 +4,9 @@
       <div class="v-header">
         <el-row> <el-input placeholder="请输入标题" v-model="title" clearable> </el-input> </el-row>
         <el-row type="flex" align="middle">
-          <el-col :span="4">作者：<el-input placeholder="请输入作者" v-model="author" clearable style="width: 75%;"> </el-input></el-col>
-          <el-col :span="4">分类：
+          <el-col :span="4"> <span>作者：</span> <el-input placeholder="请输入作者" v-model="author" clearable style="width: 75%;"> </el-input> </el-col>
+          <el-col :span="4">
+            <span>分类：</span>
             <el-select v-model="type" clearable placeholder="请选择文章类别">
               <el-option
                 v-for="item in articleTypes"
@@ -16,9 +17,22 @@
               </el-option>
             </el-select>
           </el-col>
-          <el-col :span="4">点赞数：<el-input-number v-model="likeNum" @change="handleChange" :min="0" :max="100000000" label="请输入点赞数"></el-input-number> </el-col>
-          <el-col :span="4">浏览数：<el-input-number v-model="lookNum" @change="handleChange" :min="0" :max="100000000" label="请输入浏览数"></el-input-number> </el-col>
-          <el-col :span="5">发布时间：<el-date-picker v-model="releaseTime" type="datetime" placeholder="请选择日期" :editable="false" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker></el-col>
+          <el-col :span="4"><span>点赞数：</span><el-input-number v-model="likeNum" @change="handleChange" :min="0" :max="100000000" label="请输入点赞数"></el-input-number> </el-col>
+          <el-col :span="4"><span>浏览数：</span><el-input-number v-model="lookNum" @change="handleChange" :min="0" :max="100000000" label="请输入浏览数"></el-input-number> </el-col>
+          <el-col :span="5"><span>发布时间：</span><el-date-picker v-model="releaseTime" type="datetime" placeholder="请选择日期" :editable="false" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker></el-col>
+        </el-row>
+        <el-row type="flex" align="middle">
+          <el-col :span="12">
+            <span>标签：</span>
+            <el-select v-model="tag" multiple clearable placeholder="请选择文章标签" style="width: 90%;">
+              <el-option
+                v-for="item in articleTags"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
         </el-row>
       </div>
       <div class="v-body">
@@ -37,7 +51,7 @@
                         :options="editorOption"
                         @change="onEditorChange($event)">
           </quill-editor> -->
-          <tinymce v-model="content" :height="500"></tinymce>
+          <tinymce v-model="content" :height="480"></tinymce>
         </el-row>
       </div>
       <div class="v-footer">
@@ -61,15 +75,18 @@
     name: 'create',
     data(){
       let articleTypes = data.articleTypes
+      let articleTags = data.articleTags
       return {
         title: '',
         author: '',
         type: '',
+        tag: [],
         likeNum: 0,
         lookNum: 0,
         releaseTime: '',
-        content: '<h2>I am Example</h2>',
+        content: '',
         articleTypes,
+        articleTags,
         // editorOption: {
         //   // some quill options
         // }
@@ -109,12 +126,13 @@
             title: this.title,
             author: this.author,
             type: this.type,
+            tag: this.tag.join(),
             likeNum: this.likeNum,
             lookNum: this.lookNum,
             releaseTime: this.releaseTime,
             content: this.content
           }
-          // console.log(params)
+          console.log(params)
           this.$store.dispatch('AddArticle', params).then(res => {
             console.log(res)
             if(res.success){
@@ -149,6 +167,9 @@
           return false
         }else if(!this.content.trim()){
           this.$message({ message: '请输入文章内容', type: 'error' })
+          return false
+        }else if(!this.tag){
+          this.$message({ message: '请选择文章标签', type: 'error' })
           return false
         }else{
           return true

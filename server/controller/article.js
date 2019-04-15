@@ -42,6 +42,7 @@ class articleController{
 		let pageSize = parseInt(ctx.query.pageSize)
 		let queryTitle = ctx.query.queryTitle
 		let queryType = parseInt(ctx.query.queryType)
+		let queryTag = parseInt(ctx.query.queryTag)
 		let result = null, total = 0
 		currentPage = currentPage <= 0 ? 1 : currentPage
 		// 组合搜索内容
@@ -54,6 +55,7 @@ class articleController{
 		}
 		// 权限查询
 		if (queryType) { querys.type = queryType }
+		if (queryTag) { querys.type = queryTag }
 		result = await Article
 			.find(querys) // 模糊搜索
 			.sort({ 'createTime': -1 }) // 排序，-1为倒序
@@ -93,7 +95,7 @@ class articleController{
 	// 发布文章
 	static async addArticle(ctx) {
 		//es6对象解构赋值
-		const { title, author, type, likeNum, lookNum, releaseTime, content } = ctx.request.body //请求参数放在请求体
+		const { title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body //请求参数放在请求体
 		if (!title) {
 			handleError({ ctx, msg: '文章标题不能为空！' })
 			return false
@@ -102,6 +104,9 @@ class articleController{
 			return false
 		} else if (!type) {
 			handleError({ ctx, msg: '文章类型不能为空！' })
+			return false
+		} else if (!tag) {
+			handleError({ ctx, msg: '文章标签不能为空！' })
 			return false
 		} else if (typeof likeNum === "underfined") {
 			handleError({ ctx, msg: '点赞数不能为空！' })
@@ -128,6 +133,7 @@ class articleController{
 				title,
 				author,
 				type,
+				tag,
 				likeNum,
 				lookNum,
 				releaseTime,
@@ -145,10 +151,60 @@ class articleController{
 			handleError({ ctx, msg: '文章名已存在！' })
 		}
 	}
+
 	// 编辑文章
 	static async editArticle(ctx) {
-
+		const { id, title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body 
+		if (!title) {
+			handleError({ ctx, msg: '文章标题不能为空！' })
+			return false
+		} else if (!author) {
+			handleError({ ctx, msg: '作者不能为空！' })
+			return false
+		} else if (!type) {
+			handleError({ ctx, msg: '文章类型不能为空！' })
+			return false
+		} else if (!tag) {
+			handleError({ ctx, msg: '文章标签不能为空！' })
+			return false
+		} else if (typeof likeNum === "underfined") {
+			handleError({ ctx, msg: '点赞数不能为空！' })
+			return false
+		} else if (typeof lookNum === "underfined") {
+			handleError({ ctx, msg: '浏览数不能为空！' })
+			return false
+		} else if (!releaseTime) {
+			handleError({ ctx, msg: '发布时间不能为空！' })
+			return false
+		} else if (!content) {
+			handleError({ ctx, msg: '文章内容为空！' })
+			return false
+		}
+		let result = null
+		if (id) {
+			result = await Article.findByIdAndUpdate(id, {
+				title,
+				author,
+				type,
+				tag,
+				likeNum,
+				lookNum,
+				releaseTime,
+				content
+			}, { new: true })
+				.exec() // 执行查询，并将查询结果传入回调函数,可以传人一个函数，会返回成为一个完整的 promise 对象
+				.catch((err) => {
+					ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!')
+				})
+			if (result) {
+				handleSuccess({
+					ctx, msg: '修改成功！',
+					data: result
+				})
+			}
+		}
 	}
+	
 	// 删除文章
 	static async deleteArticle(ctx) {
 		const id = ctx.params.id

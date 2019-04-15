@@ -4,7 +4,7 @@ const articleSchema = new mongoose.Schema({
 	title: { type: String, required: true },
 	author: { type: String, required: true },
 	type: { type: Number, required: true}, // 文章类型
-	// tag: {type: String}, // 文章标签
+	tag: { type: String, required: true}, // 文章标签
 	likeNum: { type: Number, required: true },
 	lookNum: { type: Number, required: true },
 	content: { type: String, required: true },

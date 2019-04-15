@@ -33,35 +33,37 @@ const data = {
     {
       value: 0,
       label: '全部'
-    },
-    {
+    }, {
       value: 1,
-      label: 'javascript'
-    }, {
-      value: 2,
-      label: 'css&css3'
-    }, {
-      value: 3,
-      label: 'html&html5'
-    }, {
-      value: 4,
-      label: 'vue'
-    }, {
-      value: 5,
-      label: 'canvas'
-    }, {
-      value: 6,
-      label: 'koa2&express'
-    }, {
-      value: 7,
       label: '技术'
     }, {
-      value: 8,
+      value: 2,
       label: '生活'
     }, {
-      value: 9,
+      value: 3,
       label: '前端'
     },
+  ],
+  articleTags: [
+    {
+      value: 0,
+      label: 'javascript'
+    }, {
+      value: 1,
+      label: 'css&css3'
+    }, {
+      value: 2,
+      label: 'html&html5'
+    }, {
+      value: 3,
+      label: 'vue'
+    }, {
+      value: 4,
+      label: 'canvas'
+    }, {
+      value: 5,
+      label: 'koa2&express'
+    }
   ]
 }
 
