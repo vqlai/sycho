@@ -47,15 +47,18 @@ class articleController{
 		currentPage = currentPage <= 0 ? 1 : currentPage
 		// 组合搜索内容
 		const querys = {}
-		// 名字查询
+		// 组合查询
 		if (queryTitle) {
 			querys['$or'] = [
-				{ 'title': { $regex: queryTitle } } // 使用正则模糊搜索,可在数组添加多个条件
+				{ 'title': { $regex: queryTitle } }, // 使用正则模糊搜索,可在数组添加多个条件
 			]
 		}
 		// 权限查询
 		if (queryType) { querys.type = queryType }
-		if (queryTag) { querys.type = queryTag }
+		if (queryTag) { 
+			querys.tag = { $regex: queryTag } // 使用正则模糊搜索,可在数组添加多个条件
+		}
+		console.log(querys)
 		result = await Article
 			.find(querys) // 模糊搜索
 			.sort({ 'createTime': -1 }) // 排序，-1为倒序
@@ -65,7 +68,7 @@ class articleController{
 			.catch(err => {
 				ctx.throw(500, '服务器内部错误-getArticles错误！')
 			})
-		// console.log(result)
+		console.log(result)
 		if (result.length) {
 			total = await Article // 获取分页总数
 				// .count() // 5.2版本已废弃

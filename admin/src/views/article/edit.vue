@@ -29,7 +29,8 @@
                 v-for="item in articleTags"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.value"
+                v-show="item.value !== 0">
               </el-option>
             </el-select>
           </el-col>
@@ -95,7 +96,10 @@
             this.likeNum = result.likeNum
             this.lookNum = result.lookNum
             this.type = result.type
-            this.tag = result.tag.split(',')
+            this.tag = result.tag.split(',').map(item => {
+              return parseInt(item)
+            })
+            console.log(this.tag)
             this.releaseTime = result.releaseTime
             this.content = result.content
           }else{
@@ -110,6 +114,7 @@
             title: this.title,
             author: this.author,
             type: this.type,
+            tag: this.tag.join(),
             likeNum: this.likeNum,
             lookNum: this.lookNum,
             releaseTime: this.releaseTime,
@@ -136,6 +141,9 @@
           return false
         }else if(!this.type){
           this.$message({ message: '请选择文章类型', type: 'error' })
+          return false
+        }else if(!this.tag){
+          this.$message({ message: '请选择文章标签', type: 'error' })
           return false
         }else if(typeof this.likeNum === 'undefined'){
           this.$message({ message: '请输入点赞数', type: 'error' })

@@ -47,21 +47,24 @@ const data = {
   articleTags: [
     {
       value: 0,
-      label: 'javascript'
+      label: '全部'
     }, {
       value: 1,
-      label: 'css&css3'
+      label: 'javascript'
     }, {
       value: 2,
-      label: 'html&html5'
+      label: 'css&css3'
     }, {
       value: 3,
-      label: 'vue'
+      label: 'html&html5'
     }, {
       value: 4,
-      label: 'canvas'
+      label: 'vue'
     }, {
       value: 5,
+      label: 'canvas'
+    }, {
+      value: 6,
       label: 'koa2&express'
     }
   ]

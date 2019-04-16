@@ -29,7 +29,8 @@
                 v-for="item in articleTags"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
+                :value="item.value"
+                v-show="item.value !== 0">
               </el-option>
             </el-select>
           </el-col>

@@ -12,7 +12,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="4">
         <el-select v-model="queryTag" placeholder="请选择文章标签" style="display: block;" clearable>
           <el-option
             v-for="item in articleTags"
@@ -22,7 +22,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="12">
         <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
         <!-- <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button> -->
       </el-col>
@@ -163,14 +163,8 @@
         return this.articleTypes[cellValue].label
       },
       formatTag(row, column, cellValue, inde){
-        let arr = cellValue.split(',')
-        console.log(arr)
-        let arr2 = []
-        for(let item of arr){
-          console.log(this.articleTags[parseInt(item)])
-          arr2.push(this.articleTags[parseInt(item)].label)
-        }
-        return arr2.join()
+        // 箭头函数省去return
+        return cellValue.split(',').map(item => this.articleTags[parseInt(item)].label).join()
       },
       _getArticles(params){
         this.loading = true
@@ -196,7 +190,7 @@
         this._getArticles({ currentPage: this.currentPage, pageSize: this.pageSize })
       },
       handleSearch(){
-        this._getArticles({ currentPage: 1, pageSize: this.pageSize, queryTitle: this.queryTitle, queryType: this.queryType })
+        this._getArticles({ currentPage: 1, pageSize: this.pageSize, queryTitle: this.queryTitle, queryType: this.queryType, queryTag: this.queryTag })
       },
       handleEdit(row) {
         console.log(row)
