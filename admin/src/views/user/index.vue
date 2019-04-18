@@ -117,14 +117,17 @@
         <el-form-item label="密码" required prop="curPwd" v-if="dialogType === 1" autocomplete="off">
           <el-input v-model="userForm.curPwd" type="password" placeholder="请输入密码" clearable></el-input>
         </el-form-item>
+        <el-form-item label="确认密码" required prop="surePwd" v-if="dialogType === 1" >
+          <el-input v-model="userForm.surePwd" type="password" placeholder="请再次输入密码" clearable></el-input>
+        </el-form-item>
         <el-form-item label="原始密码" required prop="prePwd" v-if="dialogType === 2" autocomplete="off">
-          <el-input v-model="userForm.prePwd" type="password" placeholder="请输入密码" clearable></el-input>
+          <el-input v-model="userForm.prePwd" type="password" placeholder="请输入原始密码" clearable></el-input>
         </el-form-item>
         <el-form-item label="新密码" required prop="newPwd" v-if="dialogType === 2">
-          <el-input v-model="userForm.newPwd" type="password" placeholder="请输入密码" clearable></el-input>
+          <el-input v-model="userForm.newPwd" type="password" placeholder="请输入新密码" clearable></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" required prop="surePwd">
-          <el-input v-model="userForm.surePwd" type="password" placeholder="请输入密码" clearable></el-input>
+        <el-form-item label="确认密码" required prop="confirmPwd" v-if="dialogType === 2">
+          <el-input v-model="userForm.confirmPwd" type="password" placeholder="请再次输入新密码" clearable></el-input>
         </el-form-item>
         <el-form-item label="角色" required prop="role">
           <el-select v-model="userForm.role" placeholder="请选择角色权限类型" style="display: block;" clearable>
@@ -196,7 +199,7 @@
   export default {
     name: 'user',
     data(){
-      let checkPwd = (rule, value, callback) => {
+      let checkAddPwd = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'))
         } else if (value.length < 6){
@@ -208,14 +211,35 @@
           callback()
         }
       }
-      let checkPwd2 = (rule, value, callback) => {
+      let checkAddPwd2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'))
         } else if (value.length < 6){
           callback(new Error('密码不能少于6位'))
-        } else if (value !== this.userForm.curPwd && this.dialogType === 1) {
+        } else if (value !== this.userForm.curPwd) {
           callback(new Error('两次密码输入不一致!'))
-        } else if (value !== this.userForm.newPwd && this.dialogType === 2) {
+        }else {
+          callback()
+        }
+      }
+      let checkEditPwd = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'))
+        } else if (value.length < 6){
+          callback(new Error('密码不能少于6位'))
+        } else {
+          if (this.userForm.confirmPwd !== '') {
+            this.$refs.userForm.validateField('confirmPwd')
+          }
+          callback()
+        }
+      }
+      let checkEditPwd2 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'))
+        } else if (value.length < 6){
+          callback(new Error('密码不能少于6位'))
+        } else if (value !== this.userForm.newPwd) {
           callback(new Error('两次密码输入不一致!'))
         } else {
           callback()
@@ -231,9 +255,10 @@
           id: undefined,
           username: '',
           curPwd: '',
+          surePwd: '',
           prePwd: '',
           newPwd: '',
-          surePwd: '',
+          confirmPwd: '',
           role: undefined,
           desc: ''
         },
@@ -243,20 +268,24 @@
             { required: true, message: '请输入用户名', trigger: 'change' }
           ],
           curPwd: [
-            { validator: checkPwd, trigger: 'blur' },
-            { required: true, message: '请输入密码', trigger: 'change' }
-          ],
-          prePwd: [
             { required: true, message: '请输入密码', trigger: 'blur' },
-            { required: true, message: '请输入密码', trigger: 'change' }
-          ],
-          newPwd: [
-            { validator: checkPwd, trigger: 'blur' },
-            { required: true, message: '请输入密码', trigger: 'change' }
+            { validator: checkAddPwd, trigger: 'change' }
           ],
           surePwd: [
-            { validator: checkPwd2, trigger: 'blur' },
-            { required: true, message: '请输入密码', trigger: 'change' }
+            { required: true, message: '请再次输入密码', trigger: 'blur' },
+            { validator: checkAddPwd2, trigger: 'change' }
+          ],
+          prePwd: [
+            { required: true, message: '请输入原始密码', trigger: 'blur' },
+            { validator: checkEditPwd, trigger: 'change' }
+          ],
+          newPwd: [
+            { required: true, message: '请输入新密码', trigger: 'blur' },
+            { validator: checkEditPwd, trigger: 'change' }
+          ],
+          confirmPwd: [
+            { required: true, message: '请再次输入密码', trigger: 'blur' },
+            { validator: checkEditPwd2, trigger: 'change' }
           ],
           role: [
             { required: true, message: '请选择用户角色', trigger: 'change' }
@@ -331,9 +360,10 @@
       handleAdd(){
         this.userForm.username = ''
         this.userForm.curPwd = ''
+        this.userForm.surePwd = ''
         this.userForm.prePwd = ''
         this.userForm.newPwd = ''
-        this.userForm.surePwd = ''
+        this.userForm.confirmPwd = ''
         this.userForm.role = ''
         this.userForm.desc = ''
         this.avatarImgUrl = ''
@@ -390,7 +420,6 @@
             let formData = new FormData()
             formData.append('file', this.fileObj)
             formData.append('username', this.userForm.username)
-            formData.append('surePwd', this.userForm.surePwd)
             formData.append('role', this.userForm.role)
             formData.append('desc', this.userForm.desc)
             // 注意输出formData只能通过get方式
@@ -404,6 +433,7 @@
               //   return
               // }
               formData.append('curPwd', this.userForm.curPwd)
+              formData.append('surePwd', this.userForm.surePwd)
               this.$store.dispatch('AddUser', formData).then(res => {
                 if(res.success){
                   this.fileObj = null // 清空上传图片
@@ -418,6 +448,7 @@
               formData.append('id', this.userForm.id)
               formData.append('prePwd', this.userForm.prePwd)
               formData.append('newPwd', this.userForm.newPwd)
+              formData.append('surePwd', this.userForm.confirmPwd)
               this.$store.dispatch('EditUser', formData).then(res => {
                 if(res.success){
                   this.fileObj = null // 清空上传图片
