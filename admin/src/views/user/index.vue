@@ -206,7 +206,7 @@
           callback(new Error('密码不能少于6位'))
         } else {
           if (this.userForm.surePwd !== '') {
-            this.$refs.userForm.validateField('surePwd')
+            this.$refs.userForm.validateField('surePwd') // 校验确认密码
           }
           callback()
         }
@@ -229,7 +229,7 @@
           callback(new Error('密码不能少于6位'))
         } else {
           if (this.userForm.confirmPwd !== '') {
-            this.$refs.userForm.validateField('confirmPwd')
+            this.$refs.userForm.validateField('confirmPwd') // 校验确认密码
           }
           callback()
         }
