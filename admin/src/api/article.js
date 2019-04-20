@@ -47,3 +47,14 @@ export async function deleteArticle(data) {
     method: 'delete',
   })
 }
+
+// 批量上传文章图片
+// 注意上传文件不能用...运算符,要设置文件类型头部
+export async function uploadArticlePics(data) {
+  return await request({
+    headers: { 'Content-Type': 'multipart/form-data' },
+    url: '/uploadArticlePics',
+    method: 'post',
+    data: data
+  })
+}

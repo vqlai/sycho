@@ -6,7 +6,7 @@ const multer = require('koa-multer') // 加载koa-multer模块
 //文件上传 配置
 let storage = multer.diskStorage({
 	// 设置上传后文件路径，uploads文件夹会自动创建
-	destination: (req, file , cb) => {
+	destination: (req, file, cb) => {
 		console.log(req.url)
 		console.log(file)
 		// 路径前面不能为/，否则会去找绝对路径
@@ -15,7 +15,7 @@ let storage = multer.diskStorage({
 			// 根据请求url将头像放到不同文件夹下
 			if (req.url.includes('UploadUser')){
 				path = './static/upload/avatar'
-			}else if(req.url == '/api/article/release'){
+			} else if (req.url.includes('uploadArticlePics')){
 				path = './static/upload/article'
 			}
 			cb(null, path)
@@ -40,7 +40,10 @@ let storage = multer.diskStorage({
 // 添加配置文件到muler对象
 // 如需其他设置，请参考multer的limits
 let upload = multer({
-	storage: storage
+	storage: storage,
+	// limits: {
+	// 	fileSize: '1MB'
+	// }
 })
 
 module.exports = upload

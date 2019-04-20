@@ -5,7 +5,31 @@ const fs = require('fs')
 class articleController{
 
 	// 上传文章图片
-	static async uploadArticlePics(ctx) {}
+	static async uploadArticlePics(ctx) {
+		// console.log(`http://${ctx.req.headers.host}`)
+		console.log(123)
+		console.log(ctx.req.files) // 获取批量上传数组
+		console.log(ctx.req.body)
+		console.log(123)
+		// const files = ctx.req.files
+		// if (files.length) {
+		// 	let host = `http://${ctx.req.headers.host}/upload/article`
+		// 	let reg = /!\[(.*?)\]\((.*?)\)/g
+		// 	let originImgs = []
+		// 	let cacheImg = null
+		// 	while ((cacheImg = reg.exec(content)) !== null) {
+		// 		originImgs.push(cacheImg[0])
+		// 	}
+		// 	for (let [index, item] of originImgs.entries()) {
+		// 		content = content.replace(item, `![图片${index}](${host}/${files[index].filename})`)
+		// 	}
+		// } 
+		handleSuccess({
+			ctx, msg: '添加成功！',
+			data: 'success'
+		})
+		
+	}
 
 	// 上传文章图片
 	static async removeArticlePics(ctx) {}

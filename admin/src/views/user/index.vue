@@ -374,7 +374,7 @@
         this.dialogVisible = true
       },
       handleEdit(row){
-        console.log(row)
+        // console.log(row)
         this.userForm.id = row._id
         this.userForm.username = row.username
         this.userForm.curPwd = ''
@@ -482,6 +482,7 @@
           this.fileObj = file
           // console.log(this.fileObj)
         }
+        return false // 加了return false组件的action就不会发起post请求了
       },
       // handleUpload(file){
       //   console.log(file)

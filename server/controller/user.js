@@ -225,7 +225,7 @@ class userController{
 			.catch(err => {
 				ctx.throw(500, '服务器内部错误-findOneUser错误！')
 			})
-		console.log(aUser)
+		// console.log(aUser)
 		if (aUser != null){
 			handleError({ ctx, msg: '用户名已存在' })
 			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
@@ -283,8 +283,9 @@ class userController{
 				ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!');
 			})
 		// 有新图片上传 更新完毕后将老图删除
-		console.log(file.path)
-		if (file) {
+		// console.log(file.path)
+		// 	要过滤掉默认图片，不然会被删除
+		if (file && !oneUser.avatar.includes('default.png')) {
 			// 先读取头像看是否存在,确保头像不存在的去删除的异常
 			fs.readFile(`static/${oneUser.avatar}`, (err, data)=>{
 				// 读取文件失败/错误
@@ -293,7 +294,7 @@ class userController{
 					console.log(err)
 				} else {
 					// 读取文件成功
-					console.log(data);
+					console.log(data)
 					fs.unlinkSync(`static/${oneUser.avatar}`)
 				}
 			})

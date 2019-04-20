@@ -39,8 +39,10 @@ router.get('/getArticles', A.getArticles)
 router.post('/addArticle', checkToken, A.addArticle)
 router.put('/editArticle', checkToken, A.editArticle)
 router.delete('/deleteArticle/:id', checkToken, A.deleteArticle)
+//upload.array设置多文件上传 20为限制上传数量
+router.post('/uploadArticlePics', checkToken, upload.array('file', 20), A.uploadArticlePics)
 
-//upload.array设置多文件上传
+//upload.array设置多文件上传（该方法已废弃）
 router.post('/article/release', checkToken, upload.array('file', 20), A.release)
 
-module.exports = router;
+module.exports = router
