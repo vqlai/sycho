@@ -469,19 +469,21 @@
           return false
         }
         console.log(file)
-        // 读取文件对象
-        let reader = new FileReader()
-        // readAsDataURL 方法用于读取指定 Blob 或 File 的内容
-        // 当读操作完成，readyState 变为 DONE，loadend 被触发，此时 result 属性包含数据：URL（以 base64 编码的字符串表示文件的数据）
-        // 读取文件作为 URL 可访问地址
-        reader.readAsDataURL(file)
-        reader.onloadend = e => {
-          // console.log(e)
-          file.url = reader.result
-          this.avatarImgUrl = file.url
-          this.fileObj = file
-          // console.log(this.fileObj)
-        }
+        // // 读取文件对象
+        // let reader = new FileReader()
+        // // readAsDataURL 方法用于读取指定 Blob 或 File 的内容
+        // // 当读操作完成，readyState 变为 DONE，loadend 被触发，此时 result 属性包含数据：URL（以 base64 编码的字符串表示文件的数据）
+        // // 读取文件作为 URL 可访问地址
+        // reader.readAsDataURL(file)
+        // reader.onloadend = e => {
+        //   // console.log(e)
+        //   file.url = reader.result
+        //   this.avatarImgUrl = file.url
+        //   this.fileObj = file
+        //   // console.log(this.fileObj)
+        // }
+        this.avatarImgUrl = URL.createObjectURL(file)
+        this.fileObj = file
         return false // 加了return false组件的action就不会发起post请求了
       },
       // handleUpload(file){

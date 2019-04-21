@@ -38,8 +38,10 @@ class articleController{
 		
 	}
 
-	// 上传文章图片
-	static async removeArticlePics(ctx) {}
+	// 删除文章图片
+	static async removeArticlePics(ctx) {
+		console.log(ctx.req.body)
+	}
 
 	// 获取文章内容
 	static async getArticleById(ctx) {
