@@ -11,7 +11,7 @@ class articleController{
 		console.log(ctx.req.files) // 获取批量上传数组
 		console.log(ctx.req.body)
 		console.log(123)
-		// const files = ctx.req.files
+		const files = ctx.req.files
 		// if (files.length) {
 		// 	let host = `http://${ctx.req.headers.host}/upload/article`
 		// 	let reg = /!\[(.*?)\]\((.*?)\)/g
@@ -24,9 +24,16 @@ class articleController{
 		// 		content = content.replace(item, `![图片${index}](${host}/${files[index].filename})`)
 		// 	}
 		// } 
+		let result = []
+		for(let item of files){
+			let obj = {}
+			obj.url = `upload/article/${item.filename}`
+			obj.name = item.filename
+			result.push(obj)
+		}
 		handleSuccess({
-			ctx, msg: '添加成功！',
-			data: 'success'
+			ctx, msg: '批量上传图片成功！',
+			data: result
 		})
 		
 	}
