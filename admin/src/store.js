@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } from '@/api/user'
 import { getLinks, addLink, editLink, deleteLink } from '@/api/link'
-import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics } from '@/api/article'
+import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
 
 Vue.use(Vuex)
@@ -181,10 +181,20 @@ const store = new Vuex.Store({
         })
       })
     },
-
+    // 批量上传文章图片
     UploadArticlePics({ commit }, params) {
       return new Promise((resolve, reject) => {
         uploadArticlePics(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 删除文章图片
+    RemoveArticlePics({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        removeArticlePics(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)

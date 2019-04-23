@@ -2,6 +2,10 @@ const Article = require('../model/article.js')
 const { handleSuccess, handleError } = require('../utils/handle')
 const fs = require('fs')
 
+// ctx.req.files  ctx.req.body  文件上传
+// ctx.request.body POST/PUT
+// ctx.query GET
+// ctx.params DELETE
 class articleController{
 
 	// 上传文章图片
@@ -35,19 +39,37 @@ class articleController{
 			ctx, msg: '批量上传图片成功！',
 			data: result
 		})
-		
 	}
 
 	// 删除文章图片
 	static async removeArticlePics(ctx) {
-		console.log(ctx.req.body)
+		console.log(ctx.request.body)
+		if (ctx.request.body.url) {
+			fs.readFile(`static/${ctx.request.body.url}`, (err, data) => {
+				// 读取文件失败/错误
+				if (err) {
+					// throw err;
+					console.log(err)
+					handleError({ ctx, msg: '删除失败' })
+				} else {
+					// 读取文件成功
+					fs.unlinkSync(`static/${ctx.request.body.url}`)
+				}
+			})
+		}else{
+			handleError({ ctx, msg: '没有图片路径' })
+		}
+		handleSuccess({
+			ctx, msg: '删除成功！',
+			data: 'remove successful。'
+		})
 	}
 
 	// 获取文章内容
 	static async getArticleById(ctx) {
 		let id = ctx.query.id
 		if (!id) {
-			handleError({ ctx, msg: '参数无效，删除失败！' })
+			handleError({ ctx, msg: '参数无效，chax 失败！' })
 			return false
 		}
 		const result = await Article

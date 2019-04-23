@@ -40,7 +40,7 @@ export async function editArticle(data) {
   })
 }
 
-// 删除文章
+// 删除文章(注：delete方法只能再url上拼参数，无法将参数放在请求body里)
 export async function deleteArticle(data) {
   return await request({
     url: `/deleteArticle/${data}`,
@@ -56,5 +56,14 @@ export async function uploadArticlePics(data) {
     url: '/uploadArticlePics',
     method: 'post',
     data: data
+  })
+}
+
+// 删除文章图片
+export async function removeArticlePics(data) {
+  return await request({
+    url: `/removeArticlePics`,
+    method: 'post',
+    data: { ...data }
   })
 }

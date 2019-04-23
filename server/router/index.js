@@ -41,6 +41,7 @@ router.put('/editArticle', checkToken, A.editArticle)
 router.delete('/deleteArticle/:id', checkToken, A.deleteArticle)
 //upload.array设置多文件上传 20为限制上传数量
 router.post('/uploadArticlePics', checkToken, upload.array('file', 20), A.uploadArticlePics)
+// 注：delete方法只能再url上拼参数，无法将参数放在请求body里
 router.post('/removeArticlePics', checkToken, A.removeArticlePics)
 
 //upload.array设置多文件上传（该方法已废弃）

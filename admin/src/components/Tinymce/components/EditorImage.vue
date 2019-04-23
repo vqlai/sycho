@@ -121,6 +121,11 @@ export default {
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
+          console.log(this.listObj[objKeyArr[i]])
+          this.$store.dispatch('RemoveArticlePics', { url: this.listObj[objKeyArr[i]].preUrl }).then(res => {
+            console.log(res)
+          })
+          // delete 可以删除数组的元素
           delete this.listObj[objKeyArr[i]]
           return
         }
@@ -143,6 +148,7 @@ export default {
             for(let [index, item] of this.fileArray.entries()){
               const uid = item.uid
               this.listObj[uid].url = `${this.reUrl}${res.data[index].url}`
+              this.listObj[uid].preUrl = res.data[index].url
               this.listObj[uid].hasSuccess = true
               // const objKeyArr = Object.keys(this.listObj)
               // for (let i = 0, len = objKeyArr.length; i < len; i++) {
@@ -156,9 +162,8 @@ export default {
             // this.formData =new FormData()
             // this.$refs.upload.uploadFiles = []
             this.fileArray = []
-            this.$refs.upload.onSuccess(() => {
-              
-            })
+            // this.$refs.upload.onSuccess(() => {
+            // })
             // this.fileNum = 0
             console.log(this.listObj)
           }
