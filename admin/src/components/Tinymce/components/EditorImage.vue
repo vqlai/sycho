@@ -1,6 +1,9 @@
 <template>
   <div class="upload-container">
-    <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" uploadDialog=true">
+    <el-button :style="{background:color,borderColor:color}" icon="el-icon-view" size="mini" type="primary" @click="previewDialog=true">
+      图片预览
+    </el-button>
+    <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click="uploadDialog=true">
       上传图片
     </el-button>
     <el-dialog
@@ -25,7 +28,7 @@
           :multiple="true"
           :file-list="fileList"
           :show-file-list="true"
-          :limit="5"
+          :limit="10"
           accept=".jpg, .jpeg, .png"
           list-type="picture-card"
           :http-request="handleUpload"
@@ -36,7 +39,7 @@
           :on-exceed="handleExceed">
           <i class="el-icon-plus"></i>
           <div slot="tip">文件格式必须是 jpg 、png 或 jpeg，每次只能同时上传5张，且每张不超过 500kb的图片。</div>
-          <el-dialog :visible.sync="previewDialog" width="35%" append-to-body>
+          <el-dialog :visible.sync="previewInUploadDialog" width="35%" append-to-body>
             <div style="text-align: center;">
               <img :src="previewPic" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
             </div>
@@ -66,13 +69,14 @@ export default {
   },
   data() {
     return {
+      previewDialog: false,
       uploadDialog: false,
       listObj: {}, // 存储插入到editor的图片
       fileList: [],
       fileArray: [], // 存储添加的数组图片
-      fileNum: 0,
-      formData: new FormData(),
-      previewDialog: false,
+      // fileNum: 0,
+      formData: null,
+      previewInUploadDialog: false,
       previewPic: ''
     }
   },
@@ -117,6 +121,7 @@ export default {
     // },
     // 文件列表移除文件时的钩子
     handleRemove(file) {
+      console.log(file)
       const uid = file.uid
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
@@ -132,43 +137,54 @@ export default {
       }
     },
     // 会循环遍历upload组件的文件列表，一个个加入到上传文件栈
+    // 暂无法实现一个请求上传多个文件，因为会导致二次选择时，会将上次选中的图片一起再上传
     handleUpload(file) {
       console.log(this.$refs.upload) // 获取upload组件
        // const files = this.$refs.upload.uploadFiles 获取upload上传多文件list
       // this.$refs.upload.submit() 手动触发上传
-      this.formData.append('file', file.file)
-      this.fileArray.push(file.file)
+      // this.formData.append('file', file.file)
+      // this.fileArray.push(file.file)
+      // console.log(this.formData.get('file'))
+      let formData = new FormData()
+      formData.append('file', file.file)
       // upload组件当多个文件自动上传时，默认会发起多个请求，一个个的上传文件到服务器，为了避免，需要做如下判断
-      if(this.fileArray.length === this.$refs.upload.uploadFiles.length){
+      // if(this.fileArray.length === this.$refs.upload.uploadFiles.length){
         console.log(this.$refs.upload.uploadFiles)
-        this.$store.dispatch('UploadArticlePics', this.formData).then(res => {
+        this.$store.dispatch('UploadArticlePics', formData).then(res => {
           console.log(res)
           // console.log(this.fileList)  // 这里获取不到fileList
           if(res.success){
-            for(let [index, item] of this.fileArray.entries()){
-              const uid = item.uid
-              this.listObj[uid].url = `${this.reUrl}${res.data[index].url}`
-              this.listObj[uid].preUrl = res.data[index].url
-              this.listObj[uid].hasSuccess = true
-              // const objKeyArr = Object.keys(this.listObj)
-              // for (let i = 0, len = objKeyArr.length; i < len; i++) {
-              //   if (this.listObj[objKeyArr[i]].uid === uid) {
-              //     this.listObj[objKeyArr[i]].url = res.data
-              //     this.listObj[objKeyArr[i]].hasSuccess = true
-              //     return
-              //   }
-              // }
-            }
-            // this.formData =new FormData()
-            // this.$refs.upload.uploadFiles = []
-            this.fileArray = []
-            // this.$refs.upload.onSuccess(() => {
-            // })
-            // this.fileNum = 0
-            console.log(this.listObj)
+            this.listObj[file.file.uid].url = `${this.reUrl}${res.data[0].url}`
+            this.listObj[file.file.uid].preUrl = res.data[0].url
+            this.listObj[file.file.uid].hasSuccess = true
+            // this.$refs.upload.submit() // 手动触发上传
+            // for(let [index, item] of this.fileArray.entries()){
+            //   const uid = item.uid
+            //   this.listObj[uid].url = `${this.reUrl}${res.data[index].url}`
+            //   this.listObj[uid].preUrl = res.data[index].url
+            //   this.listObj[uid].hasSuccess = true
+            //   // this.fileList.push({ url: `${this.reUrl}${res.data[index].url}` })
+            //   // const objKeyArr = Object.keys(this.listObj)
+            //   // for (let i = 0, len = objKeyArr.length; i < len; i++) {
+            //   //   if (this.listObj[objKeyArr[i]].uid === uid) {
+            //   //     this.listObj[objKeyArr[i]].url = res.data
+            //   //     this.listObj[objKeyArr[i]].hasSuccess = true
+            //   //     return
+            //   //   }
+            //   // }
+            // }
+            // this.$refs.upload.clearFiles()
+            // this.formData = null
+            // this.fileArray = []
+            // // console.log(this.$refs.upload)
+            // console.log(this.fileList)
+            // // this.$refs.upload.onSuccess(() => {
+            // // })
+            // // this.fileNum = 0
+            // console.log(this.listObj)
           }
         })
-      }
+      // }
     },
     // 处理图片上传前的逻辑,上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
     beforeUpload(file) {
@@ -176,7 +192,7 @@ export default {
         this.$message({ message: `文件${file.name}太大，不能超过 500kb`, type: 'warning' })
         return false
       }
-      this.fileNum += 1
+      // this.fileNum += 1
       // this.listObj[file.uid] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
       // const _self = this
       // const _URL = window.URL || window.webkitURL
@@ -189,6 +205,7 @@ export default {
         //   _self.listObj[fileName] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
         // }
         console.log(1)
+        this.formData = new FormData()
         this.listObj[file.uid] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
         resolve(true)
       })
