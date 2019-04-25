@@ -1,4 +1,4 @@
-const config = require('../config')
+const config = require('../utils/config.js')
 const User = require('../model/user')
 const md5 = require('md5')
 

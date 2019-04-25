@@ -1,4 +1,4 @@
-const config = require('../config'),
+const config = require('../utils/config.js'),
 			Router = require('koa-router'),
 			router = new Router({
 				prefix: config.app.routerBaseApi // 设置接口基础路径

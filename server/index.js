@@ -7,7 +7,7 @@ const serve = require('koa-static') // 静态资源处理
 // import static from 'koa-static' 
 
 //配置文件
-const config = require('./config')
+const config = require('./utils/config.js')
 const router = require('./router')
 const mongodb = require('./mongodb')
 
