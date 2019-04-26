@@ -1,7 +1,7 @@
 const User = require('../model/user.js')
 const md5 = require('md5')
 const jwt = require('jsonwebtoken')
-const config = require('../config')
+const config = require('../utils/config')
 const { handleSuccess, handleError } = require('../utils/handle')
 const fs = require('fs')
 

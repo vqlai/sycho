@@ -149,10 +149,12 @@
       },
       checkArticle(){
         if(!this.title.trim()){
-          this.$message({ message: '请输入标题', type: 'error' })
+          this.$message.error('请输入标题')
+          // this.$message({ message: '请输入标题', type: 'error' })
           return false
         }else if(!this.author.trim()){
-          this.$message({ message: '请输入作者', type: 'error' })
+          this.$message.error('请输入作者')
+          // this.$message({ message: '请输入作者', type: 'error' })
           return false
         }else if(!this.type){
           this.$message({ message: '请选择文章类型', type: 'error' })
