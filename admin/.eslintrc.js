@@ -16,6 +16,7 @@ module.exports = {
     "eol-last": "off",
     "comma-dangle": "off",
     "no-console": 0,
+    "//": "关闭函数名与后面括号间必须空格规则",
     "space-before-function-paren": 0,
     "keyword-spacing": 0,
     "space-before-blocks": 0,

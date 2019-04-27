@@ -40,7 +40,19 @@ module.exports = {
       }
     }
   },
-  css: {},
+  css: {
+    // 是否使用css分离插件 ExtractTextPlugin
+    extract: true,
+    // 开启 CSS source maps?
+    sourceMap: false,
+    // css预设器配置项
+    // 启用 CSS modules for all css / pre-processor files.
+    modules: false,
+    // sass: {
+    //   // data: '@import "style/_mixin.scss";@import "style/_variables.scss";' // 全局引入
+    //   data: '@import "assets/css/index.scss";' // 全局引入
+    // }
+  },
   pluginOptions: {},
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

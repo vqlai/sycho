@@ -26,6 +26,8 @@ Vue.use(Router)
     title: 'title'               the name show in subMenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar
     breadcrumb: false            if false, the item will hidden in breadcrumb(default is true)
+    auth: false, // 是否需要登录
+    keepAlive: true // 是否缓存组件
   }
 **/
 export const constantRouterMap = [
@@ -38,7 +40,7 @@ export const constantRouterMap = [
     redirect: '/dashboard',
     name: 'Dashboard',
     hidden: false, // 是否隐藏
-    meta: { title: 'Dashboard', icon: 'dashboard' },
+    meta: { title: 'Dashboard', icon: 'dashboard', keepAlive: true },
     children: [{
       path: 'dashboard',
       component: () => import('@/views/dashboard/index')
@@ -57,12 +59,12 @@ export const constantRouterMap = [
         path: 'list',
         name: 'List',
         component: () => import('@/views/article/list'),
-        meta: { title: 'List', icon: 'article-list' }
+        meta: { title: 'List', icon: 'article-list', keepAlive: true }
       }, {
         path: 'create',
         name: 'Create',
         component: () => import('@/views/article/create'),
-        meta: { title: 'Create', icon: 'article-edit' }
+        meta: { title: 'Create', icon: 'article-edit', keepAlive: true }
       }, {
         path: 'edit/:id',
         name: 'Edit',
@@ -81,7 +83,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Message',
         component: () => import('@/views/message/index'),
-        meta: { title: 'Message', icon: 'message' }
+        meta: { title: 'Message', icon: 'message', keepAlive: true }
       }
     ]
   },
@@ -94,7 +96,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Link',
         component: () => import('@/views/link/index'),
-        meta: { title: 'Link', icon: 'link' }
+        meta: { title: 'Link', icon: 'link', keepAlive: true }
       }
     ]
   },
@@ -107,7 +109,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'User',
         component: () => import('@/views/user/index'),
-        meta: { title: 'User', icon: 'user' }
+        meta: { title: 'User', icon: 'user', keepAlive: true }
       }
     ]
   },
@@ -120,7 +122,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Tag',
         component: () => import('@/views/tag/index'),
-        meta: { title: 'Tag', icon: 'tag' }
+        meta: { title: 'Tag', icon: 'tag', keepAlive: true }
       }
     ]
   },
@@ -150,7 +152,8 @@ export const testRouterMap = [
     redirect: '/example/table',
     name: 'Example',
     hidden: false,
-    meta: { title: 'Example', icon: 'example' },
+    meta: {
+      title: 'Example', icon: 'example' },
     children: [
       {
         path: 'table',
@@ -252,35 +255,40 @@ NProgress.configure({ showSpinner: false }) // NProgress configuration
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (getToken()) {
-    if (to.path === '/login') {
-      next({ path: '/' })
-      NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
-    } else {
-      // 路由跳转前判断用户角色是否为空拉取用户信息
-      // vuex一刷新数据就被清空，这次每次刷新页面就会调用后台接口
-      if (!store.getters.name) {
-        store.dispatch('GetUserInfo').then(res => { // 拉取用户信息
-          next()
-        }).catch((err) => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error(err || 'Verification failed, please login again')
-            next({ path: '/' })
-          })
-        })
+  // let auth = to.meta.auth
+  // if (auth) { // 需要登录
+    if (getToken()) {
+      if (to.path === '/login') {
+        next({ path: '/' })
+        NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
       } else {
+        // 路由跳转前判断用户角色是否为空拉取用户信息
+        // vuex一刷新数据就被清空，这次每次刷新页面就会调用后台接口
+        if (!store.getters.name) {
+          store.dispatch('GetUserInfo').then(res => { // 拉取用户信息
+            next()
+          }).catch((err) => {
+            store.dispatch('FedLogOut').then(() => {
+              Message.error(err || 'Verification failed, please login again')
+              next({ path: '/' })
+            })
+          })
+        } else {
+          next()
+        }
+      }
+    } else {
+      // 无token未登录
+      if (whiteList.indexOf(to.path) !== -1) {
         next()
+      } else {
+        next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
+        NProgress.done()
       }
     }
-  } else {
-    // 无token未登录
-    if (whiteList.indexOf(to.path) !== -1) {
-      next()
-    } else {
-      next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
-      NProgress.done()
-    }
-  }
+  // } else { // 无需登录
+  //   next()
+  // }
 })
 
 router.afterEach(() => {
