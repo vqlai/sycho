@@ -57,6 +57,8 @@ class userController{
 	static async getUserInfo(ctx){
 		console.log(ctx.header.authorization)
 		console.log(ctx.query)
+		const ip = ctx.request.get('X-Forwarded-For') || ctx.request.get('X-Real-IP')
+		console.log(ip)
 		let token = ctx.header.authorization.split(' ')[1]
 		let decoded = jwt.verify(token, config.jwt.secret)
 		console.log(decoded)

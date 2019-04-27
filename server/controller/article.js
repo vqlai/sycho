@@ -11,10 +11,8 @@ class articleController{
 	// 上传文章图片
 	static async uploadArticlePics(ctx) {
 		// console.log(`http://${ctx.req.headers.host}`)
-		console.log(123)
 		console.log(ctx.req.files) // 获取批量上传数组
 		console.log(ctx.req.body)
-		console.log(123)
 		const files = ctx.req.files
 		// if (files.length) {
 		// 	let host = `http://${ctx.req.headers.host}/upload/article`

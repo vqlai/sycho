@@ -13,8 +13,8 @@
         </el-select>
       </el-col>
       <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round>搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" round>新增</el-button>
+        <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
+        <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button>
       </el-col>
     </el-row>
     <el-row class="content">
@@ -66,6 +66,28 @@
         </el-pagination>
       </el-col>
     </el-row>
+    <el-dialog
+      :title="dialogType === 1 ? '添加' : '编辑'"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :close-on-click-modal="false">
+      <!-- :rules="commentFormRules"  -->
+      <el-form ref="commentForm" :model="commentForm" label-width="80px" status-icon>
+        <el-form-item label="昵称" required prop="nickName">
+          <el-input v-model="commentForm.name" placeholder="请输入昵称" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" required prop="email">
+          <el-input v-model="commentForm.email" placeholder="请输入邮箱" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="内容" required prop="content" @keyup.enter.native="handleFormComfirm">
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="commentForm.content"> </el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleFormComfirm">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -105,7 +127,28 @@
           name: '王小虎',
           address: '上海市普陀区金沙江路 1519 弄'
         }],
-        currentPage: 1
+        currentPage: 1,
+        commentForm: {
+          id: undefined,
+          nickName: '',
+          email: '',
+          content: ''
+        },
+        commentFormRules: {
+          name: [
+            { required: true, message: '请输入链接名称', trigger: 'blur' },
+            { required: true, message: '请输入链接名称', trigger: 'change' }
+          ],
+          type: [
+            { required: true, message: '请选择链接类型', trigger: 'change' }
+          ],
+          url: [
+            { required: true, message: '请输入链接地址', trigger: 'blur' },
+            { required: true, message: '请输入链接地址', trigger: 'change' }
+          ]
+        },
+        dialogVisible: false,
+        dialogType: 1,
       }
     },
     methods: {
@@ -117,6 +160,39 @@
       },
       handleClick(row) {
         console.log(row)
+      },
+      handleSearch(){},
+      handleAdd(){
+        this.commentForm.id = ''
+        this.commentForm.nickName = ''
+        // 一定要转数字，否则无法知道select值
+        this.commentForm.email = ''
+        this.commentForm.content = ''
+        // this.$refs['commentForm'].resetFields()
+        this.dialogType = 1
+        this.dialogVisible = true
+        this.$nextTick(() => {
+          this.$refs['commentForm'].clearValidate()
+        })
+      },
+      handleFormComfirm(){
+        let params = {
+          nickName: this.commentForm.nickName,
+          email: this.commentForm.email,
+          url: this.commentForm.content,
+          type: 1,
+          client: navigator.userAgent
+        }
+        this.$store.dispatch('AddComment', params).then(res => {
+          console.log(res)
+          if(res.success){
+            // this._getLinks({ currentPage: 1, pageSize: this.pageSize })
+            this.dialogVisible = false
+            this.$message.success(res.msg)
+          }else{
+            this.$message.error(res.msg)
+          }
+        })
       }
     },
   }

@@ -76,14 +76,14 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/message',
+    path: '/comment',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Message',
-        component: () => import('@/views/message/index'),
-        meta: { title: 'Message', icon: 'message', keepAlive: true }
+        name: 'Comment',
+        component: () => import('@/views/comment/index'),
+        meta: { title: 'Comment', icon: 'message', keepAlive: true }
       }
     ]
   },
@@ -269,7 +269,7 @@ router.beforeEach((to, from, next) => {
           store.dispatch('GetUserInfo').then(res => {
             console.log(res)
             next()
-          }).catch((err) => {
+          }).catch(err => {
             console.log(err)
             store.dispatch('FedLogOut').then(() => {
               // Message.error(err || 'Verification failed, please login again')

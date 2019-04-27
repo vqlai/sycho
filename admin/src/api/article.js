@@ -3,7 +3,7 @@ import request from '@/api/request'
 // 传参方式: post方式用 data: {...data} ，get方式用 params: {...params}
 // 增删改查 post delete put get
 
-// 根据id获取指定wenz
+// 根据id获取指定文章
 export function getArticleById(params) {
   return request({
     url: '/getArticleById',

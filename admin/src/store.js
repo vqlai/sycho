@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } from '@/api/user'
 import { getLinks, addLink, editLink, deleteLink } from '@/api/link'
 import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
+import { getCommentById, getComments, addComment, editComment, deleteComment } from '@/api/comment'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
 
 Vue.use(Vuex)
@@ -278,6 +279,56 @@ const store = new Vuex.Store({
     DeleteUser({ commit }, params) {
       return new Promise((resolve, reject) => {
         deleteUser(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    GetCommentById({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getCommentById(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    GetComments({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getComments(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    AddComment({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        addComment(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    EditComment({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        editComment(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    DeleteComment({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        deleteComment(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
