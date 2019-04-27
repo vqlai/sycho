@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import store from '@/store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
-import { Message } from 'element-ui'
+// import { Message } from 'element-ui'
 import { getToken } from '@/assets/js/auth' // getToken from localstroge
 
 /* Layout */
@@ -263,13 +263,16 @@ router.beforeEach((to, from, next) => {
         NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
       } else {
         // 路由跳转前判断用户角色是否为空拉取用户信息
-        // vuex一刷新数据就被清空，这次每次刷新页面就会调用后台接口
+        // vuex一刷新数据就被清空，这里每次刷新页面就会调用后台接口
         if (!store.getters.name) {
-          store.dispatch('GetUserInfo').then(res => { // 拉取用户信息
+          // 拉取用户信息
+          store.dispatch('GetUserInfo').then(res => {
+            console.log(res)
             next()
           }).catch((err) => {
+            console.log(err)
             store.dispatch('FedLogOut').then(() => {
-              Message.error(err || 'Verification failed, please login again')
+              // Message.error(err || 'Verification failed, please login again')
               next({ path: '/' })
             })
           })
@@ -282,7 +285,8 @@ router.beforeEach((to, from, next) => {
       if (whiteList.indexOf(to.path) !== -1) {
         next()
       } else {
-        next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
+        // 否则全部重定向到登录页
+        next(`/login?redirect=${to.path}`)
         NProgress.done()
       }
     }

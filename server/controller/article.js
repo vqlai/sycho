@@ -69,7 +69,7 @@ class articleController{
 	static async getArticleById(ctx) {
 		let id = ctx.query.id
 		if (!id) {
-			handleError({ ctx, msg: '参数无效，chax 失败！' })
+			handleError({ ctx, msg: '参数无效，查询失败！' })
 			return false
 		}
 		const result = await Article
