@@ -17,9 +17,6 @@ module.exports = async (ctx, next) => {
 			let decoded = jwt.verify(token, config.jwt.secret)
 			// decoded值如下,解析后的exp=创建token的时间+之前设置的过期时间
 			// { id: '5934afe7adb12d30f0679b41', iat: 1496629988, exp: 1496633588 } 
-			if (decoded.exp > Math.floor(Date.now() / 1000)) {
-				return true
-			}
 		}catch(err){
 			// console.log(err)
 			if ('TokenExpiredError' === err.name) {

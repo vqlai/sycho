@@ -76,6 +76,19 @@ export const constantRouterMap = [
   },
 
   {
+    path: '/message',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Message',
+        component: () => import('@/views/message/index'),
+        meta: { title: 'Message', icon: 'message', keepAlive: true }
+      }
+    ]
+  },
+
+  {
     path: '/comment',
     component: Layout,
     children: [
