@@ -1,5 +1,5 @@
 <template>
-  <div class="message">
+  <div class="comment">
     <el-row type="flex" justify="space-between" class="header">
       <el-col :span="4"><el-input placeholder="请输入内容" v-model="searchText" clearable> </el-input> </el-col>
       <el-col :span="4">
@@ -93,7 +93,7 @@
 
 <script>
   export default {
-    name: 'message',
+    name: 'comment',
     data(){
       return {
         searchText: '',
@@ -200,7 +200,7 @@
 
 <style lang="scss" scoped>
   $bg: #fff;
-  .message{
+  .comment{
     padding: 10px;
     .header{
       padding: 10px;

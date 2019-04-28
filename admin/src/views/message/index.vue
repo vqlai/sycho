@@ -71,16 +71,16 @@
       :visible.sync="dialogVisible"
       width="30%"
       :close-on-click-modal="false">
-      <!-- :rules="commentFormRules"  -->
-      <el-form ref="commentForm" :model="commentForm" label-width="80px" status-icon>
+      <!-- :rules="messageFormRules"  -->
+      <el-form ref="messageForm" :model="messageForm" label-width="80px" status-icon>
         <el-form-item label="昵称" required prop="nickName">
-          <el-input v-model="commentForm.name" placeholder="请输入昵称" clearable></el-input>
+          <el-input v-model="messageForm.name" placeholder="请输入昵称" clearable></el-input>
         </el-form-item>
         <el-form-item label="邮箱" required prop="email">
-          <el-input v-model="commentForm.email" placeholder="请输入邮箱" clearable></el-input>
+          <el-input v-model="messageForm.email" placeholder="请输入邮箱" clearable></el-input>
         </el-form-item>
         <el-form-item label="内容" required prop="content" @keyup.enter.native="handleFormComfirm">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="commentForm.content"> </el-input>
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="messageForm.content"> </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -128,13 +128,13 @@
           address: '上海市普陀区金沙江路 1519 弄'
         }],
         currentPage: 1,
-        commentForm: {
+        messageForm: {
           id: undefined,
           nickName: '',
           email: '',
           content: ''
         },
-        commentFormRules: {
+        messageFormRules: {
           name: [
             { required: true, message: '请输入链接名称', trigger: 'blur' },
             { required: true, message: '请输入链接名称', trigger: 'change' }
@@ -163,23 +163,23 @@
       },
       handleSearch(){},
       handleAdd(){
-        this.commentForm.id = ''
-        this.commentForm.nickName = ''
+        this.messageForm.id = ''
+        this.messageForm.nickName = ''
         // 一定要转数字，否则无法知道select值
-        this.commentForm.email = ''
-        this.commentForm.content = ''
-        // this.$refs['commentForm'].resetFields()
+        this.messageForm.email = ''
+        this.messageForm.content = ''
+        // this.$refs['messageForm'].resetFields()
         this.dialogType = 1
         this.dialogVisible = true
         this.$nextTick(() => {
-          this.$refs['commentForm'].clearValidate()
+          this.$refs['messageForm'].clearValidate()
         })
       },
       handleFormComfirm(){
         let params = {
-          nickName: this.commentForm.nickName,
-          email: this.commentForm.email,
-          url: this.commentForm.content,
+          nickName: this.messageForm.nickName,
+          email: this.messageForm.email,
+          url: this.messageForm.content,
           type: 1,
           client: navigator.userAgent
         }
