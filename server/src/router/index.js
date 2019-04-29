@@ -9,6 +9,7 @@ const config = require('../utils/config.js'),
 			L = require('../controller/link.js'),
 			A = require('../controller/article.js'),
 			C = require('../controller/comment.js')
+			M = require('../controller/message.js')
 /*HTTP动词
 	GET     //查询 
 	POST    //新增
@@ -44,6 +45,13 @@ router.delete('/deleteArticle/:id', checkToken, A.deleteArticle)
 router.post('/uploadArticlePics', checkToken, upload.array('file', 20), A.uploadArticlePics)
 // 注：delete方法只能再url上拼参数，无法将参数放在请求body里
 router.post('/removeArticlePics', checkToken, A.removeArticlePics)
+
+// 留言管理
+router.get('/getMessageById', checkToken, M.getMessageById)
+router.get('/getMessages', checkToken, M.getMessages)
+router.post('/addMessage', checkToken, M.addMessage)
+router.put('/editMessage', checkToken, M.editMessage)
+router.delete('/deleteMessage/:id', checkToken, M.deleteMessage)
 
 // 评论管理
 router.get('/getCommentById', checkToken, C.getCommentById)

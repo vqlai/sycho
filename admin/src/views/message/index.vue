@@ -73,7 +73,7 @@
       :close-on-click-modal="false">
       <!-- :rules="messageFormRules"  -->
       <el-form ref="messageForm" :model="messageForm" label-width="80px" status-icon>
-        <el-form-item label="昵称" required prop="nickName">
+        <el-form-item label="昵称" required prop="name">
           <el-input v-model="messageForm.name" placeholder="请输入昵称" clearable></el-input>
         </el-form-item>
         <el-form-item label="邮箱" required prop="email">
@@ -130,7 +130,7 @@
         currentPage: 1,
         messageForm: {
           id: undefined,
-          nickName: '',
+          name: '',
           email: '',
           content: ''
         },
@@ -139,10 +139,10 @@
             { required: true, message: '请输入链接名称', trigger: 'blur' },
             { required: true, message: '请输入链接名称', trigger: 'change' }
           ],
-          type: [
+          email: [
             { required: true, message: '请选择链接类型', trigger: 'change' }
           ],
-          url: [
+          content: [
             { required: true, message: '请输入链接地址', trigger: 'blur' },
             { required: true, message: '请输入链接地址', trigger: 'change' }
           ]
@@ -177,13 +177,12 @@
       },
       handleFormComfirm(){
         let params = {
-          nickName: this.messageForm.nickName,
+          name: this.messageForm.name,
           email: this.messageForm.email,
-          url: this.messageForm.content,
-          type: 1,
-          client: navigator.userAgent
+          // content: this.messageForm.content,
+          agent: navigator.userAgent
         }
-        this.$store.dispatch('AddComment', params).then(res => {
+        this.$store.dispatch('AddMessage', params).then(res => {
           console.log(res)
           if(res.success){
             // this._getLinks({ currentPage: 1, pageSize: this.pageSize })

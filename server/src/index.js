@@ -8,7 +8,8 @@ const koa = require('koa') // web开发框架
 const cors = require('@koa/cors') // 跨域
 // import cors from 'koa-cors'
 const serve = require('koa-static') // 静态资源处理
-// import static from 'koa-static' 
+// import static from 'koa-static'
+const mongoosePaginate = require('mongoose-paginate')
 
 //配置文件
 const config = require('./utils/config.js')
@@ -23,6 +24,9 @@ const app = new koa()
 
 // 连接数据库
 mongodb()
+mongoosePaginate.paginate.options = {
+	limit: config.app.LIMIT
+}
 
 // 处理cors中间件
 const corsOpt = require('./middlewares/corsOpt.js')

@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 const config = require('../utils/config.js')
 
-mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise
 
 // exports.mongoose = mongoose
 // exports.connect

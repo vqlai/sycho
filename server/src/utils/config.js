@@ -58,7 +58,8 @@ let config = {
 	app: {
 		ip: process.env.ip,
 		port: process.env.PORT || 1008, // server端口
-		routerBaseApi: '/v1' // 接口基础路径
+		routerBaseApi: '/v1', // 接口基础路径
+		LIMIT: 16,
 	}
 }
 

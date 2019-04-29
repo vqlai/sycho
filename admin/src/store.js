@@ -4,6 +4,7 @@ import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } f
 import { getLinks, addLink, editLink, deleteLink } from '@/api/link'
 import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
 import { getCommentById, getComments, addComment, editComment, deleteComment } from '@/api/comment'
+import { getMessageById, getMessages, addMessage, editMessage, deleteMessage } from '@/api/message'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
 
 Vue.use(Vuex)
@@ -279,6 +280,56 @@ const store = new Vuex.Store({
     DeleteUser({ commit }, params) {
       return new Promise((resolve, reject) => {
         deleteUser(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    GetMessageById({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getMessageById(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    GetMessages({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        getMessages(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    AddMessage({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        addMessage(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    EditMessage({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        editMessage(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    DeleteMessage({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        deleteMessage(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
