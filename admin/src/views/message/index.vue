@@ -27,13 +27,7 @@
           fit
           highlight-current-row
           style="width: 100%">
-          <el-table-column
-            type="index"
-            label="序号"
-            align="center"
-            width="50">
-          </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             prop="name"
             label="留言内容"
             width="180">
@@ -55,16 +49,104 @@
               <el-button type="text" size="small" icon="el-icon-edit">编辑</el-button>
               <el-button type="text" size="small" icon="el-icon-edit">回复</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
+          <el-table-column type="expand">
+          <template slot-scope="props">
+            <el-form label-position="left" inline class="table-expand">
+              <el-form-item label="IP：">
+                <span>{{ props.row.ip }}</span>
+              </el-form-item>
+              <el-form-item label="地址：">
+                <span>{{ props.row.country }} {{ props.row.city }}</span>
+              </el-form-item>
+              <el-form-item label="浏览器：">
+                <span v-html="uaParse(props.row.agent)"></span>
+              </el-form-item>
+              <el-form-item label="系统：">
+                <span v-html="osParse(props.row.agent)"></span>
+              </el-form-item>
+              <!-- <el-form-item label="内容：">
+                <span>{{ props.row.content }}</span>
+              </el-form-item> -->
+            </el-form>
+          </template>
+        </el-table-column>
+        <el-table-column
+          type="index"
+          label="序号"
+          align="center"
+          width="50">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="姓名"
+          min-width="120px"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="content"
+          label="内容"
+          min-width="120px"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="date"
+          label="日期"
+          width="160">
+          <template slot-scope="scope">
+            <i class="iconfont icon-date mar"></i>
+            {{ scope.row.create_time | format('yyyy-MM-dd')}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="状态"
+          width="120">
+          <template slot-scope="scope">
+            {{
+               scope.row.state === 0
+               ? '待审核'
+               : scope.row.state === 1
+                 ? '通过'
+                 : '不通过'
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="280"
+          fixed="right">
+          <template slot-scope="scope">
+            <transition-group tag="span" name="btn">
+              <el-button
+                type="success"
+                size="small"
+                v-if="scope.row.state === 0 || scope.row.state === 2"
+                @click="changeState(scope.row, 1)"
+                key="1">通过</el-button>
+              <el-button
+                type="danger"
+                size="small"
+                v-if="scope.row.state === 0 || scope.row.state === 1"
+                @click="changeState(scope.row, 2)"
+                key="2">不通过</el-button>
+              <el-button
+                type="danger"
+                size="small"
+                key="3"
+                @click="deleteHero(scope.row)"
+                :disabled="scope.row.deleteing">{{ scope.row.deleteing ? '删除中' : '删 除' }}</el-button>
+            </transition-group>
+          </template>
+        </el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
+          :page-size="pageSize"
+          :total="total"
+          :page-sizes="[10, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </el-col>
     </el-row>
@@ -94,6 +176,9 @@
 </template>
 
 <script>
+import moment from 'moment'
+import { UAParse, OSParse } from '@/assets/js/ua-parse.js'
+import { format } from '@/assets/js/filter.js'
   export default {
     name: 'message',
     data(){
@@ -116,20 +201,6 @@
           label: '北京烤鸭'
         }],
         searchValue: '',
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }],
-        currentPage: 1,
         messageForm: {
           id: undefined,
           name: '',
@@ -151,9 +222,45 @@
         },
         dialogVisible: false,
         dialogType: 1,
+        tableData: [],
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+        loading: false,
       }
     },
+    created(){
+      this._getMessage({ currentPage: this.currentPage, pageSize: this.pageSize })
+    },
+    filters: {
+      format
+    },
     methods: {
+      _getMessage(params){
+        this.loading = true
+        this.$store.dispatch('GetMessages', params).then(res => {
+          console.log(res)
+          if(res.success){
+            this.tableData = [...res.data.list]
+            this.total = res.data.pagination.total
+            this.pageSize = res.data.pagination.pageSize
+            this.currentPage = res.data.pagination.currentPage
+          }else{
+            this.$message.error(res.msg)
+          }
+        }).then(() => {
+          this.loading = false
+        })
+      },
+      formatterTime(row, column, cellValue, inde){
+        return moment(new Date(cellValue)).format('YYYY-MM-DD HH:mm:ss')
+      },
+      uaParse(val){
+        return UAParse(val)
+      },
+      osParse(val){
+        return OSParse(val)
+      },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
       },
