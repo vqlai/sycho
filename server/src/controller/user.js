@@ -1,3 +1,7 @@
+/**
+ * Created by laiweiqang on 2019/04/26
+ */
+// 用户控制器
 const User = require('../model/user.js')
 const md5 = require('md5')
 const jwt = require('jsonwebtoken')

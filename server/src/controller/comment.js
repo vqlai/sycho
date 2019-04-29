@@ -1,7 +1,7 @@
 /**
  * Created by laiweiqang on 2019/04/26
  */
-// 评论逻辑处理
+// 评论控制器
 const Comment = require('../model/comment.js')
 const { response } = require('../utils/handle')
 const { CustomError, HttpError } = require('../utils/customError.js')

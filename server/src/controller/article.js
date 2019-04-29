@@ -1,3 +1,7 @@
+/**
+ * Created by laiweiqang on 2019/04/26
+ */
+// 文章控制器
 const Article = require('../model/article.js')
 const { handleSuccess, handleError } = require('../utils/handle')
 const fs = require('fs')

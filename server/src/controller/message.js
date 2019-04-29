@@ -28,11 +28,27 @@ class messageController {
     // 查询
     const result = await Message
       .paginate(querys, options)
-      .catch(err => ctx.throw(500, '服务器内部错误'))
+      .catch(err => {
+        // ctx.throw(500, '服务器内部错误')
+        throw new CustomError(500, '服务器内部错误')
+        return false
+      })
     if (result) {
-      handleSuccess({
-        ctx,
-        result: {
+      // handleSuccess({
+      //   ctx,
+      //   result: {
+      //     pagination: {
+      //       total: result.total,
+      //       current_page: result.page,
+      //       total_page: result.pages,
+      //       page_size: result.limit
+      //     },
+      //     list: result.docs
+      //   },
+      //   message: '列表数据获取成功!'
+      // })
+      response({
+        ctx, success: true, msg: '列表数据获取成功!', data: {
           pagination: {
             total: result.total,
             current_page: result.page,
@@ -40,10 +56,12 @@ class messageController {
             page_size: result.limit
           },
           list: result.docs
-        },
-        message: '列表数据获取成功!'
+        }
       })
-    } else handleError({ ctx, message: '获取列表数据失败' })
+    } else {
+      // handleError({ ctx, message: '获取列表数据失败' })
+      response({ ctx, success: false, msg: '获取列表数据失败!' })
+    }
   }
   // 获取指定id的评论
   static async getMessageById(ctx) { }
@@ -66,13 +84,13 @@ class messageController {
     message.agent = ctx.headers['user-agent'] || message.agent
 
     const ip_location = geoip.lookup(ip)
-
+    console.log(geoip)
     if (ip_location) {
       message.city = ip_location.city,
       message.range = ip_location.range,
       message.country = ip_location.country
     }
-    console.log(message)
+    // console.log(message)
     
     const res = await new Message(message)
       .save()
@@ -89,7 +107,7 @@ class messageController {
       response({ ctx, success: true, msg: '数据提交审核成功，请耐心等待!', data: res})
     } else {
       // handleError({ ctx, message: '提交数据失败' })
-      response({ ctx, msg: '数据提交审核成功，请耐心等待!' })
+      response({ ctx, success: false, msg: '数据提交审核成功，请耐心等待!' })
     }
 
     

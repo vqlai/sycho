@@ -1,3 +1,7 @@
+/**
+ * Created by laiweiqang on 2019/04/26
+ */
+// 链接控制器
 const Link = require('../model/link.js')
 const { handleSuccess, handleError } = require('../utils/handle')
 

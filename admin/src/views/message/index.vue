@@ -24,12 +24,14 @@
           border
           height="560"
           stripe
+          fit
           highlight-current-row
           style="width: 100%">
           <el-table-column
-            prop="date"
+            type="index"
             label="序号"
-            width="180">
+            align="center"
+            width="50">
           </el-table-column>
           <el-table-column
             prop="name"
@@ -179,7 +181,7 @@
         let params = {
           name: this.messageForm.name,
           email: this.messageForm.email,
-          // content: this.messageForm.content,
+          content: this.messageForm.content,
           agent: navigator.userAgent
         }
         this.$store.dispatch('AddMessage', params).then(res => {
