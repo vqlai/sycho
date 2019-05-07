@@ -6,10 +6,11 @@
  * @param {string} format
  * @returns {string}
  */
-export function format(time, format) {
-  console.log(time)
+export function format(time, format = 'yyyy-MM-dd') {
+  // console.log(time)
   let res = ''
   const date = new Date(time)
+  console.log(date)
   const o = {
     'M+': date.getMonth() + 1, // month
     'd+': date.getDate(), // day

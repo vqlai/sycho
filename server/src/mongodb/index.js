@@ -11,7 +11,10 @@ module.exports = () =>{
 	const mongoUrl = `mongodb://${config.mongodb.user}:${config.mongodb.password}@${config.mongodb.host}:${config.mongodb.port}/${config.mongodb.database}`;
 	//连接数据库
 	// 新版mongodb连接数据库要加{ useNewUrlParser:true }
-	mongoose.connect(mongoUrl, { useNewUrlParser: true })
+	mongoose.connect(mongoUrl, { 
+		useCreateIndex: true,
+		useNewUrlParser: true
+	})
 	
 	const db = mongoose.connection
 	// 连接错误处理

@@ -84,18 +84,24 @@
           show-overflow-tooltip>
         </el-table-column>
         <el-table-column
+          prop="email"
+          label="邮箱"
+          min-width="120px"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
           prop="content"
           label="内容"
           min-width="120px"
           show-overflow-tooltip>
         </el-table-column>
+        <!-- :prop="createDate | formatterTime" -->
         <el-table-column
-          prop="date"
-          label="日期"
+          label="创建时间"
           width="160">
           <template slot-scope="scope">
             <i class="iconfont icon-date mar"></i>
-            {{ scope.row.create_time | format('yyyy-MM-dd')}}
+            {{ scope.row.createDate | formatterTime}}
           </template>
         </el-table-column>
         <el-table-column
@@ -113,7 +119,7 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          width="280"
+          width="380"
           fixed="right">
           <template slot-scope="scope">
             <transition-group tag="span" name="btn">
@@ -135,6 +141,8 @@
                 key="3"
                 @click="deleteHero(scope.row)"
                 :disabled="scope.row.deleteing">{{ scope.row.deleteing ? '删除中' : '删 除' }}</el-button>
+              <el-button type="text" size="small" icon="el-icon-edit" key="4">编辑</el-button>
+              <el-button type="text" size="small" icon="el-icon-edit" key="5">回复</el-button>
             </transition-group>
           </template>
         </el-table-column>
@@ -178,7 +186,7 @@
 <script>
 import moment from 'moment'
 import { UAParse, OSParse } from '@/assets/js/ua-parse.js'
-import { format } from '@/assets/js/filter.js'
+// import { format } from '@/assets/js/filter.js'
   export default {
     name: 'message',
     data(){
@@ -233,7 +241,10 @@ import { format } from '@/assets/js/filter.js'
       this._getMessage({ currentPage: this.currentPage, pageSize: this.pageSize })
     },
     filters: {
-      format
+      // format,
+      formatterTime(val){
+        return moment(new Date(val)).format('YYYY-MM-DD HH:mm:ss')
+      },
     },
     methods: {
       _getMessage(params){
