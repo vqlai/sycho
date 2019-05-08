@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const config = require('../utils/config.js')
 
 mongoose.Promise = global.Promise
-
+mongoose.set('useFindAndModify', false)
 // exports.mongoose = mongoose
 // exports.connect
 module.exports = () =>{

@@ -57,7 +57,8 @@
                 <span>{{ props.row.ip }}</span>
               </el-form-item>
               <el-form-item label="地址：">
-                <span>{{ props.row.country }} {{ props.row.city }}</span>
+                <span v-if="!props.row.country&&!props.row.city">{{ props.row.country }} {{ props.row.city }}</span>
+                <span v-else>暂无</span>
               </el-form-item>
               <el-form-item label="浏览器：">
                 <span v-html="uaParse(props.row.agent)"></span>
@@ -79,26 +80,26 @@
         </el-table-column>
         <el-table-column
           prop="name"
-          label="姓名"
-          min-width="120px"
+          label="昵称"
+          width="120px"
           show-overflow-tooltip>
         </el-table-column>
         <el-table-column
           prop="email"
           label="邮箱"
-          min-width="120px"
+          width="200px"
           show-overflow-tooltip>
         </el-table-column>
         <el-table-column
           prop="content"
           label="内容"
-          min-width="120px"
+          min-width="200px"
           show-overflow-tooltip>
         </el-table-column>
         <!-- :prop="createDate | formatterTime" -->
         <el-table-column
           label="创建时间"
-          width="160">
+          width="180">
           <template slot-scope="scope">
             <i class="iconfont icon-date mar"></i>
             {{ scope.row.createDate | formatterTime}}
@@ -106,7 +107,7 @@
         </el-table-column>
         <el-table-column
           label="状态"
-          width="120">
+          width="80">
           <template slot-scope="scope">
             {{
                scope.row.state === 0
@@ -193,20 +194,17 @@ import { UAParse, OSParse } from '@/assets/js/ua-parse.js'
       return {
         searchText: '',
         searchType: [{
-          value: '选项1',
-          label: '黄金糕'
+          value: '0',
+          label: '全部'
         }, {
-          value: '选项2',
-          label: '双皮奶'
+          value: '1',
+          label: '待审核'
         }, {
-          value: '选项3',
-          label: '蚵仔煎'
+          value: '2',
+          label: '已通过'
         }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
+          value: '3',
+          label: '未通过'
         }],
         searchValue: '',
         messageForm: {

@@ -33,6 +33,7 @@ class messageController {
         throw new CustomError(500, '服务器内部错误')
         return false
       })
+    console.log(result)
     if (result) {
       // handleSuccess({
       //   ctx,
@@ -85,6 +86,7 @@ class messageController {
 
     const ip_location = geoip.lookup(ip)
     console.log(geoip)
+    console.log(ip_location)
     if (ip_location) {
       message.city = ip_location.city,
       message.range = ip_location.range,
