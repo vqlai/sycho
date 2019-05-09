@@ -69,7 +69,7 @@ class messageController {
   // 新增评论
   static async addMessage(ctx) {
     let { body: message } = ctx.request
-    console.log(message)
+    // console.log(message)
 
     // 获取ip地址以及物理地理地址
     const ip = (ctx.req.headers['x-forwarded-for'] ||
@@ -85,8 +85,8 @@ class messageController {
     message.agent = ctx.headers['user-agent'] || message.agent
 
     const ip_location = geoip.lookup(ip)
-    console.log(geoip)
-    console.log(ip_location)
+    // console.log(geoip)
+    // console.log(ip_location)
     if (ip_location) {
       message.city = ip_location.city,
       message.range = ip_location.range,
@@ -103,7 +103,7 @@ class messageController {
         throw new CustomError(500, err.ValidationError)
         return false
       })
-    console.log(res)
+    // console.log(res)
     if (res) {
       // handleSuccess({ ctx, message: '数据提交审核成功，请耐心等待' })
       response({ ctx, success: true, msg: '数据提交审核成功，请耐心等待!', data: res})

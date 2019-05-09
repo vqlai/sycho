@@ -1,9 +1,9 @@
 <template>
   <div class="message">
     <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入内容" v-model="searchText" clearable> </el-input> </el-col>
+      <el-col :span="4"><el-input placeholder="请输入昵称" v-model="searchText" clearable> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="searchValue" placeholder="请选择" style="display: block;" clearable>
+        <el-select v-model="searchValue" placeholder="请选择留言状态" style="display: block;" clearable>
           <el-option
             v-for="item in searchType"
             :key="item.value"
@@ -27,29 +27,6 @@
           fit
           highlight-current-row
           style="width: 100%">
-          <!-- <el-table-column
-            prop="name"
-            label="留言内容"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            prop="address"
-            label="用户名">
-          </el-table-column>
-          <el-table-column
-            prop="address"
-            label="留言时间">
-          </el-table-column>
-          <el-table-column
-            fixed="right"
-            label="操作"
-            width="180">
-            <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small" icon="el-icon-view">查看</el-button>
-              <el-button type="text" size="small" icon="el-icon-edit">编辑</el-button>
-              <el-button type="text" size="small" icon="el-icon-edit">回复</el-button>
-            </template>
-          </el-table-column> -->
           <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="table-expand">
@@ -186,7 +163,7 @@
 
 <script>
 import moment from 'moment'
-import { UAParse, OSParse } from '@/assets/js/ua-parse.js'
+import { UAParse, OSParse } from '@/assets/js/parse.js'
 // import { format } from '@/assets/js/filter.js'
   export default {
     name: 'message',
