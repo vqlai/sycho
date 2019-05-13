@@ -1,11 +1,11 @@
 <template>
   <div class="message">
     <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入昵称" v-model="searchText" clearable> </el-input> </el-col>
+      <el-col :span="4"><el-input placeholder="请输入昵称" v-model="keyword" clearable @keyup.enter.native="_getMessage"> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="searchValue" placeholder="请选择留言状态" style="display: block;" clearable>
+        <el-select v-model="state" placeholder="请选择留言状态" style="display: block;" clearable>
           <el-option
-            v-for="item in searchType"
+            v-for="item in stateList"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -13,7 +13,7 @@
         </el-select>
       </el-col>
       <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" round @click.native="_getMessage">搜索</el-button>
         <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button>
       </el-col>
     </el-row>
@@ -141,8 +141,7 @@
       :visible.sync="dialogVisible"
       width="30%"
       :close-on-click-modal="false">
-      <!-- :rules="messageFormRules"  -->
-      <el-form ref="messageForm" :model="messageForm" label-width="80px" status-icon>
+      <el-form ref="messageForm" :model="messageForm" :rules="messageFormRules" label-width="80px" status-icon>
         <el-form-item label="昵称" required prop="name">
           <el-input v-model="messageForm.name" placeholder="请输入昵称" clearable></el-input>
         </el-form-item>
@@ -169,21 +168,21 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
     name: 'message',
     data(){
       return {
-        searchText: '',
-        searchType: [{
-          value: '0',
+        keyword: '',
+        state: '',
+        stateList: [{
+          value: '3',
           label: '全部'
         }, {
-          value: '1',
+          value: '0',
           label: '待审核'
         }, {
-          value: '2',
+          value: '1',
           label: '已通过'
         }, {
-          value: '3',
+          value: '2',
           label: '未通过'
         }],
-        searchValue: '',
         messageForm: {
           id: undefined,
           name: '',
@@ -192,15 +191,16 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
         },
         messageFormRules: {
           name: [
-            { required: true, message: '请输入链接名称', trigger: 'blur' },
-            { required: true, message: '请输入链接名称', trigger: 'change' }
+            { required: true, message: '请输入昵称', trigger: 'blur' },
+            { required: true, message: '请输入昵称', trigger: 'change' }
           ],
           email: [
-            { required: true, message: '请选择链接类型', trigger: 'change' }
+            { required: true, message: '请输入email', trigger: 'blur' },
+            { required: true, message: '请选择email', trigger: 'change' }
           ],
           content: [
-            { required: true, message: '请输入链接地址', trigger: 'blur' },
-            { required: true, message: '请输入链接地址', trigger: 'change' }
+            { required: true, message: '请输入内容', trigger: 'blur' },
+            { required: true, message: '请输入内容', trigger: 'change' }
           ]
         },
         dialogVisible: false,
@@ -213,7 +213,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
       }
     },
     created(){
-      this._getMessage({ currentPage: this.currentPage, pageSize: this.pageSize })
+      this._getMessage()
     },
     filters: {
       // format,
@@ -224,7 +224,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
     methods: {
       _getMessage(params){
         this.loading = true
-        this.$store.dispatch('GetMessages', params).then(res => {
+        this.$store.dispatch('GetMessages', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, state: this.state }).then(res => {
           console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
@@ -249,9 +249,13 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
+        this.pageSize = val
+        this._getMessage()
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`)
+        this.currentPage = val
+        this._getMessage()
       },
       handleClick(row) {
         console.log(row)
@@ -259,7 +263,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
       handleSearch(){},
       handleAdd(){
         this.messageForm.id = ''
-        this.messageForm.nickName = ''
+        this.messageForm.name = ''
         // 一定要转数字，否则无法知道select值
         this.messageForm.email = ''
         this.messageForm.content = ''
@@ -280,7 +284,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
         this.$store.dispatch('AddMessage', params).then(res => {
           console.log(res)
           if(res.success){
-            // this._getLinks({ currentPage: 1, pageSize: this.pageSize })
+            this._getMessage() // 刷新页面数据
             this.dialogVisible = false
             this.$message.success(res.msg)
           }else{

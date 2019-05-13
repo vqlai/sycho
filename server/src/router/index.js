@@ -50,6 +50,7 @@ router.post('/removeArticlePics', checkToken, A.removeArticlePics)
 router.get('/getMessageById', checkToken, M.getMessageById)
 router.get('/getMessages', checkToken, M.getMessages)
 router.post('/addMessage', checkToken, M.addMessage)
+router.patch('/editMessageStatus', checkToken, M.editMessageStatus) 														// 修改留言墙状态	
 router.put('/editMessage', checkToken, M.editMessage)
 router.delete('/deleteMessage/:id', checkToken, M.deleteMessage)
 
