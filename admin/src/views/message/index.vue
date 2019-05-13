@@ -117,10 +117,10 @@
                 type="danger"
                 size="small"
                 key="3"
-                @click="deleteHero(scope.row)"
+                @click="handleDelete(scope.row)"
                 :disabled="scope.row.deleteing">{{ scope.row.deleteing ? '删除中' : '删 除' }}</el-button>
-              <el-button type="text" size="small" icon="el-icon-edit" key="4">编辑</el-button>
-              <el-button type="text" size="small" icon="el-icon-edit" key="5">回复</el-button>
+              <!-- <el-button type="text" size="small" icon="el-icon-edit" key="4">编辑</el-button>
+              <el-button type="text" size="small" icon="el-icon-edit" key="5">回复</el-button> -->
             </transition-group>
           </template>
         </el-table-column>
@@ -224,7 +224,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
     methods: {
       _getMessage(params){
         this.loading = true
-        this.$store.dispatch('GetMessages', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, state: this.state }).then(res => {
+        this.$store.dispatch('GetMessage', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, state: this.state }).then(res => {
           console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
@@ -248,12 +248,12 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
         return OSParse(val)
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
+        // console.log(`每页 ${val} 条`)
         this.pageSize = val
         this._getMessage()
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
+        // console.log(`当前页: ${val}`)
         this.currentPage = val
         this._getMessage()
       },
@@ -281,7 +281,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
           content: this.messageForm.content,
           agent: navigator.userAgent
         }
-        this.$store.dispatch('AddMessage', params).then(res => {
+        this.$store.dispatch('PostMessage', params).then(res => {
           console.log(res)
           if(res.success){
             this._getMessage() // 刷新页面数据
@@ -291,7 +291,32 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
             this.$message.error(res.msg)
           }
         })
-      }
+      },
+      handleDelete(row){
+        console.log(row)
+        this.$confirm('此操作将删除该行, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DeleteMessage', row._id).then(res => {
+            if(res.success){
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              })
+              this._getMessage()
+            }else{
+              this.$message({
+                message: res.msg,
+                type: 'error'
+              })
+            }
+          })
+        }).catch(() => {
+          console.log('取消删除')
+        })
+      },
     },
   }
 </script>

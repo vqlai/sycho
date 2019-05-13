@@ -10,11 +10,15 @@ const constants = require('../utils/constants.js')
 
 class messageController {
   // 获取留言列表
-  static async getMessages(ctx) {
+  static async getMessage(ctx) {
     let { currentPage = 1, pageSize = 10, keyword = '', state = '' } = ctx.query
 
     // 过滤条件
-    const options = { sort: { _id: +1 }, page: Number(currentPage), limit: Number(pageSize) }
+    const options = { 
+      sort: { createDate: -1 }, // 按时间倒序
+      page: Number(currentPage), // 当前页
+      limit: Number(pageSize) // 每页数
+    }
 
     // 查询参数
     const querys = { name: new RegExp(keyword) }
@@ -69,7 +73,7 @@ class messageController {
   static async getMessageById(ctx) {}
 
   // 新增留言
-  static async addMessage(ctx) {
+  static async postMessage(ctx) {
     let { body: message } = ctx.request
     // console.log(message)
     // 获取ip地址以及物理地理地址
@@ -111,7 +115,7 @@ class messageController {
   }
 
   // 修改留言状态
-  static async editMessageStatus(ctx) {
+  static async patchMessage(ctx) {
     const { state, _id } = ctx.request.body
 
     if (!state) {
@@ -133,6 +137,9 @@ class messageController {
     }
   }
 
+  // 编辑留言
+  static async putMessage(ctx) { }
+
   // 删除留言
   static async deleteMessage(ctx) {
     const _id = ctx.params.id
@@ -151,15 +158,12 @@ class messageController {
       })
     if (result){
       // handleSuccess({ ctx, message: '删除数据成功' })
-      response({ ctx, success: true, msg: '删除数据成功' })
+      response({ ctx, success: true, msg: '删除留言成功', data: result })
     }else{
       // handleError({ ctx, message: '删除数据失败' })
-      response({ ctx, success: false, msg: '删除数据失败' })
+      response({ ctx, success: false, msg: '删除留言失败' })
     }
   }
-
-  // 编辑评论
-  static async editMessage(ctx) {}
 }
 
 module.exports = messageController

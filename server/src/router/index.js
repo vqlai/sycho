@@ -48,11 +48,11 @@ router.post('/removeArticlePics', checkToken, A.removeArticlePics)
 
 // 留言管理
 router.get('/getMessageById', checkToken, M.getMessageById)
-router.get('/getMessages', checkToken, M.getMessages)
-router.post('/addMessage', checkToken, M.addMessage)
-router.patch('/editMessageStatus', checkToken, M.editMessageStatus) 														// 修改留言墙状态	
-router.put('/editMessage', checkToken, M.editMessage)
-router.delete('/deleteMessage/:id', checkToken, M.deleteMessage)
+router.get('/message', checkToken, M.getMessage) // 获取留言
+router.post('/message', checkToken, M.postMessage)	// 添加留言
+router.patch('/message', checkToken, M.patchMessage) // 修改留言墙状态	
+router.delete('/message/:id', checkToken, M.deleteMessage) // 删除留言
+router.put('/message', checkToken, M.putMessage)	// 修改留言
 
 // 评论管理
 router.get('/getCommentById', checkToken, C.getCommentById)

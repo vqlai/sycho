@@ -4,7 +4,7 @@ import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } f
 import { getLinks, addLink, editLink, deleteLink } from '@/api/link'
 import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
 import { getCommentById, getComments, addComment, editComment, deleteComment } from '@/api/comment'
-import { getMessageById, getMessages, addMessage, editMessage, deleteMessage } from '@/api/message'
+import { getMessage, postMessage, putMessage, patchMessage, deleteMessage } from '@/api/message'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
 
 Vue.use(Vuex)
@@ -287,9 +287,9 @@ const store = new Vuex.Store({
       })
     },
 
-    GetMessageById({ commit }, params) {
+    GetMessage({ commit }, params) {
       return new Promise((resolve, reject) => {
-        getMessageById(params).then(res => {
+        getMessage(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -297,9 +297,9 @@ const store = new Vuex.Store({
       })
     },
 
-    GetMessages({ commit }, params) {
+    PostMessage({ commit }, params) {
       return new Promise((resolve, reject) => {
-        getMessages(params).then(res => {
+        postMessage(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -307,9 +307,9 @@ const store = new Vuex.Store({
       })
     },
 
-    AddMessage({ commit }, params) {
+    PutMessage({ commit }, params) {
       return new Promise((resolve, reject) => {
-        addMessage(params).then(res => {
+        putMessage(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -317,9 +317,9 @@ const store = new Vuex.Store({
       })
     },
 
-    EditMessage({ commit }, params) {
+    PatchMessage({ commit }, params) {
       return new Promise((resolve, reject) => {
-        editMessage(params).then(res => {
+        patchMessage(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
