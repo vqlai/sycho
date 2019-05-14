@@ -43,9 +43,6 @@
               <el-form-item label="系统：">
                 <span v-html="osParse(props.row.agent)"></span>
               </el-form-item>
-              <!-- <el-form-item label="内容：">
-                <span>{{ props.row.content }}</span>
-              </el-form-item> -->
             </el-form>
           </template>
         </el-table-column>
@@ -73,7 +70,6 @@
           min-width="200px"
           show-overflow-tooltip>
         </el-table-column>
-        <!-- :prop="createDate | formatterTime" -->
         <el-table-column
           label="创建时间"
           width="180">
@@ -86,13 +82,7 @@
           label="状态"
           width="80">
           <template slot-scope="scope">
-            {{
-               scope.row.state === 0
-               ? '待审核'
-               : scope.row.state === 1
-                 ? '通过'
-                 : '不通过'
-            }}
+            {{ scope.row.state === 0 ? '待审核' : scope.row.state === 1 ? '通过' : '不通过' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -105,13 +95,13 @@
                 type="success"
                 size="small"
                 v-if="scope.row.state === 0 || scope.row.state === 2"
-                @click="changeState(scope.row, 1)"
+                @click="handleState(scope.row, 1)"
                 key="1">通过</el-button>
               <el-button
                 type="danger"
                 size="small"
                 v-if="scope.row.state === 0 || scope.row.state === 1"
-                @click="changeState(scope.row, 2)"
+                @click="handleState(scope.row, 2)"
                 key="2">不通过</el-button>
               <el-button
                 type="danger"
@@ -161,12 +151,22 @@
 </template>
 
 <script>
-import moment from 'moment'
 import { UAParse, OSParse } from '@/assets/js/parse.js'
-// import { format } from '@/assets/js/filter.js'
+import { formatterTime } from '@/assets/js/filter.js'
+import { checkEmail } from '@/assets/js/validate.js'
   export default {
     name: 'message',
     data(){
+      let validateEmail = (rule, value, callback) => {
+        console.log(checkEmail(value))
+        if(value === ''){
+          callback(new Error('请输入邮箱'))
+        }else if (!checkEmail(value)) {
+          callback(new Error('请正确输入邮箱'))
+        } else {
+          callback()
+        }
+      }
       return {
         keyword: '',
         state: '',
@@ -195,8 +195,8 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
             { required: true, message: '请输入昵称', trigger: 'change' }
           ],
           email: [
-            { required: true, message: '请输入email', trigger: 'blur' },
-            { required: true, message: '请选择email', trigger: 'change' }
+            { validator: validateEmail, trigger: 'blur' },
+            { validator: validateEmail, trigger: 'change' }
           ],
           content: [
             { required: true, message: '请输入内容', trigger: 'blur' },
@@ -212,20 +212,21 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
         loading: false,
       }
     },
-    created(){
+    created: function (){
       this._getMessage()
     },
     filters: {
-      // format,
-      formatterTime(val){
-        return moment(new Date(val)).format('YYYY-MM-DD HH:mm:ss')
-      },
+      formatterTime
+    },
+    mounted: function () {
+      this.$nextTick(() => {})
     },
     methods: {
+      // 根据条件获取留言
       _getMessage(params){
         this.loading = true
         this.$store.dispatch('GetMessage', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, state: this.state }).then(res => {
-          console.log(res)
+          // console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
             this.total = res.data.pagination.total
@@ -237,9 +238,6 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
         }).then(() => {
           this.loading = false
         })
-      },
-      formatterTime(row, column, cellValue, inde){
-        return moment(new Date(cellValue)).format('YYYY-MM-DD HH:mm:ss')
       },
       uaParse(val){
         return UAParse(val)
@@ -257,14 +255,10 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
         this.currentPage = val
         this._getMessage()
       },
-      handleClick(row) {
-        console.log(row)
-      },
-      handleSearch(){},
+      // 新增留言
       handleAdd(){
         this.messageForm.id = ''
         this.messageForm.name = ''
-        // 一定要转数字，否则无法知道select值
         this.messageForm.email = ''
         this.messageForm.content = ''
         // this.$refs['messageForm'].resetFields()
@@ -274,6 +268,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
           this.$refs['messageForm'].clearValidate()
         })
       },
+      // 提交留言
       handleFormComfirm(){
         let params = {
           name: this.messageForm.name,
@@ -282,7 +277,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
           agent: navigator.userAgent
         }
         this.$store.dispatch('PostMessage', params).then(res => {
-          console.log(res)
+          // console.log(res)
           if(res.success){
             this._getMessage() // 刷新页面数据
             this.dialogVisible = false
@@ -292,6 +287,25 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
           }
         })
       },
+      // 修改状态
+      handleState(row, code){
+        this.$store.dispatch('PatchMessage', { _id: row._id, state: code }).then(res => {
+          console.log(res)
+          if(res.success){
+            this.$message({
+              message: res.msg,
+              type: 'success'
+            })
+            this._getMessage()
+          }else{
+            this.$message({
+              message: res.msg,
+              type: 'error'
+            })
+          }
+        })
+      },
+      // 删除留言
       handleDelete(row){
         console.log(row)
         this.$confirm('此操作将删除该行, 是否继续?', '提示', {
@@ -314,7 +328,7 @@ import { UAParse, OSParse } from '@/assets/js/parse.js'
             }
           })
         }).catch(() => {
-          console.log('取消删除')
+          // console.log('取消删除')
         })
       },
     },

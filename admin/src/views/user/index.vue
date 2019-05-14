@@ -268,23 +268,23 @@
             { required: true, message: '请输入用户名', trigger: 'change' }
           ],
           curPwd: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
+            { validator: checkAddPwd, trigger: 'blur' },
             { validator: checkAddPwd, trigger: 'change' }
           ],
           surePwd: [
-            { required: true, message: '请再次输入密码', trigger: 'blur' },
+            { validator: checkAddPwd2, trigger: 'blur' },
             { validator: checkAddPwd2, trigger: 'change' }
           ],
           prePwd: [
-            { required: true, message: '请输入原始密码', trigger: 'blur' },
+            { validator: checkEditPwd, trigger: 'blur' },
             { validator: checkEditPwd, trigger: 'change' }
           ],
           newPwd: [
-            { required: true, message: '请输入新密码', trigger: 'blur' },
+            { validator: checkEditPwd, trigger: 'blur' },
             { validator: checkEditPwd, trigger: 'change' }
           ],
           confirmPwd: [
-            { required: true, message: '请再次输入密码', trigger: 'blur' },
+            { validator: checkEditPwd2, trigger: 'blur' },
             { validator: checkEditPwd2, trigger: 'change' }
           ],
           role: [

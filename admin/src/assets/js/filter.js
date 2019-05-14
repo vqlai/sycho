@@ -6,6 +6,9 @@
  * @param {string} format
  * @returns {string}
  */
+
+import moment from 'moment'
+
 export function format(time, format = 'yyyy-MM-dd') {
   // console.log(time)
   let res = ''
@@ -29,4 +32,8 @@ export function format(time, format = 'yyyy-MM-dd') {
     }
   }
   return res
+}
+
+export function formatterTime(val, format = 'YYYY-MM-DD HH:mm:ss'){
+  return moment(new Date(val)).format(format)
 }
