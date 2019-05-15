@@ -1,17 +1,20 @@
 const data = {
   linkTypes: [
     {
-      value: 0,
+      value: '0',
       label: '全部'
     }, {
-      value: 1,
+      value: '1',
       label: '技术'
     }, {
-      value: 2,
+      value: '2',
       label: '生活'
     }, {
-      value: 3,
+      value: '3',
       label: '购物'
+    }, {
+      value: '4',
+      label: '友链'
     }
   ],
   userTypes: [
@@ -42,7 +45,7 @@ const data = {
     }, {
       value: 3,
       label: '前端'
-    },
+    }
   ],
   articleTags: [
     {

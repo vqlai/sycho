@@ -1,9 +1,9 @@
 <template>
   <div class="link">
     <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入内容" v-model="queryName" clearable> </el-input> </el-col>
+      <el-col :span="4"><el-input placeholder="请输入内容" v-model="keyword" clearable> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="queryType" placeholder="请选择链接类型"  style="display: block;" clearable>
+        <el-select v-model="type" placeholder="请选择链接类型"  style="display: block;" clearable>
           <el-option
             v-for="item in linkTypes"
             :key="item.value"
@@ -13,7 +13,7 @@
         </el-select>
       </el-col>
       <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" round @click="_getLink()">搜索</el-button>
         <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button>
       </el-col>
     </el-row>
@@ -54,10 +54,18 @@
             label="链接">
           </el-table-column>
           <el-table-column
-            prop="createTime"
-            :formatter="formatterTime"
             align="center"
             label="创建时间">
+            <template slot-scope="scope">
+              {{ scope.row.createDate | formatterTime}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="更新时间">
+            <template slot-scope="scope">
+              {{ scope.row.updateDate | formatterTime}}
+            </template>
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -118,12 +126,12 @@
         </el-form-item>
         <el-form-item label="URL" required prop="url">
           <el-input v-model="linkForm.url" placeholder="请输入链接地址" clearable
-          @keyup.enter.native="handleFormComfirm"></el-input>
+          @keyup.enter.native="handleSubmitForm"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleFormComfirm">确 定</el-button>
+        <el-button type="primary" @click="handleSubmitForm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -132,17 +140,18 @@
 <script>
   import moment from 'moment'
   import data from '@/assets/js/data'
+  import { formatterTime } from '@/assets/js/filter.js'
 
   export default {
     name: 'linkPage',
     data(){
       let linkTypes = data.linkTypes
       return {
-        queryName: '',
+        keyword: '',
         linkTypes,
-        queryType: '',
+        type: '',
         linkForm: {
-          id: undefined,
+          _id: '',
           name: '',
           type: '',
           url: ''
@@ -169,8 +178,11 @@
         dialogType: 1,
       }
     },
+    filters: {
+      formatterTime
+    },
     created(){
-      this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
+      this._getLink()
     },
     mounted(){
     },
@@ -178,46 +190,46 @@
       formatterTime(row, column, cellValue, inde){
         return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
       },
-      _getLinks(params){
+      _getLink(){
         this.loading = true
-        this.$store.dispatch('GetLinks', params).then(res => {
+        this.$store.dispatch('GetLink', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, type: this.type }).then(res => {
           // console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
-            for(let item of this.tableData){
-              item.visible = false
-            }
             console.log(this.tableData)
             this.total = res.data.pagination.total
             this.pageSize = res.data.pagination.pageSize
             this.currentPage = res.data.pagination.currentPage
           }else{
-            this.$message(res.msg)
+            this.$message.error(res.msg)
           }
         }).then(() => {
           this.loading = false
         })
       },
       handleSizeChange(val) {
-        this.pageSize = val
-        this._getLinks({ currentPage: 1, pageSize: this.pageSize })
         // console.log(`每页 ${val} 条`)
+        this.pageSize = val
+        this._getLink()
       },
       handleCurrentChange(val) {
-        this.currentPage = val
-        this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
         // console.log(`当前页: ${val}`)
-      },
-      handleSearch(){
-        this._getLinks({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryType: this.queryType })
+        this.currentPage = val
+        this._getLink()
       },
       handleAdd(){
-        this.linkForm.id = ''
-        this.linkForm.name = ''
-        // 一定要转数字，否则无法知道select值
-        this.linkForm.type = ''
-        this.linkForm.url = ''
+        // this.linkForm.id = ''
+        // this.linkForm.name = ''
+        // // 一定要转数字，否则无法知道select值
+        // this.linkForm.type = ''
+        // this.linkForm.url = ''
         // this.$refs['linkForm'].resetFields()
+        this.linkForm = Object.assign({}, {
+          _id: '',
+          name: '',
+          type: '',
+          url: ''
+        })
         this.dialogType = 1
         this.dialogVisible = true
         this.$nextTick(() => {
@@ -226,15 +238,106 @@
       },
       handleEdit(row){
         console.log(row)
-        this.linkForm.id = row._id
-        this.linkForm.name = row.name
-        // 一定要转数字，否则无法知道select值
-        this.linkForm.type = Number(row.type)
-        this.linkForm.url = row.url
+        // this.linkForm.id = row._id
+        // this.linkForm.name = row.name
+        // // 一定要转数字，否则无法知道select值
+        // this.linkForm.type = Number(row.type)
+        // this.linkForm.url = row.url
+        this.linkForm = { ...row }
         this.dialogType = 2
         this.dialogVisible = true
         this.$nextTick(() => {
           this.$refs['linkForm'].clearValidate()
+        })
+      },
+      handleSubmitForm(){
+        this.$refs.linkForm.validate((valid) => {
+          if (valid) {
+            // console.log(this.$refs.linkForm)
+            let desc = ''
+            for(let item of this.linkTypes){
+              if(item.value === this.linkForm.type){
+                desc = item.label
+              }
+            }
+            let action = ''
+            let params = {
+              name: this.linkForm.name,
+              type: this.linkForm.type,
+              url: this.linkForm.url,
+              desc: desc
+            }
+            // console.log(params)
+            if (this.linkForm._id) {
+              action = 'PutLink'
+              params._id = this.linkForm._id
+              // params = Object.assign({}, {
+              //   _id: this.linkForm._id,
+              //   name: this.linkForm.name,
+              //   type: this.linkForm.type,
+              //   url: this.linkForm.url,
+              //   desc
+              // })
+            } else {
+              action = 'PostLink'
+              // params = { ...this.linkForm }
+            }
+            this.$store.dispatch(action, params).then(res => {
+              console.log(res)
+              if(res.success){
+                this._getLink()
+                this.dialogVisible = false
+                this.$message({
+                  message: res.msg,
+                  type: 'success'
+                })
+              }else{
+                this.$message({
+                  message: res.msg,
+                  type: 'error'
+                })
+              }
+            })
+            // if(this.dialogType === 1){
+            //   this.$store.dispatch('postLink', params).then(res => {
+            //     console.log(res)
+            //     if(res.success){
+            //       this._getLink()
+            //       this.dialogVisible = false
+            //       this.$message({
+            //         message: res.msg,
+            //         type: 'success'
+            //       })
+            //     }else{
+            //       this.$message({
+            //         message: res.msg,
+            //         type: 'error'
+            //       })
+            //     }
+            //   })
+            // }else if(this.dialogType === 2){
+            //   params.id = this.linkForm.id
+            //   this.$store.dispatch('putLink', params).then(res => {
+            //     console.log(res)
+            //     if(res.success){
+            //       this._getLink()
+            //       this.dialogVisible = false
+            //       this.$message({
+            //         message: res.msg,
+            //         type: 'success'
+            //       })
+            //     }else{
+            //       this.$message({
+            //         message: res.msg,
+            //         type: 'error'
+            //       })
+            //     }
+            //   })
+            // }
+          } else {
+            console.log('error submit!!')
+            return false
+          }
         })
       },
       handleDelete(row){
@@ -245,16 +348,10 @@
         }).then(() => {
           this.$store.dispatch('DeleteLink', row._id).then(res => {
             if(res.success){
-              this.$message({
-                message: res.msg,
-                type: 'success'
-              })
-              this._getLinks({ currentPage: this.currentPage, pageSize: this.pageSize })
+              this.$message.success(res.msg)
+              this._getLink()
             }else{
-              this.$message({
-                message: res.msg,
-                type: 'error'
-              })
+              this.$message.error(res.msg)
             }
           })
         }).catch(() => {
@@ -266,65 +363,6 @@
         // this.$refs['linkForm'].resetFields()
         // console.log(this.linkForm)
         this.dialogVisible = false
-      },
-      handleFormComfirm(){
-        this.$refs.linkForm.validate((valid) => {
-          if (valid) {
-            // console.log(this.$refs.linkForm)
-            let desc = ''
-            for(let item of this.linkTypes){
-              if(item.value === this.linkForm.type){
-                desc = item.label
-              }
-            }
-            let params = {
-              name: this.linkForm.name,
-              type: this.linkForm.type,
-              url: this.linkForm.url,
-              desc: desc
-            }
-            console.log(params)
-            if(this.dialogType === 1){
-              this.$store.dispatch('AddLink', params).then(res => {
-                console.log(res)
-                if(res.success){
-                  this._getLinks({ currentPage: 1, pageSize: this.pageSize })
-                  this.dialogVisible = false
-                  this.$message({
-                    message: res.msg,
-                    type: 'success'
-                  })
-                }else{
-                  this.$message({
-                    message: res.msg,
-                    type: 'error'
-                  })
-                }
-              })
-            }else if(this.dialogType === 2){
-              params.id = this.linkForm.id
-              this.$store.dispatch('EditLink', params).then(res => {
-                console.log(res)
-                if(res.success){
-                  this._getLinks({ currentPage: 1, pageSize: this.pageSize })
-                  this.dialogVisible = false
-                  this.$message({
-                    message: res.msg,
-                    type: 'success'
-                  })
-                }else{
-                  this.$message({
-                    message: res.msg,
-                    type: 'error'
-                  })
-                }
-              })
-            }
-          } else {
-            console.log('error submit!!')
-            return false
-          }
-        })
       },
     },
   }

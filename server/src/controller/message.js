@@ -3,10 +3,10 @@
  */
 // 留言控制器
 const Message = require('../model/message.js')
-const { response } = require('../utils/handle')
+const { handleSuccess, handleError } = require('../utils/handle')
 const geoip = require('geoip-lite')
 const { CustomError, HttpError } = require('../utils/customError.js')
-const constants = require('../utils/constants.js')
+// const constants = require('../utils/constants.js')
 
 class messageController {
   // 获取留言列表
@@ -37,23 +37,10 @@ class messageController {
         throw new CustomError(500, '服务器内部错误')
         return false
       })
-    console.log(result)
+    // console.log(result)
     if (result) {
-      // handleSuccess({
-      //   ctx,
-      //   result: {
-      //     pagination: {
-      //       total: result.total,
-      //       current_page: result.page,
-      //       total_page: result.pages,
-      //       page_size: result.limit
-      //     },
-      //     list: result.docs
-      //   },
-      //   message: '列表数据获取成功!'
-      // })
-      response({
-        ctx, success: true, msg: '列表数据获取成功!', data: {
+      handleSuccess({
+        ctx, msg: '列表数据获取成功', data: {
           pagination: {
             currentPage: result.page, // 当前页
             pageSize: result.limit, // 分页大小 
@@ -64,8 +51,7 @@ class messageController {
         }
       })
     } else {
-      // handleError({ ctx, message: '获取列表数据失败' })
-      response({ ctx, success: false, msg: '获取列表数据失败!' })
+      handleError({ ctx, msg: '获取列表数据失败' })
     }
   }
 
@@ -106,11 +92,9 @@ class messageController {
       })
     // console.log(result)
     if (result) {
-      // handleSuccess({ ctx, message: '数据提交审核成功，请耐心等待' })
-      response({ ctx, success: true, msg: '数据提交审核成功，请耐心等待!', data: result})
+      handleSuccess({ ctx, msg: '留言已提交，请耐心等待审核~', data: result})
     } else {
-      // handleError({ ctx, message: '提交数据失败' })
-      response({ ctx, success: false, msg: '数据提交审核成功，请耐心等待!' })
+      handleError({ ctx, msg: '提交留言失败' })
     }
   }
 
@@ -129,11 +113,9 @@ class messageController {
       .catch(err => ctx.throw(500, '服务器内部错误'))
 
     if (result){
-      // handleSuccess({ ctx, message: '修改状态成功!' })
-      response({ ctx, success: true, msg: '修改状态成功!'})
+      handleSuccess({ ctx, msg: '修改状态成功'})
     }else{
-      // handleError({ ctx, message: '修改状态失败' })
-      response({ ctx, success: false, msg: '修改状态失败!' })
+      handleError({ ctx, msg: '修改状态失败' })
     }
   }
 
@@ -157,11 +139,9 @@ class messageController {
         throw new CustomError(500, '服务器内部错误')
       })
     if (result){
-      // handleSuccess({ ctx, message: '删除数据成功' })
-      response({ ctx, success: true, msg: '删除留言成功', data: result })
+      handleSuccess({ ctx, msg: '删除留言成功', data: result })
     }else{
-      // handleError({ ctx, message: '删除数据失败' })
-      response({ ctx, success: false, msg: '删除留言失败' })
+      handleError({ ctx,  msg: '删除留言失败' })
     }
   }
 }

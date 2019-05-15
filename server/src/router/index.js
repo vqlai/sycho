@@ -30,10 +30,10 @@ router.post('/addAndUploadUser', checkToken, upload.single('file'), U.addAndUplo
 router.put('/editAndUploadUser', checkToken, upload.single('file'), U.editAndUploadUser)
 
 // 链接管理 checkToken,
-router.get('/getLinks', L.getLinks)
-router.post('/addLink', checkToken, L.addLink)
-router.put('/editLink', checkToken, L.editLink)
-router.delete('/deleteLink/:id', checkToken, L.deleteLink)
+router.get('/link', L.getLink)
+router.post('/link', checkToken, L.postLink)
+router.put('/link/:id', checkToken, L.putLink)
+router.delete('/link/:id', checkToken, L.deleteLink)
 
 // 文章管理 
 router.get('/getArticleById', A.getArticleById)

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } from '@/api/user'
-import { getLinks, addLink, editLink, deleteLink } from '@/api/link'
+import { getLink, postLink, putLink, deleteLink } from '@/api/link'
 import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
 import { getCommentById, getComments, addComment, editComment, deleteComment } from '@/api/comment'
 import { getMessage, postMessage, putMessage, patchMessage, deleteMessage } from '@/api/message'
@@ -204,10 +204,9 @@ const store = new Vuex.Store({
       })
     },
 
-    GetLinks({ commit }, params) {
+    GetLink({ commit }, params) {
       return new Promise((resolve, reject) => {
-        getLinks(params).then(res => {
-          // console.log(res)
+        getLink(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -215,10 +214,9 @@ const store = new Vuex.Store({
       })
     },
 
-    AddLink({ commit }, params) {
+    PostLink({ commit }, params) {
       return new Promise((resolve, reject) => {
-        addLink(params).then(res => {
-          // console.log(res)
+        postLink(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -226,10 +224,9 @@ const store = new Vuex.Store({
       })
     },
 
-    EditLink({ commit }, params) {
+    PutLink({ commit }, params) {
       return new Promise((resolve, reject) => {
-        editLink(params).then(res => {
-          // console.log(res)
+        putLink(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)

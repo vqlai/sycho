@@ -138,13 +138,13 @@
         <el-form-item label="邮箱" required prop="email">
           <el-input v-model="messageForm.email" placeholder="请输入邮箱" clearable></el-input>
         </el-form-item>
-        <el-form-item label="内容" required prop="content" @keyup.enter.native="handleFormComfirm">
+        <el-form-item label="内容" required prop="content" @keyup.enter.native="handleSubmitForm">
           <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="messageForm.content"> </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleFormComfirm">确 定</el-button>
+        <el-button type="primary" @click="handleSubmitForm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -269,7 +269,7 @@ import { checkEmail } from '@/assets/js/validate.js'
         })
       },
       // 提交留言
-      handleFormComfirm(){
+      handleSubmitForm(){
         let params = {
           name: this.messageForm.name,
           email: this.messageForm.email,
