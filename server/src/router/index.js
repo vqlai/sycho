@@ -19,15 +19,15 @@ const config = require('../utils/config.js'),
 */
 // 用户管理
 router.post('/login', U.login)
-router.post('/addUser', checkToken, U.addUser)
 router.get('/getUserInfo', checkToken, U.getUserInfo)
-router.get('/getUsers', checkToken, U.getUsers)
-router.delete('/deleteUser/:id', checkToken, U.deleteUser)
 // router.get('/getAllUser', checkToken, U.getAllUser)
+router.get('/user', checkToken, U.getUser)
+// router.post('/addUser', checkToken, U.addUser)
 // upload.single('file')这里面的file是上传空间的name<input type="file" name="file"/> 
 // upload.single设置单文件上传
-router.post('/addAndUploadUser', checkToken, upload.single('file'), U.addAndUploadUser)
-router.put('/editAndUploadUser', checkToken, upload.single('file'), U.editAndUploadUser)
+router.post('/user', checkToken, upload.single('file'), U.postUser)
+router.put('/user/:id', checkToken, upload.single('file'), U.putUser)
+router.delete('/user/:id', checkToken, U.deleteUser)
 
 // 链接管理 checkToken,
 router.get('/link', L.getLink)

@@ -30,9 +30,9 @@ export async function GetUserInfo () {
 }
 
 // 获取用户列表
-export async function getUsers(params) {
+export async function getUser(params) {
   return await request({
-    url: '/getUsers',
+    url: '/user',
     method: 'get',
     params: { ...params }
   })
@@ -40,19 +40,19 @@ export async function getUsers(params) {
 
 // 新增用户
 // 注意上传文件不能用...运算符,要设置文件类型头部
-export async function addUser(data) {
+export async function postUser(data) {
   return await request({
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: '/addAndUploadUser',
+    url: '/user',
     method: 'post',
     data: data
   })
 }
 
-export async function editUser(data) {
+export async function putUser(data) {
   return await request({
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: '/editAndUploadUser',
+    url: `/user/${data._id}`,
     method: 'put',
     data: data
   })
@@ -61,7 +61,7 @@ export async function editUser(data) {
 // 删除用户
 export async function deleteUser(data) {
   return await request({
-    url: `/deleteUser/${data}`,
+    url: `/user/${data}`,
     method: 'delete',
   })
 }

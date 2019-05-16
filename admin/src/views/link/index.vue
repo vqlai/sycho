@@ -115,6 +115,7 @@
         </el-form-item>
         <el-form-item label="类型" required prop="type">
           <el-select v-model="linkForm.type" placeholder="请选择链接类型" style="display: block;" clearable>
+            <!-- option的值是通过===严格判断的 -->
             <el-option
               v-for="(item, index) in linkTypes"
               :key="item.value"
@@ -138,7 +139,7 @@
 </template>
 
 <script>
-  import moment from 'moment'
+  // import moment from 'moment'
   import data from '@/assets/js/data'
   import { formatterTime } from '@/assets/js/filter.js'
 
@@ -187,13 +188,12 @@
     mounted(){
     },
     methods: {
-      formatterTime(row, column, cellValue, inde){
-        return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
-      },
+      // formatterTime(row, column, cellValue, inde){
+      //   return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
+      // },
       _getLink(){
         this.loading = true
         this.$store.dispatch('GetLink', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, type: this.type }).then(res => {
-          // console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
             console.log(this.tableData)
@@ -267,7 +267,6 @@
               url: this.linkForm.url,
               desc: desc
             }
-            // console.log(params)
             if (this.linkForm._id) {
               action = 'PutLink'
               params._id = this.linkForm._id
@@ -283,7 +282,7 @@
               // params = { ...this.linkForm }
             }
             this.$store.dispatch(action, params).then(res => {
-              console.log(res)
+              // console.log(res)
               if(res.success){
                 this._getLink()
                 this.dialogVisible = false

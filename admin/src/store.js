@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { login, logout, GetUserInfo, addUser, getUsers, editUser, deleteUser } from '@/api/user'
+import { login, logout, GetUserInfo, getUser, postUser, putUser, deleteUser } from '@/api/user'
 import { getLink, postLink, putLink, deleteLink } from '@/api/link'
 import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
 import { getCommentById, getComments, addComment, editComment, deleteComment } from '@/api/comment'
@@ -244,9 +244,9 @@ const store = new Vuex.Store({
       })
     },
 
-    GetUsers({ commit }, params) {
+    GetUser({ commit }, params) {
       return new Promise((resolve, reject) => {
-        getUsers(params).then(res => {
+        getUser(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -254,9 +254,9 @@ const store = new Vuex.Store({
       })
     },
 
-    AddUser({ commit }, params) {
+    PostUser({ commit }, params) {
       return new Promise((resolve, reject) => {
-        addUser(params).then(res => {
+        postUser(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -264,9 +264,9 @@ const store = new Vuex.Store({
       })
     },
 
-    EditUser({ commit }, params) {
+    PutUser({ commit }, params) {
       return new Promise((resolve, reject) => {
-        editUser(params).then(res => {
+        putUser(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)

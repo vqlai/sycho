@@ -7,6 +7,7 @@ const md5 = require('md5')
 const jwt = require('jsonwebtoken')
 const config = require('../utils/config')
 const { handleSuccess, handleError } = require('../utils/handle')
+const { CustomError, HttpError } = require('../utils/customError.js')
 const fs = require('fs')
 
 //返回数据格式
@@ -19,7 +20,8 @@ class userController{
 	// 用户登录
 	static async login(ctx){
 		// 获取参数，get通过ctx.query;post通过ctx.request.body
-		const {username, password} = ctx.request.body;
+		const {username, password} = ctx.request.body
+		console.log(ctx.request.body)
 		if(!username){
 			handleError({ ctx, msg: '用户名不能为空！' })
       return false // 需返回false，否则会往下执行
@@ -61,8 +63,8 @@ class userController{
 	static async getUserInfo(ctx){
 		console.log(ctx.header.authorization)
 		console.log(ctx.query)
-		const ip = ctx.request.get('X-Forwarded-For') || ctx.request.get('X-Real-IP')
-		console.log(ip)
+		// const ip = ctx.request.get('X-Forwarded-For') || ctx.request.get('X-Real-IP')
+		// console.log(ip)
 		let token = ctx.header.authorization.split(' ')[1]
 		let decoded = jwt.verify(token, config.jwt.secret)
 		console.log(decoded)
@@ -81,134 +83,212 @@ class userController{
 	}
 
 	// 根据搜索条件获取用户，默认获取用户列表
-	static async getUsers(ctx){
-		let currentPage = parseInt(ctx.query.currentPage)
-		let pageSize = parseInt(ctx.query.pageSize)
-		let queryName = ctx.query.queryName
-		let queryRole = parseInt(ctx.query.queryRole)
+	static async getUser(ctx){
+		let { currentPage = 1, pageSize = 10, keyword = '', role = '' } = ctx.query
 		console.log(ctx.query)
-		// console.log(ctx.query.queryName)
-		if(currentPage <= 0) currentPage = 1
-		let result=null,total=0
-		// 组合搜索
-    const querys = {}
-    // 名字查询
-    if(queryName){
-    	querys['$or'] = [ 
-	      { 'username': {$regex: queryName} } // 使用正则模糊搜索
-	    ]
-    }
-    // 权限查询
-    if (queryRole) { querys.role = queryRole }
-		// 如何将密码去除在返回到前端？
-		if(currentPage && pageSize){
-			result = await User
-				// .find({'username': new RegExp(ctx.query.queryName)}) // 模糊搜索
-				// .find({'username': {$regex: ctx.query.queryName}}) // 模糊搜索
-				// .find({ $or: [
-        //  	{'username': {$regex: ctx.query.queryName}}
-       	//	]
-        // }) 
-        .find(querys) // 模糊搜索
-				.sort({ 'createTime': -1 }) // 排序，-1为倒序
-				.skip(pageSize * (currentPage - 1)) // 跳过数
-				.limit(pageSize) // 限制每页显示数
-				.exec() // 执行sql语句
-				.catch(err=>{
-					ctx.throw(500, '服务器内部错误-getUser错误！')
-				})
-			total = await User
-				// .count() // 5.2版本已废弃
-				.countDocuments()
-				.exec()
-				.catch(err => {
-					ctx.throw(500, '服务器内部错误-分页总数查询错误!')
-				})
-		}else{
-			result = await User.find().exec().catch(err => {
-				ctx.throw(500, '服务器内部错误-getUser错误！')
-			})
+		// 过滤条件
+		const options = {
+			sort: { createDate: -1 }, // 按时间倒序
+			page: Number(currentPage), // 当前页
+			limit: Number(pageSize) // 每页数
 		}
-		if(result){
-			handleSuccess({ ctx, msg: '数据获取成功！', 
-				data: {
+
+		// 查询参数
+		const querys = { username: new RegExp(keyword) }
+
+		// 审核状态查询
+		if (['1', '2', '3'].includes(role)) { querys.role = Number(role) }
+		// 查询
+		const result = await User
+			.paginate(querys, options)
+			.catch(err => {
+				throw new CustomError(500, '服务器内部错误')
+				return false
+			})
+		console.log(result)
+		if (result) {
+			handleSuccess({
+				ctx, msg: '列表数据获取成功', data: {
 					pagination: {
-            total,
-            currentPage,
-            pageSize
-          },
-          list: result
+						currentPage: result.page, // 当前页
+						totalPage: result.pages, // 总页数
+						pageSize: result.limit, // 分页大小
+						total: result.total, // 总条数
+					},
+					list: result.docs
 				}
 			})
-		}else{
-			handleError({ ctx, msg: '数据获取失败！' })
+		} else {
+			handleError({ ctx, msg: '获取列表数据失败' })
 		}
+
+		// let currentPage = parseInt(ctx.query.currentPage)
+		// let pageSize = parseInt(ctx.query.pageSize)
+		// let queryName = ctx.query.queryName
+		// let queryRole = parseInt(ctx.query.queryRole)
+		// console.log(ctx.query)
+		// // console.log(ctx.query.queryName)
+		// if(currentPage <= 0) currentPage = 1
+		// let result=null,total=0
+		// // 组合搜索
+    // const querys = {}
+    // // 名字查询
+    // if(queryName){
+    // 	querys['$or'] = [ 
+	  //     { 'username': {$regex: queryName} } // 使用正则模糊搜索
+	  //   ]
+    // }
+    // // 权限查询
+    // if (queryRole) { querys.role = queryRole }
+		// // 如何将密码去除在返回到前端？
+		// if(currentPage && pageSize){
+		// 	result = await User
+		// 		// .find({'username': new RegExp(ctx.query.queryName)}) // 模糊搜索
+		// 		// .find({'username': {$regex: ctx.query.queryName}}) // 模糊搜索
+		// 		// .find({ $or: [
+    //     //  	{'username': {$regex: ctx.query.queryName}}
+    //    	//	]
+    //     // }) 
+    //     .find(querys) // 模糊搜索
+		// 		.sort({ 'createTime': -1 }) // 排序，-1为倒序
+		// 		.skip(pageSize * (currentPage - 1)) // 跳过数
+		// 		.limit(pageSize) // 限制每页显示数
+		// 		.exec() // 执行sql语句
+		// 		.catch(err=>{
+		// 			ctx.throw(500, '服务器内部错误-getUser错误！')
+		// 		})
+		// 	total = await User
+		// 		// .count() // 5.2版本已废弃
+		// 		.countDocuments()
+		// 		.exec()
+		// 		.catch(err => {
+		// 			ctx.throw(500, '服务器内部错误-分页总数查询错误!')
+		// 		})
+		// }else{
+		// 	result = await User.find().exec().catch(err => {
+		// 		ctx.throw(500, '服务器内部错误-getUser错误！')
+		// 	})
+		// }
+		// if(result){
+		// 	handleSuccess({ ctx, msg: '数据获取成功！', 
+		// 		data: {
+		// 			pagination: {
+    //         total,
+    //         currentPage,
+    //         pageSize
+    //       },
+    //       list: result
+		// 		}
+		// 	})
+		// }else{
+		// 	handleError({ ctx, msg: '数据获取失败！' })
+		// }
 	}
 
 
 	// 新增用户&图片上传 （注意：接口需要有返回，否则响应404）
-	static async addAndUploadUser(ctx){
+	static async postUser(ctx){
 		// ctx.req是使用multer上传插件封装的请求参数
-		console.log(ctx.req.file)
-		console.log(ctx.req.body)
-		const { username, curPwd, surePwd, role, desc } = ctx.req.body
+		const { username, curPwd, surePwd, role, desc } = ctx.req.body //请求参数放在请求体
 		const file = ctx.req.file
-		if(!username){
-			handleError({ ctx, msg: '用户名不能为空！' })
-			if(file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
-			return false
-		}
 		if (!curPwd){
-			handleError({ ctx, msg: '密码不能为空！' })
 			if(file) fs.unlinkSync(file.path)
+			throw new CustomError(500, '密码不能为空')
 			return false
 		}
 		if (curPwd != surePwd) {
-			handleError({ ctx, msg: '两次密码输入不一致！' })
 			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+			throw new CustomError(500, '两次密码输入不一致')
 			return false
 		}
-		if (!role){
-			handleError({ ctx, msg: '角色没有分配！' })
-			if(file) fs.unlinkSync(file.path)
-			return false
-		}
-		if (!desc) {
-			handleError({ ctx, msg: '角色描述不能为空！' })
-			if (file) fs.unlinkSync(file.path)
-			return false
-		}
-		// 查询新增用户名是否已存在
+		// // 查询新增用户名是否已存在
 		let oneUser = await User
 			.findOne({ 'username': username })
 			.exec() // 执行sql语句
 			.catch(err => {
-				ctx.throw(500, '服务器内部错误-findOneUser错误！')
+				throw new CustomError(500, '服务器内部错误')
+				return false
 			})
-		if(oneUser === null){
-			const user = new User({
+		if(oneUser){
+			if(file) fs.unlinkSync(file.path)
+			handleError({ ctx, msg: '用户名已存在！' })
+		} else {
+			const result = await new User({
 				username,
 				password: md5(curPwd),
 				role: parseInt(role),
 				desc: desc,
 				avatar: file ? `upload/avatar/${file.filename}` : 'upload/avatar/default.png',
-				createTime: new Date().getTime()
-			})
-			let result = await user.save().catch((err) => {
-				ctx.throw(500, '服务器内部错误-addUser错误！')
-			})
-			handleSuccess({
-				ctx, msg: '新增成功！',
-				data: result
-			})
-		}else{
-			if(file) fs.unlinkSync(file.path)
-			handleError({ ctx, msg: '用户名已存在！' })
+			}).save()
+				.catch(err => {
+					if (file) fs.unlinkSync(file.path)
+					throw new CustomError(500, '服务器内部错误')
+					return false
+				})
+			if (result) handleSuccess({ ctx, msg: '新增链接成功', data: result })
+			else handleError({ ctx, msg: '新增链接失败' })
 		}
+
+		// console.log(ctx.req.file)
+		// console.log(ctx.req.body)
+		// const { username, curPwd, surePwd, role, desc } = ctx.req.body
+		// const file = ctx.req.file
+		// if(!username){
+		// 	handleError({ ctx, msg: '用户名不能为空！' })
+		// 	if(file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+		// 	return false
+		// }
+		// if (!curPwd){
+		// 	handleError({ ctx, msg: '密码不能为空！' })
+		// 	if(file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// if (curPwd != surePwd) {
+		// 	handleError({ ctx, msg: '两次密码输入不一致！' })
+		// 	if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+		// 	return false
+		// }
+		// if (!role){
+		// 	handleError({ ctx, msg: '角色没有分配！' })
+		// 	if(file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// if (!desc) {
+		// 	handleError({ ctx, msg: '角色描述不能为空！' })
+		// 	if (file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// // 查询新增用户名是否已存在
+		// let oneUser = await User
+		// 	.findOne({ 'username': username })
+		// 	.exec() // 执行sql语句
+		// 	.catch(err => {
+		// 		ctx.throw(500, '服务器内部错误-findOneUser错误！')
+		// 	})
+		// if(oneUser === null){
+		// 	const user = new User({
+		// 		username,
+		// 		password: md5(curPwd),
+		// 		role: parseInt(role),
+		// 		desc: desc,
+		// 		avatar: file ? `upload/avatar/${file.filename}` : 'upload/avatar/default.png',
+		// 		createTime: new Date().getTime()
+		// 	})
+		// 	let result = await user.save().catch((err) => {
+		// 		ctx.throw(500, '服务器内部错误-addUser错误！')
+		// 	})
+		// 	handleSuccess({
+		// 		ctx, msg: '新增成功！',
+		// 		data: result
+		// 	})
+		// }else{
+		// 	if(file) fs.unlinkSync(file.path)
+		// 	handleError({ ctx, msg: '用户名已存在！' })
+		// }
 	}
 
 	// 编辑用户&修改图片
-	static async editAndUploadUser(ctx){
+	static async putUser(ctx){
 		console.log(ctx.req.file)
 		console.log(ctx.req.body)
 		const { id, username, role, desc, prePwd, newPwd, surePwd } = ctx.req.body

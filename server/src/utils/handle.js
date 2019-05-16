@@ -9,6 +9,6 @@ exports.handleSuccess = ({ ctx, msg = '请求成功', data = null }) => {
 }
 
 // 请求成功
-exports.response = ({ ctx, success = false, msg = '请求成功', data = {} }) => {
-	ctx.response.body = { code: 200, success, msg, data }
-}
+// exports.response = ({ ctx, success = false, msg = '请求成功', data = {} }) => {
+// 	ctx.response.body = { code: 200, success, msg, data }
+// }

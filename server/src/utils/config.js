@@ -3,13 +3,13 @@ let config = {
 	admin: [{
 		username: 'admin',
 		password: 'v123456Q',
-		role: 1,
+		role: 3,
 		desc: '超级管理员',
 		avatar: 'upload/avatar/default.png'
 	},{
 		username: 'root',
 		password: 'v123456Q',
-		role: 1,
+		role: 3,
 		desc: '超级管理员',
 		avatar: 'upload/avatar/default.png'
 	},{
@@ -21,7 +21,7 @@ let config = {
 	},{
 		username: 'vqlai',
 		password: 'v123456Q',
-		role: 3,
+		role: 1,
 		desc: '普通用户',
 		avatar: 'upload/avatar/default.png'
 	}],

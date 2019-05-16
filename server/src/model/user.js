@@ -1,13 +1,39 @@
+/**
+ * Created by laiweiqang on 2019/04/26
+ */
+// 用户表
 const mongoose = require('mongoose')
-// const Schema = mongoose.Schema
+const autoIncrement = require('mongoose-auto-increment')
+const mongoosePaginate = require('mongoose-paginate')
+
+// 自增ID初始化
+autoIncrement.initialize(mongoose.connection)
 
 const userSchema = new mongoose.Schema({
 	username: { type: String, required: true },
 	password: { type: String, required: true },
-	role: { type: Number }, // 用户权限 1为超级管理员 2为管理员 3为普通用户
+	role: { type: Number, required: true }, // 用户权限 1为普通用户 2为管理员 3为超级管理员
 	desc: { type: String }, // 用户描述
 	avatar: { type: String }, // 用户头像
-	createTime: { type: String, required: true} // 因为类型是Date, 无法保存时间戳, 废弃Date类型
+	// 发布日期
+	createDate: { type: Date, default: Date.now() },
+	// 最后修改日期
+	updateDate: { type: Date, default: Date.now() }
+})
+
+// 翻页 + 自增ID插件配置
+userSchema.plugin(mongoosePaginate)
+userSchema.plugin(autoIncrement.plugin, {
+	model: 'user',
+	field: 'id',
+	startAt: 1,
+	incrementBy: 1
+})
+
+// 时间更新
+userSchema.pre('findOneAndUpdate', function (next) {
+	this.findOneAndUpdate({}, { updateDate: Date.now() })
+	next()
 })
 
 // mongoose 会自动把表名变成复数

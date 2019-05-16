@@ -1,9 +1,9 @@
 <template>
   <div class="user">
     <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入内容" v-model="queryName" clearable> </el-input> </el-col>
+      <el-col :span="4"><el-input placeholder="请输入内容" v-model="keyword" clearable> </el-input> </el-col>
       <el-col :span="4">
-        <el-select v-model="queryRole" placeholder="请选择权限类型" style="display: block;" clearable>
+        <el-select v-model="role" placeholder="请选择权限类型" style="display: block;" clearable>
           <el-option
             v-for="item in userTypes"
             :key="item.value"
@@ -69,11 +69,12 @@
             label="角色描述">
           </el-table-column>
           <el-table-column
-            prop="createTime"
             sortable
-            :formatter="formatterTime"
             align="center"
             label="创建时间">
+            <template slot-scope="scope">
+              {{ scope.row.createDate | formatterTime}}
+            </template>
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -194,8 +195,9 @@
 </template>
 
 <script>
-  import moment from 'moment'
+  // import moment from 'moment'
   import data from '@/assets/js/data'
+  import { formatterTime } from '@/assets/js/filter.js'
   export default {
     name: 'user',
     data(){
@@ -247,9 +249,9 @@
       }
       let userTypes = data.userTypes
       return {
-        queryName: '',
+        keyword: '',
         userTypes,
-        queryRole: '',
+        role: '',
         tableData: [],
         userForm: {
           id: undefined,
@@ -308,7 +310,10 @@
       }
     },
     created(){
-      this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
+      this._getUser()
+    },
+    filters: {
+      formatterTime
     },
     methods: {
       handleRemoveAvatar(){
@@ -323,39 +328,39 @@
           return '用户'
         }
       },
-      formatterTime(row, column, cellValue, inde){
-        return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
-      },
-      _getUsers(params){
+      // formatterTime(row, column, cellValue, inde){
+      //   return moment(parseInt(cellValue)).format('YYYY-MM-DD HH:mm:ss')
+      // },
+      _getUser(){
         this.loading = true
-        this.$store.dispatch('GetUsers', params).then(res => {
+        this.$store.dispatch('GetUser', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, role: this.role }).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
             this.total = res.data.pagination.total
             this.pageSize = res.data.pagination.pageSize
             this.currentPage = res.data.pagination.currentPage
           }else{
-            this.$message(res.msg)
+            this.$message.error(res.msg)
           }
         }).then(() => {
           this.loading = false
         })
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
+        // console.log(`每页 ${val} 条`)
         this.pageSize = val
-        this._getUsers({ currentPage: 1, pageSize: this.pageSize })
+        this._getUser()
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
+        // console.log(`当前页: ${val}`)
         this.currentPage = val
-        this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
+        this._getUser()
       },
       handleClick(row) {
         console.log(row)
       },
       handleSearch(){
-        this._getUsers({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryRole: this.queryRole })
+        this._getUser({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryRole: this.queryRole })
       },
       handleAdd(){
         this.userForm.username = ''
@@ -434,12 +439,12 @@
               // }
               formData.append('curPwd', this.userForm.curPwd)
               formData.append('surePwd', this.userForm.surePwd)
-              this.$store.dispatch('AddUser', formData).then(res => {
+              this.$store.dispatch('PostUser', formData).then(res => {
                 if(res.success){
                   this.fileObj = null // 清空上传图片
                   this.dialogVisible = false
                   this.$message({ message: res.msg, type: 'success' })
-                  this._getUsers({ currentPage: 1, pageSize: this.pageSize })
+                  this._getUser({ currentPage: 1, pageSize: this.pageSize })
                 }else{
                   this.$message({ message: res.msg, type: 'error' })
                 }
@@ -449,12 +454,12 @@
               formData.append('prePwd', this.userForm.prePwd)
               formData.append('newPwd', this.userForm.newPwd)
               formData.append('surePwd', this.userForm.confirmPwd)
-              this.$store.dispatch('EditUser', formData).then(res => {
+              this.$store.dispatch('PutUser', formData).then(res => {
                 if(res.success){
                   this.fileObj = null // 清空上传图片
                   this.dialogVisible = false
                   this.$message({ message: res.msg, type: 'success' })
-                  this._getUsers({ currentPage: 1, pageSize: this.pageSize })
+                  this._getUser({ currentPage: 1, pageSize: this.pageSize })
                 }else{
                   this.$message({ message: res.msg, type: 'error' })
                 }
