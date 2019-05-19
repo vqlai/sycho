@@ -21,7 +21,7 @@ export async function login(data) {
 // }
 
 // 无需传token，直接header解析
-export async function GetUserInfo () {
+export async function getUserInfo () {
   return await request({
     url: '/getUserInfo',
     method: 'get',

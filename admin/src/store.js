@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { login, logout, GetUserInfo, getUser, postUser, putUser, deleteUser } from '@/api/user'
+import { login, logout, getUserInfo, getUser, postUser, putUser, deleteUser } from '@/api/user'
 import { getLink, postLink, putLink, deleteLink } from '@/api/link'
 import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
 import { getCommentById, getComments, addComment, editComment, deleteComment } from '@/api/comment'
@@ -82,7 +82,8 @@ const store = new Vuex.Store({
         // (username, userInfo.password)
         // debugger
         login({ username: username, password: userInfo.password }).then(response => {
-          const data = response.data
+          // const data = response.data
+          const data = response
           console.log(data)
           setToken(data.token) // 把token存在cookie
           commit('SET_TOKEN', data.token) // token也存在vuex
@@ -97,7 +98,7 @@ const store = new Vuex.Store({
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         // state.token
-        GetUserInfo().then(res => {
+        getUserInfo().then(res => {
           // const data = response.data
           // if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
           //   commit('SET_ROLES', data.roles)

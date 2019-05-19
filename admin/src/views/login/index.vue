@@ -96,11 +96,15 @@ export default {
         if (valid) {
           this.loading = true
           console.log(111)
-          this.$store.dispatch('Login', this.loginForm).then((data) => {
+          this.$store.dispatch('Login', this.loginForm).then(data => {
             // debugger
-            this.loading = false
             console.log(data)
-            this.$router.push({ path: this.redirect || '/' })
+            if(data.success){
+              this.$router.push({ path: this.redirect || '/' })
+            }else{
+              this.$message.error(data.msg)
+            }
+            this.loading = false
           }).catch(() => {
             this.loading = false
           })
