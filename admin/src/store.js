@@ -81,13 +81,19 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         // (username, userInfo.password)
         // debugger
-        login({ username: username, password: userInfo.password }).then(response => {
+        login({ username: username, password: userInfo.password }).then(res => {
           // const data = response.data
-          const data = response
-          console.log(data)
-          setToken(data.token) // 把token存在cookie
-          commit('SET_TOKEN', data.token) // token也存在vuex
-          resolve(data)
+          // const data = response
+          // console.log(res)
+          // setToken(data.token) // 把token存在cookie
+          // commit('SET_TOKEN', data.token) // token也存在vuex
+          // resolve(data)
+          // const result = res.data
+          if (res.success){
+            setToken(res.data.token) // 把token存在cookie
+            commit('SET_TOKEN', res.data.token)
+          }
+          resolve(res)
         }).catch(error => {
           reject(error)
         })
