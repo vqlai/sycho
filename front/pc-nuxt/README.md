@@ -20,3 +20,27 @@ $ npm run generate
 ```
 
 For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
+
+       ┌─┐       ┌─┐
+    ┌──┘ ┴───────┘ ┴──┐
+    │                 │
+    │       ───       │
+    │   >        <    │
+    │                 │
+    │   ...  ⌒  ...   │
+    │                 │
+    └───┐         ┌───┘
+        │         │
+        │         │
+        │         │
+        │         └──────────────┐
+        │                        │
+        │                        ├─┐
+        │                        ┌─┘
+        │                        │
+        └─┐  ┐  ┌───────┬──┐  ┌──┘
+          │ ─┤ ─┤       │ ─┤ ─┤
+          └──┴──┘       └──┴──┘
+                 神兽保佑
+                代码无BUG!
+ 
