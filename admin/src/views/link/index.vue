@@ -230,25 +230,21 @@
           type: '',
           url: ''
         })
+        this.$nextTick(() => { this.$refs['linkForm'].clearValidate() })
         this.dialogType = 1
         this.dialogVisible = true
-        this.$nextTick(() => {
-          this.$refs['linkForm'].clearValidate()
-        })
       },
       handleEdit(row){
-        console.log(row)
+        // console.log(row)
         // this.linkForm.id = row._id
         // this.linkForm.name = row.name
         // // 一定要转数字，否则无法知道select值
         // this.linkForm.type = Number(row.type)
         // this.linkForm.url = row.url
         this.linkForm = { ...row }
+        this.$nextTick(() => { this.$refs['linkForm'].clearValidate() })
         this.dialogType = 2
         this.dialogVisible = true
-        this.$nextTick(() => {
-          this.$refs['linkForm'].clearValidate()
-        })
       },
       handleSubmitForm(){
         this.$refs.linkForm.validate((valid) => {

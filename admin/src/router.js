@@ -70,7 +70,7 @@ export const constantRouterMap = [
         name: 'Edit',
         hidden: true,
         component: () => import('@/views/article/edit'),
-        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list' }
+        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list', keepAlive: false }
       }
     ]
   },

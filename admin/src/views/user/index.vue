@@ -13,7 +13,7 @@
         </el-select>
       </el-col>
       <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" round @click="_getUser">搜索</el-button>
         <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button>
       </el-col>
     </el-row>
@@ -188,7 +188,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleFormComfirm">确 定</el-button>
+        <el-button type="primary" @click="handleSubmitForm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -201,7 +201,7 @@
   export default {
     name: 'user',
     data(){
-      let checkAddPwd = (rule, value, callback) => {
+      let checkAddPwd1 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'))
         } else if (value.length < 6){
@@ -214,7 +214,7 @@
         }
       }
       let checkAddPwd2 = (rule, value, callback) => {
-        if (value === '') {
+        if (value === '' || typeof value === 'undefined') {
           callback(new Error('请再次输入密码'))
         } else if (value.length < 6){
           callback(new Error('密码不能少于6位'))
@@ -224,7 +224,16 @@
           callback()
         }
       }
-      let checkEditPwd = (rule, value, callback) => {
+      let checkEditPwd1 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入密码'))
+        } else if (value.length < 6){
+          callback(new Error('密码不能少于6位'))
+        } else {
+          callback()
+        }
+      }
+      let checkEditPwd2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'))
         } else if (value.length < 6){
@@ -236,8 +245,8 @@
           callback()
         }
       }
-      let checkEditPwd2 = (rule, value, callback) => {
-        if (value === '') {
+      let checkEditPwd3 = (rule, value, callback) => {
+        if (value === '' || typeof value === 'undefined') {
           callback(new Error('请再次输入密码'))
         } else if (value.length < 6){
           callback(new Error('密码不能少于6位'))
@@ -254,14 +263,14 @@
         role: '',
         tableData: [],
         userForm: {
-          id: undefined,
+          _id: '',
           username: '',
           curPwd: '',
           surePwd: '',
           prePwd: '',
           newPwd: '',
           confirmPwd: '',
-          role: undefined,
+          role: '',
           desc: ''
         },
         userFormRules: {
@@ -270,24 +279,24 @@
             { required: true, message: '请输入用户名', trigger: 'change' }
           ],
           curPwd: [
-            { validator: checkAddPwd, trigger: 'blur' },
-            { validator: checkAddPwd, trigger: 'change' }
+            { validator: checkAddPwd1, trigger: 'blur' },
+            { validator: checkAddPwd1, trigger: 'change' }
           ],
           surePwd: [
             { validator: checkAddPwd2, trigger: 'blur' },
             { validator: checkAddPwd2, trigger: 'change' }
           ],
           prePwd: [
-            { validator: checkEditPwd, trigger: 'blur' },
-            { validator: checkEditPwd, trigger: 'change' }
+            { validator: checkEditPwd1, trigger: 'blur' },
+            { validator: checkEditPwd1, trigger: 'change' }
           ],
           newPwd: [
-            { validator: checkEditPwd, trigger: 'blur' },
-            { validator: checkEditPwd, trigger: 'change' }
-          ],
-          confirmPwd: [
             { validator: checkEditPwd2, trigger: 'blur' },
             { validator: checkEditPwd2, trigger: 'change' }
+          ],
+          confirmPwd: [
+            { validator: checkEditPwd3, trigger: 'blur' },
+            { validator: checkEditPwd3, trigger: 'change' }
           ],
           role: [
             { required: true, message: '请选择用户角色', trigger: 'change' }
@@ -320,12 +329,12 @@
         this.avatarImgUrl = ''
       },
       formatterRole(row, column, cellValue, index){
-        if(cellValue === 1){
-          return '超级管理员'
-        }else if(cellValue === 2){
-          return '管理员'
-        }else if(cellValue === 3){
+        if(cellValue === '1'){
           return '用户'
+        }else if(cellValue === '2'){
+          return '管理员'
+        }else if(cellValue === '3'){
+          return '超级管理员'
         }
       },
       // formatterTime(row, column, cellValue, inde){
@@ -359,67 +368,34 @@
       handleClick(row) {
         console.log(row)
       },
-      handleSearch(){
-        this._getUser({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryRole: this.queryRole })
-      },
+      // handleSearch(){
+      //   this._getUser({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryRole: this.queryRole })
+      // },
       handleAdd(){
-        this.userForm.username = ''
-        this.userForm.curPwd = ''
-        this.userForm.surePwd = ''
-        this.userForm.prePwd = ''
-        this.userForm.newPwd = ''
-        this.userForm.confirmPwd = ''
-        this.userForm.role = ''
-        this.userForm.desc = ''
-        this.avatarImgUrl = ''
-        this.$nextTick(() => {
-          this.$refs['userForm'].clearValidate()
+        this.userForm = Object.assign({}, {
+          _id: '',
+          username: '',
+          curPwd: '',
+          prePwd: '',
+          newPwd: '',
+          confirmPwd: '',
+          role: '',
+          desc: '',
         })
+        this.avatarImgUrl = ''
+        this.$nextTick(() => { this.$refs['userForm'].clearValidate() })
         this.dialogType = 1
         this.dialogVisible = true
       },
       handleEdit(row){
         // console.log(row)
-        this.userForm.id = row._id
-        this.userForm.username = row.username
-        this.userForm.curPwd = ''
-        this.userForm.prePwd = ''
-        this.userForm.newPwd = ''
-        this.userForm.surePwd = ''
-        this.userForm.role = Number(row.role)
-        this.userForm.desc = row.desc
+        this.userForm = { ...row }
         this.avatarImgUrl = `${this.reUrl}${row.avatar}`
-        this.$nextTick(() => {
-          this.$refs['userForm'].clearValidate()
-        })
+        this.$nextTick(() => { this.$refs['userForm'].clearValidate() })
         this.dialogType = 2
         this.dialogVisible = true
       },
-      handleDelete(row){
-        this.$confirm('此操作将删除该行, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch('DeleteUser', row._id).then(res => {
-            if(res.success){
-              this.$message({
-                message: res.msg,
-                type: 'success'
-              })
-              this._getUsers({ currentPage: this.currentPage, pageSize: this.pageSize })
-            }else{
-              this.$message({
-                message: res.msg,
-                type: 'error'
-              })
-            }
-          })
-        }).catch(() => {
-          console.log('取消删除')
-        })
-      },
-      handleFormComfirm(){
+      handleSubmitForm(){
         this.$refs.userForm.validate((valid) => {
           if (valid) {
             let formData = new FormData()
@@ -430,42 +406,48 @@
             // 注意输出formData只能通过get方式
             // console.log(formData.get('file'))
             // console.log(formData.get('username'))
-            if(this.dialogType === 1){
-              // if (this.fileObj) {
-              //   formData.append('file', this.fileObj)
-              // }else{
-              //   this.$message({ message: '请选择头像', type: 'warning' })
-              //   return
-              // }
-              formData.append('curPwd', this.userForm.curPwd)
-              formData.append('surePwd', this.userForm.surePwd)
-              this.$store.dispatch('PostUser', formData).then(res => {
-                if(res.success){
-                  this.fileObj = null // 清空上传图片
-                  this.dialogVisible = false
-                  this.$message({ message: res.msg, type: 'success' })
-                  this._getUser({ currentPage: 1, pageSize: this.pageSize })
-                }else{
-                  this.$message({ message: res.msg, type: 'error' })
-                }
-              })
-            }else if(this.dialogType === 2){
-              formData.append('id', this.userForm.id)
+            let action = ''
+            if (this.userForm._id) {
+              action = 'PutUser'
+              formData.append('_id', this.userForm._id)
               formData.append('prePwd', this.userForm.prePwd)
               formData.append('newPwd', this.userForm.newPwd)
               formData.append('surePwd', this.userForm.confirmPwd)
-              this.$store.dispatch('PutUser', formData).then(res => {
-                if(res.success){
-                  this.fileObj = null // 清空上传图片
-                  this.dialogVisible = false
-                  this.$message({ message: res.msg, type: 'success' })
-                  this._getUser({ currentPage: 1, pageSize: this.pageSize })
-                }else{
-                  this.$message({ message: res.msg, type: 'error' })
-                }
-              })
+            } else {
+              action = 'PostUser'
+              formData.append('curPwd', this.userForm.curPwd)
+              formData.append('surePwd', this.userForm.surePwd)
             }
+
+            this.$store.dispatch(action, formData).then(res => {
+              if(res.success){
+                this.fileObj = null // 清空上传图片
+                this.dialogVisible = false
+                this.$message({ message: res.msg, type: 'success' })
+                this._getUser()
+              }else{
+                this.$message({ message: res.msg, type: 'error' })
+              }
+            })
           }
+        })
+      },
+      handleDelete(row){
+        this.$confirm('此操作将删除该行, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DeleteUser', row._id).then(res => {
+            if(res.success){
+              this.$message.success(res.msg)
+              this._getUser()
+            }else{
+              this.$message.error(res.msg)
+            }
+          })
+        }).catch(() => {
+          console.log('取消删除')
         })
       },
       beforeAvatarUpload(file) {

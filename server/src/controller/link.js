@@ -220,7 +220,9 @@ class linkController {
     const result = await Link
       .findByIdAndRemove(_id)
       .catch(err => {
-        ctx.throw(500, '服务器内部错误-deleteLink错误！')
+        // ctx.throw(500, '服务器内部错误-deleteLink错误！')
+        throw new CustomError(500, '服务器内部错误')
+        return false
       })
     if (result) handleSuccess({ ctx, msg: '删除成功', data: result })
     else handleError({ ctx, msg: '删除失败' })

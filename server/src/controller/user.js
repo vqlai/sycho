@@ -85,7 +85,7 @@ class userController{
 	// 根据搜索条件获取用户，默认获取用户列表
 	static async getUser(ctx){
 		let { currentPage = 1, pageSize = 10, keyword = '', role = '' } = ctx.query
-		console.log(ctx.query)
+		// console.log(ctx.query)
 		// 过滤条件
 		const options = {
 			sort: { createDate: -1 }, // 按时间倒序
@@ -105,7 +105,7 @@ class userController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
-		console.log(result)
+		// console.log(result)
 		if (result) {
 			handleSuccess({
 				ctx, msg: '列表数据获取成功', data: {
@@ -289,142 +289,228 @@ class userController{
 
 	// 编辑用户&修改图片
 	static async putUser(ctx){
-		console.log(ctx.req.file)
-		console.log(ctx.req.body)
-		const { id, username, role, desc, prePwd, newPwd, surePwd } = ctx.req.body
+		const _id = ctx.params.id
+		const { username, role, desc, prePwd, newPwd, surePwd } = ctx.req.body
 		const file = ctx.req.file
+		console.log(ctx.params.id)
+		console.log(ctx.req.body)
+		console.log(ctx.req.file)
+
+		if (!_id) {
+			throw new CustomError(500, '无效参数')
+			return false
+		}
 		let oneUser = await User
-			.findOne({ '_id': id })
+			.findOne({ '_id': _id })
 			.exec() // 执行sql语句
 			.catch(err => {
-				ctx.throw(500, '服务器内部错误-findOneUser错误！')
+				throw new CustomError(500, '服务器内部错误')
+				return false
 			})
-		// console.log(oneUser)
-		if (!username) {
-			handleError({ ctx, msg: '用户名不能为空！' })
-			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
-			return false
-		}
-		let aUser = await User
-			.findOne({ 'username': username })
-			.exec() // 执行sql语句
+		const result = await User
+			.findByIdAndUpdate(_id, { 
+				username,
+				password: md5(newPwd),
+				role,
+				desc,
+				avatar: file ? `upload/avatar/${file.filename}` : oneUser.avatar
+			}, { new: true }) // new: true ？？？
 			.catch(err => {
-				ctx.throw(500, '服务器内部错误-findOneUser错误！')
+				throw new CustomError(500, '服务器内部错误')
+				return false
 			})
-		// console.log(aUser)
-		if (aUser != null){
-			handleError({ ctx, msg: '用户名已存在' })
-			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
-			return false
-		}
-		if (!prePwd) {
-			handleError({ ctx, msg: '原始密码不能为空' })
-			if (file) fs.unlinkSync(file.path)
-			return false
-		}
-		if (oneUser.password != md5(prePwd)){
-			handleError({ ctx, msg: '原始密码输入有误！' })
-			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
-			return false
-		}
-		if (!newPwd) {
-			handleError({ ctx, msg: '新密码不能为空' })
-			if (file) fs.unlinkSync(file.path)
-			return false
-		}
-		if (newPwd == prePwd) {
-			handleError({ ctx, msg: '新密码不能与原始密码相同' })
-			if (file) fs.unlinkSync(file.path)
-			return false
-		}
-		if (!surePwd) {
-			handleError({ ctx, msg: '确认密码不能为空' })
-			if (file) fs.unlinkSync(file.path)
-			return false
-		}
-		if (newPwd != surePwd) {
-			handleError({ ctx, msg: '新密码两次输入不一致！' })
-			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
-			return false
-		}
-		if (!role) {
-			handleError({ ctx, msg: '角色没有分配！' })
-			if (file) fs.unlinkSync(file.path)
-			return false
-		}
-		if (!desc) {
-			handleError({ ctx, msg: '角色描述不能为空！' })
-			if (file) fs.unlinkSync(file.path)
-			return false
-		}
-		let result = await User.findByIdAndUpdate(id, {
-			username,
-			password: md5(newPwd),
-			role,
-			desc,
-			avatar: file ? `upload/avatar/${file.filename}` : oneUser.avatar
-		}, { new: true })
-			.exec() // 执行查询，并将查询结果传入回调函数,可以传人一个函数，会返回成为一个完整的 promise 对象
-			.catch((err) => {
-				ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!');
-			})
-		// 有新图片上传 更新完毕后将老图删除
-		// console.log(file.path)
-		// 	要过滤掉默认图片，不然会被删除
-		if (file && !oneUser.avatar.includes('default.png')) {
-			// 先读取头像看是否存在,确保头像不存在的去删除的异常
-			fs.readFile(`static/${oneUser.avatar}`, (err, data)=>{
-				// 读取文件失败/错误
-				if (err) {
-					// throw err;
-					console.log(err)
-				} else {
-					// 读取文件成功
-					console.log(data)
-					fs.unlinkSync(`static/${oneUser.avatar}`)
-				}
-			})
-		}
-		handleSuccess({ ctx, msg: '修改成功！', data: result })
-	}
+		console.log(result)
+		if (result) {
+			// 有新图片上传 更新完毕后将老图删除
+			// console.log(file.path)
+			// 	要过滤掉默认图片，不然会被删除
+			if (file && !oneUser.avatar.includes('default.png')) {
+				// 先读取头像看是否存在,确保头像不存在的去删除的异常
+				fs.readFile(`src/static/${oneUser.avatar}`, (err, data)=>{
+					// 读取文件失败/错误
+					if (err) {
+						// throw err;
+						// console.log(err)
+						throw new CustomError(500, '读取文件失败')
+						return false
+					} else {
+						// 读取文件成功
+						// console.log(data)
+						fs.unlinkSync(`src/static/${oneUser.avatar}`)
+					}
+				})
+			}
+			handleSuccess({ ctx, msg: '修改数据成功', data: result })
+		} else handleError({ ctx, msg: '修改数据失败' })
 
-	// 用户退出 （前端直接退，无需后台退出）
-	static async logout(ctx) {
-		const { token } = ctx.request.body
-
+		// const { id, username, role, desc, prePwd, newPwd, surePwd } = ctx.req.body
+		// const file = ctx.req.file
+		// let oneUser = await User
+		// 	.findOne({ '_id': id })
+		// 	.exec() // 执行sql语句
+		// 	.catch(err => {
+		// 		ctx.throw(500, '服务器内部错误-findOneUser错误！')
+		// 	})
+		// // console.log(oneUser)
+		// if (!username) {
+		// 	handleError({ ctx, msg: '用户名不能为空！' })
+		// 	if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+		// 	return false
+		// }
+		// let aUser = await User
+		// 	.findOne({ 'username': username })
+		// 	.exec() // 执行sql语句
+		// 	.catch(err => {
+		// 		ctx.throw(500, '服务器内部错误-findOneUser错误！')
+		// 	})
+		// // console.log(aUser)
+		// if (aUser != null){
+		// 	handleError({ ctx, msg: '用户名已存在' })
+		// 	if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+		// 	return false
+		// }
+		// if (!prePwd) {
+		// 	handleError({ ctx, msg: '原始密码不能为空' })
+		// 	if (file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// if (oneUser.password != md5(prePwd)){
+		// 	handleError({ ctx, msg: '原始密码输入有误！' })
+		// 	if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+		// 	return false
+		// }
+		// if (!newPwd) {
+		// 	handleError({ ctx, msg: '新密码不能为空' })
+		// 	if (file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// if (newPwd == prePwd) {
+		// 	handleError({ ctx, msg: '新密码不能与原始密码相同' })
+		// 	if (file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// if (!surePwd) {
+		// 	handleError({ ctx, msg: '确认密码不能为空' })
+		// 	if (file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// if (newPwd != surePwd) {
+		// 	handleError({ ctx, msg: '新密码两次输入不一致！' })
+		// 	if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+		// 	return false
+		// }
+		// if (!role) {
+		// 	handleError({ ctx, msg: '角色没有分配！' })
+		// 	if (file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// if (!desc) {
+		// 	handleError({ ctx, msg: '角色描述不能为空！' })
+		// 	if (file) fs.unlinkSync(file.path)
+		// 	return false
+		// }
+		// let result = await User.findByIdAndUpdate(id, {
+		// 	username,
+		// 	password: md5(newPwd),
+		// 	role,
+		// 	desc,
+		// 	avatar: file ? `upload/avatar/${file.filename}` : oneUser.avatar
+		// }, { new: true })
+		// 	.exec() // 执行查询，并将查询结果传入回调函数,可以传人一个函数，会返回成为一个完整的 promise 对象
+		// 	.catch((err) => {
+		// 		ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!');
+		// 	})
+		// // 有新图片上传 更新完毕后将老图删除
+		// // console.log(file.path)
+		// // 	要过滤掉默认图片，不然会被删除
+		// if (file && !oneUser.avatar.includes('default.png')) {
+		// 	// 先读取头像看是否存在,确保头像不存在的去删除的异常
+		// 	fs.readFile(`static/${oneUser.avatar}`, (err, data)=>{
+		// 		// 读取文件失败/错误
+		// 		if (err) {
+		// 			// throw err;
+		// 			console.log(err)
+		// 		} else {
+		// 			// 读取文件成功
+		// 			console.log(data)
+		// 			fs.unlinkSync(`static/${oneUser.avatar}`)
+		// 		}
+		// 	})
+		// }
+		// handleSuccess({ ctx, msg: '修改成功！', data: result })
 	}
 
 	// 删除用户
 	static async deleteUser(ctx) {
 		const _id = ctx.params.id
 		if (!_id) {
-			handleError({ ctx, msg: '参数无效' })
+			throw new CustomError(500, '无效参数')
 			return false
 		}
 		const result = await User
 			.findByIdAndRemove(_id)
 			.catch(err => {
-				ctx.throw(500, '服务器内部错误-deleteUser错误！')
+				// ctx.throw(500, '服务器内部错误-deleteLink错误！')
+				throw new CustomError(500, '服务器内部错误')
+				return false
 			})
 		if (result) {
-			// fs.unlinkSync(`./static/${result.avatar}`) // 删除头像
-			if (result.avatar){
+			// console.log(result)
+				// fs.unlinkSync(`./src/static/${result.avatar}`) // 删除头像
+				// 默认头像不删除
+			if (result.avatar & !result.avatar.includes('default.png')){
 				// 先读取头像看是否存在
-				fs.readFile(`static/${result.avatar}`, (err, data) => {
+				fs.readFile(`src/static/${result.avatar}`, (err, data) => {
 					// 读取文件失败/错误
 					if (err) {
 						// throw err;
 						console.log(err)
+						throw new CustomError(500, '读取文件失败')
+						return false
 					}else{
 						// 读取文件成功
 						console.log(data);
-						fs.unlinkSync(`static/${result.avatar}`)
+						fs.unlinkSync(`src/static/${result.avatar}`)
 					}
 				})
-			} 
-			handleSuccess({ ctx, msg: '删除成功！', data: result })
-		}
-		else handleError({ ctx, msg: '删除失败！' })
+			}
+			handleSuccess({ ctx, msg: '删除成功', data: result })
+		} else handleError({ ctx, msg: '删除失败' })
+
+		// const _id = ctx.params.id
+		// if (!_id) {
+		// 	handleError({ ctx, msg: '参数无效' })
+		// 	return false
+		// }
+		// const result = await User
+		// 	.findByIdAndRemove(_id)
+		// 	.catch(err => {
+		// 		ctx.throw(500, '服务器内部错误-deleteUser错误！')
+		// 	})
+		// if (result) {
+		// 	// fs.unlinkSync(`./static/${result.avatar}`) // 删除头像
+		// 	if (result.avatar){
+		// 		// 先读取头像看是否存在
+		// 		fs.readFile(`static/${result.avatar}`, (err, data) => {
+		// 			// 读取文件失败/错误
+		// 			if (err) {
+		// 				// throw err;
+		// 				console.log(err)
+		// 			}else{
+		// 				// 读取文件成功
+		// 				console.log(data);
+		// 				fs.unlinkSync(`static/${result.avatar}`)
+		// 			}
+		// 		})
+		// 	} 
+		// 	handleSuccess({ ctx, msg: '删除成功！', data: result })
+		// }
+		// else handleError({ ctx, msg: '删除失败！' })
+	}
+
+	// 用户退出 （前端直接退，无需后台退出）
+	static async logout(ctx) {
+		const { token } = ctx.request.body
 	}
 
 	// 添加用户（废弃）

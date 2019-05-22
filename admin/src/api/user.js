@@ -21,7 +21,7 @@ export async function login(data) {
 // }
 
 // 无需传token，直接header解析
-export async function getUserInfo () {
+export async function getUserInfo() {
   return await request({
     url: '/getUserInfo',
     method: 'get',
@@ -49,10 +49,12 @@ export async function postUser(data) {
   })
 }
 
+// 修改用户
 export async function putUser(data) {
+  console.log(data.get('_id'))
   return await request({
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: `/user/${data._id}`,
+    url: `/user/${data.get('_id')}`,
     method: 'put',
     data: data
   })

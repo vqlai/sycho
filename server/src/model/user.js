@@ -12,7 +12,7 @@ autoIncrement.initialize(mongoose.connection)
 const userSchema = new mongoose.Schema({
 	username: { type: String, required: true },
 	password: { type: String, required: true },
-	role: { type: Number, required: true }, // 用户权限 1为普通用户 2为管理员 3为超级管理员
+	role: { type: String, required: true }, // 用户权限 1为普通用户 2为管理员 3为超级管理员
 	desc: { type: String }, // 用户描述
 	avatar: { type: String }, // 用户头像
 	// 发布日期

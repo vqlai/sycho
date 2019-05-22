@@ -11,13 +11,14 @@ let storage = multer.diskStorage({
 		console.log(file)
 		// 路径前面不能为/，否则会去找绝对路径
 		if(typeof file != 'undefined'){
-			let path = './static/upload/default'
+			let path = './src/static/upload/default'
 			// 根据请求url将头像放到不同文件夹下
-			if (req.url.includes('UploadUser')){
-				path = './static/upload/avatar'
+			if (req.url.includes('user')){
+				path = './src/static/upload/avatar'
 			} else if (req.url.includes('uploadArticlePics')){
-				path = './static/upload/article'
+				path = './src/static/upload/article'
 			}
+			console.log(path)
 			cb(null, path)
 		}
 	},

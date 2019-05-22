@@ -103,7 +103,8 @@ export default {
               this.$message.error(data.msg)
             }
             this.loading = false
-          }).catch(() => {
+          }).catch(err => {
+            this.$toast.error(err)
             this.loading = false
           })
         } else {
