@@ -23,15 +23,17 @@ class userController{
 		const {username, password} = ctx.request.body
 		console.log(ctx.request.body)
 		if(!username){
-			handleError({ ctx, msg: '用户名不能为空！' })
-      return false // 需返回false，否则会往下执行
+			throw new CustomError(500, '用户名不能为空')
+			// 需返回false，否则会往下执行
+			return false
 		}
 		if(!password){
-			handleError({ ctx, msg: '密码不能为空！' })
-      return false
+			throw new CustomError(500, '密码不能为空')
+			return false
 		}
 		let result = await User.findOne({username}).exec().catch(err => {
-			ctx.throw(500,'内部错误-findUser错误！')
+			throw new CustomError(500, '服务器内部错误')
+			return false
 		})
 		if(result){
 			if(result.password === md5(password)){
@@ -47,10 +49,7 @@ class userController{
 				let token = jwt.sign({id: result._id}, privateKey, {expiresIn})
 				console.log(token)
 
-				handleSuccess({ ctx, msg: '登录成功！', 
-					// data: {uid: result._id,username: result.username, token}
-					data: { token }
-				})
+				handleSuccess({ ctx, msg: '登录成功！', data: { token } })
 			}else{
 				handleError({ ctx, msg: '密码错误！' })
 			}
@@ -69,12 +68,12 @@ class userController{
 		let decoded = jwt.verify(token, config.jwt.secret)
 		console.log(decoded)
 		let result = await User.findOne({ _id: decoded.id  }).exec().catch(err => {
-			ctx.throw(500, '内部错误-findUser错误！')
+			// ctx.throw(500, '内部错误-findUser错误！')
+			throw new CustomError(500, '服务器内部错误')
+			return false
 		})
 		if(result){
-			handleSuccess({
-				ctx, 
-				msg: '获取用户信息成功！',
+			handleSuccess({ ctx, msg: '获取用户信息成功！',
 				data: { username: result.username, role: result.role, desc: result.desc,avatar: result.avatar}
 			})
 		} else {
@@ -307,6 +306,36 @@ class userController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
+		if (!prePwd) {
+			if (file) fs.unlinkSync(file.path)
+			throw new CustomError(500, '原始密码不能为空')
+			return false
+		}
+		if (!newPwd) {
+			if (file) fs.unlinkSync(file.path)
+			throw new CustomError(500, '新密码不能为空')
+			return false
+		}
+		if (!surePwd) {
+			if (file) fs.unlinkSync(file.path)
+			throw new CustomError(500, '确认密码不能为空')
+			return false
+		}
+		if (oneUser.password != md5(prePwd)){
+			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+			throw new CustomError(500, '原始密码输入有误！')
+			return false
+		}
+		if (newPwd == prePwd) {
+			if (file) fs.unlinkSync(file.path)
+			throw new CustomError(500, '新密码不能与原始密码相同')
+			return false
+		}
+		if (newPwd != surePwd) {
+			if (file) fs.unlinkSync(file.path) // 验证失败删除已上传的头像
+			throw new CustomError(500, '新密码两次输入不一致！')
+			return false
+		}
 		const result = await User
 			.findByIdAndUpdate(_id, { 
 				username,

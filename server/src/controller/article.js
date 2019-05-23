@@ -12,61 +12,8 @@ const fs = require('fs')
 // ctx.params DELETE
 class articleController{
 
-	// 上传文章图片
-	static async uploadArticlePics(ctx) {
-		// console.log(`http://${ctx.req.headers.host}`)
-		console.log(ctx.req.files) // 获取批量上传数组
-		console.log(ctx.req.body)
-		const files = ctx.req.files
-		// if (files.length) {
-		// 	let host = `http://${ctx.req.headers.host}/upload/article`
-		// 	let reg = /!\[(.*?)\]\((.*?)\)/g
-		// 	let originImgs = []
-		// 	let cacheImg = null
-		// 	while ((cacheImg = reg.exec(content)) !== null) {
-		// 		originImgs.push(cacheImg[0])
-		// 	}
-		// 	for (let [index, item] of originImgs.entries()) {
-		// 		content = content.replace(item, `![图片${index}](${host}/${files[index].filename})`)
-		// 	}
-		// } 
-		let result = []
-		for(let item of files){
-			let obj = {}
-			obj.url = `upload/article/${item.filename}`
-			obj.name = item.filename
-			result.push(obj)
-		}
-		handleSuccess({
-			ctx, msg: '批量上传图片成功！',
-			data: result
-		})
-	}
-
-	// 删除文章图片
-	static async removeArticlePics(ctx) {
-		console.log(ctx.request.body)
-		if (ctx.request.body.url) {
-			fs.readFile(`static/${ctx.request.body.url}`, (err, data) => {
-				// 读取文件失败/错误
-				if (err) {
-					// throw err;
-					console.log(err)
-					handleError({ ctx, msg: '删除失败' })
-				} else {
-					// 读取文件成功
-					fs.unlinkSync(`static/${ctx.request.body.url}`)
-				}
-			})
-		}else{
-			handleError({ ctx, msg: '没有图片路径' })
-		}
-		handleSuccess({
-			ctx, msg: '删除成功！',
-			data: 'remove successful。'
-		})
-	}
-
+	// 修改文章状态
+	static async patchArticle(ctx) {}
 	// 获取文章内容
 	static async getArticleById(ctx) {
 		let id = ctx.query.id
@@ -92,7 +39,7 @@ class articleController{
 	}
 
 	// 获取文章列表
-	static async getArticles(ctx) {
+	static async getArticle(ctx) {
 		console.log(ctx.query)
 		console.log(ctx.query.currentPage)
 		let currentPage = parseInt(ctx.query.currentPage)
@@ -153,7 +100,7 @@ class articleController{
 	}
 
 	// 发布文章
-	static async addArticle(ctx) {
+	static async postArticle(ctx) {
 		//es6对象解构赋值
 		const { title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body //请求参数放在请求体
 		if (!title) {
@@ -213,7 +160,7 @@ class articleController{
 	}
 
 	// 编辑文章
-	static async editArticle(ctx) {
+	static async putArticle(ctx) {
 		const { id, title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body 
 		if (!title) {
 			handleError({ ctx, msg: '文章标题不能为空！' })
@@ -279,6 +226,62 @@ class articleController{
 			})
 		if (result) handleSuccess({ ctx, msg: '删除成功！', data: result })
 		else handleError({ ctx, msg: '删除失败！' })
+	}
+
+
+	// 上传文章图片
+	static async uploadArticlePics(ctx) {
+		// console.log(`http://${ctx.req.headers.host}`)
+		console.log(ctx.req.files) // 获取批量上传数组
+		console.log(ctx.req.body)
+		const files = ctx.req.files
+		// if (files.length) {
+		// 	let host = `http://${ctx.req.headers.host}/upload/article`
+		// 	let reg = /!\[(.*?)\]\((.*?)\)/g
+		// 	let originImgs = []
+		// 	let cacheImg = null
+		// 	while ((cacheImg = reg.exec(content)) !== null) {
+		// 		originImgs.push(cacheImg[0])
+		// 	}
+		// 	for (let [index, item] of originImgs.entries()) {
+		// 		content = content.replace(item, `![图片${index}](${host}/${files[index].filename})`)
+		// 	}
+		// } 
+		let result = []
+		for (let item of files) {
+			let obj = {}
+			obj.url = `upload/article/${item.filename}`
+			obj.name = item.filename
+			result.push(obj)
+		}
+		handleSuccess({
+			ctx, msg: '批量上传图片成功！',
+			data: result
+		})
+	}
+
+	// 删除文章图片
+	static async removeArticlePics(ctx) {
+		console.log(ctx.request.body)
+		if (ctx.request.body.url) {
+			fs.readFile(`static/${ctx.request.body.url}`, (err, data) => {
+				// 读取文件失败/错误
+				if (err) {
+					// throw err;
+					console.log(err)
+					handleError({ ctx, msg: '删除失败' })
+				} else {
+					// 读取文件成功
+					fs.unlinkSync(`static/${ctx.request.body.url}`)
+				}
+			})
+		} else {
+			handleError({ ctx, msg: '没有图片路径' })
+		}
+		handleSuccess({
+			ctx, msg: '删除成功！',
+			data: 'remove successful。'
+		})
 	}
 
 	// 发布文章
