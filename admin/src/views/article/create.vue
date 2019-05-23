@@ -2,18 +2,19 @@
   <div class="create">
     <div class="v-container">
       <div class="v-header">
-        <el-row> <el-input placeholder="请输入标题" v-model="title" clearable> </el-input> </el-row>
+        <el-row> <span>标题：</span><el-input placeholder="请输入标题" v-model="title" clearable style="width: 81.8%;"> </el-input> </el-row>
+        <el-row style="display:flex;align-items:center;"> <span>描述：</span><el-input placeholder="请输入描述" v-model="desc" type="textarea" :rows="2" clearable style="width: 81.8%;"> </el-input> </el-row>
         <el-row type="flex" align="middle">
           <el-col :span="4"> <span>作者：</span> <el-input placeholder="请输入作者" v-model="author" clearable style="width: 75%;"> </el-input> </el-col>
           <el-col :span="4">
             <span>分类：</span>
             <el-select v-model="type" clearable placeholder="请选择文章类别">
               <el-option
-                v-for="item in articleTypes"
+                v-for="(item, index) in articleTypes"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-                v-show="item.value !== 0">
+                v-show="index !== 0">
               </el-option>
             </el-select>
           </el-col>
@@ -33,6 +34,21 @@
                 v-show="item.value !== 0">
               </el-option>
             </el-select>
+          </el-col>
+          <el-col :span="4">
+            <span>文章状态：</span>
+            <el-radio v-model="state" label="1">发布</el-radio>
+            <el-radio v-model="state" label="2">草稿</el-radio>
+          </el-col>
+          <el-col :span="4">
+            <span>是否公开：</span>
+            <el-radio v-model="publish" label="1">公开</el-radio>
+            <el-radio v-model="publish" label="2">私密</el-radio>
+          </el-col>
+        </el-row>
+        <el-row type="flex" align="middle">
+          <el-col :span="12">
+            <span>缩略图：</span>
           </el-col>
         </el-row>
       </div>
@@ -57,8 +73,8 @@
       </div>
       <div class="v-footer">
         <el-row>
+          <el-button type="success" @click="handleDraft">草稿</el-button>
           <el-button type="primary" @click="handleRelease">发布</el-button>
-          <!-- <el-button type="success" @click="handleDraft">草稿</el-button> -->
         </el-row>
       </div>
     </div>
@@ -79,11 +95,13 @@
       let articleTags = data.articleTags
       return {
         title: '',
+        desc: '',
         author: '',
         type: '',
         tag: [],
         likeNum: 0,
         lookNum: 0,
+        state: '1',
         releaseTime: '',
         content: '',
         articleTypes,

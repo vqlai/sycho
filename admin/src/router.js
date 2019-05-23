@@ -89,19 +89,6 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/comment',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Comment',
-        component: () => import('@/views/comment/index'),
-        meta: { title: 'Comment', icon: 'message', keepAlive: true }
-      }
-    ]
-  },
-
-  {
     path: '/link',
     component: Layout,
     children: [
@@ -123,6 +110,19 @@ export const constantRouterMap = [
         name: 'User',
         component: () => import('@/views/user/index'),
         meta: { title: 'User', icon: 'user', keepAlive: true }
+      }
+    ]
+  },
+
+  {
+    path: '/comment',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Comment',
+        component: () => import('@/views/comment/index'),
+        meta: { title: 'Comment', icon: 'message', keepAlive: true }
       }
     ]
   },
