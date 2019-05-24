@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { login, logout, getUserInfo, getUser, postUser, putUser, deleteUser } from '@/api/user'
 import { getLink, postLink, putLink, deleteLink } from '@/api/link'
-import { getArticleById, getArticles, addArticle, editArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
-import { getCommentById, getComments, addComment, editComment, deleteComment } from '@/api/comment'
+import { getArticleById, getArticle, postArticle, putArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
+import { getCommentById, getComment, postComment, putComment, deleteComment } from '@/api/comment'
 import { getMessage, postMessage, putMessage, patchMessage, deleteMessage } from '@/api/message'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
 
@@ -151,9 +151,9 @@ const store = new Vuex.Store({
       })
     },
 
-    GetArticles({ commit }, params) {
+    GetArticle({ commit }, params) {
       return new Promise((resolve, reject) => {
-        getArticles(params).then(res => {
+        getArticle(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -161,9 +161,9 @@ const store = new Vuex.Store({
       })
     },
 
-    AddArticle({ commit }, params) {
+    PostArticle({ commit }, params) {
       return new Promise((resolve, reject) => {
-        addArticle(params).then(res => {
+        postArticle(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -171,9 +171,9 @@ const store = new Vuex.Store({
       })
     },
 
-    EditArticle({ commit }, params) {
+    PutArticle({ commit }, params) {
       return new Promise((resolve, reject) => {
-        editArticle(params).then(res => {
+        putArticle(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -351,9 +351,9 @@ const store = new Vuex.Store({
       })
     },
 
-    GetComments({ commit }, params) {
+    GetComment({ commit }, params) {
       return new Promise((resolve, reject) => {
-        getComments(params).then(res => {
+        getComment(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -361,9 +361,9 @@ const store = new Vuex.Store({
       })
     },
 
-    AddComment({ commit }, params) {
+    PostComment({ commit }, params) {
       return new Promise((resolve, reject) => {
-        addComment(params).then(res => {
+        postComment(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -371,9 +371,9 @@ const store = new Vuex.Store({
       })
     },
 
-    EditComment({ commit }, params) {
+    PutComment({ commit }, params) {
       return new Promise((resolve, reject) => {
-        editComment(params).then(res => {
+        putComment(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)

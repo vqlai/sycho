@@ -10,28 +10,28 @@ export function getCommentById(params) {
 }
 
 // 获取文章列表
-export function getComments(params) {
+export function getComment(params) {
   console.log(params)
   return request({
-    url: '/getComments',
+    url: '/comment',
     method: 'get',
     params: { ...params }
   })
 }
 
 // 新增文章
-export async function addComment(data) {
+export async function postComment(data) {
   return await request({
-    url: '/addComment',
+    url: '/comment',
     method: 'post',
     data: { ...data }
   })
 }
 
 // 修改文章
-export async function editComment(data) {
+export async function putComment(data) {
   return await request({
-    url: '/editComment',
+    url: `/comment/${data._id}`,
     method: 'put',
     data: { ...data }
   })

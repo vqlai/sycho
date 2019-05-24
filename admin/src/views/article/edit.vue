@@ -120,7 +120,7 @@
             releaseTime: this.releaseTime,
             content: this.content
           }
-          this.$store.dispatch('EditArticle', params).then(res => {
+          this.$store.dispatch('PutArticle', params).then(res => {
             if(res.success){
               this.$message({ message: '发修改成功！', type: 'success' })
               setTimeout(() => {

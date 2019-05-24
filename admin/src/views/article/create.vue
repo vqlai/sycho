@@ -152,7 +152,7 @@
             content: this.content
           }
           console.log(params)
-          this.$store.dispatch('AddArticle', params).then(res => {
+          this.$store.dispatch('PostArticle', params).then(res => {
             console.log(res)
             if(res.success){
               this.$message({ message: '发布成功！', type: 'success' })

@@ -6,35 +6,35 @@ import request from '@/api/request'
 // 根据id获取指定文章
 export function getArticleById(params) {
   return request({
-    url: '/getArticleById',
+    url: `/article/${params._id}`,
     method: 'get',
     params: { ...params }
   })
 }
 
 // 获取文章列表
-export function getArticles(params) {
+export function getArticle(params) {
   console.log(params)
   return request({
-    url: '/getArticles',
+    url: '/article',
     method: 'get',
     params: { ...params }
   })
 }
 
 // 新增文章
-export async function addArticle(data) {
+export async function postArticle(data) {
   return await request({
-    url: '/addArticle',
+    url: `/article/${data._id}`,
     method: 'post',
     data: { ...data }
   })
 }
 
 // 修改文章
-export async function editArticle(data) {
+export async function putArticle(data) {
   return await request({
-    url: '/editArticle',
+    url: '/article',
     method: 'put',
     data: { ...data }
   })

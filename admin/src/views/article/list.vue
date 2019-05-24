@@ -1,9 +1,9 @@
 <template>
   <div class="list">
     <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入标题" v-model="queryTitle" clearable> </el-input> </el-col>
-      <el-col :span="4">
-        <el-select v-model="queryType" placeholder="请选择文章类别" style="display: block;" clearable>
+      <el-col :span="4"><el-input placeholder="请输入标题or描述" v-model="keyword" clearable @keyup.enter.native="_getArticle"> </el-input> </el-col>
+      <el-col :span="3">
+        <el-select v-model="type" placeholder="请选择类别" style="display: block;" clearable>
           <el-option
             v-for="item in articleTypes"
             :key="item.value"
@@ -12,8 +12,8 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="4">
-        <el-select v-model="queryTag" placeholder="请选择文章标签" style="display: block;" clearable>
+      <el-col :span="3">
+        <el-select v-model="tag" placeholder="请选择标签" style="display: block;" clearable>
           <el-option
             v-for="item in articleTags"
             :key="item.value"
@@ -22,8 +22,28 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="12">
-        <el-button type="primary" icon="el-icon-search" round @click="handleSearch">搜索</el-button>
+      <el-col :span="3">
+        <el-select v-model="publish" placeholder="请选择公开状态" style="display: block;" clearable>
+          <el-option
+            v-for="item in articlePublishs"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="3">
+        <el-select v-model="state" placeholder="请选择发布状态" style="display: block;" clearable>
+          <el-option
+            v-for="item in articleStates"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="6">
+        <el-button type="primary" icon="el-icon-search" round @click.native="_getArticle">搜索</el-button>
         <!-- <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button> -->
       </el-col>
     </el-row>
@@ -138,11 +158,23 @@
       let articleTypes = data.articleTypes
       let articleTags = data.articleTags
       return {
-        queryTitle: '',
+        keyword: '',
+        type: '',
+        tag: '',
+        publish: '',
+        state: '',
         articleTypes,
-        queryType: '',
         articleTags,
-        queryTag: '',
+        articlePublishs: [
+          { label: '全部', value: 0 },
+          { label: '公开', value: 1 },
+          { label: '私密', value: 2 }
+        ],
+        articleStates: [
+          { label: '全部', value: 0 },
+          { label: '已发布', value: 1 },
+          { label: '草稿', value: 2 }
+        ],
         tableData: [],
         currentPage: 1,
         pageSize: 10,
@@ -151,7 +183,7 @@
       }
     },
     created(){
-      this._getArticles({ currentPage: this.currentPage, pageSize: this.pageSize })
+      this._getArticle()
     },
     mounted(){},
     destroyed(){},
@@ -166,9 +198,18 @@
         // 箭头函数省去return
         return cellValue.split(',').map(item => this.articleTags[parseInt(item)].label).join()
       },
-      _getArticles(params){
+      _getArticle(){
         this.loading = true
-        this.$store.dispatch('GetArticles', params).then(res => {
+        let params = {
+          keyword: this.keyword,
+          type: this.type,
+          tag: this.tag,
+          publish: this.publish,
+          state: this.state,
+          currentPage: this.currentPage,
+          pageSize: this.pageSize
+        }
+        this.$store.dispatch('GetArticle', params).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
             this.total = res.data.pagination.total
@@ -183,15 +224,15 @@
       },
       handleSizeChange(val) {
         this.pageSize = val
-        this._getArticles({ currentPage: 1, pageSize: this.pageSize })
+        this._getArticle()
       },
       handleCurrentChange(val) {
         this.currentPage = val
-        this._getArticles({ currentPage: this.currentPage, pageSize: this.pageSize })
+        this._getArticle()
       },
-      handleSearch(){
-        this._getArticles({ currentPage: 1, pageSize: this.pageSize, queryTitle: this.queryTitle, queryType: this.queryType, queryTag: this.queryTag })
-      },
+      // handleSearch(){
+      //   this._getArticle({ currentPage: 1, pageSize: this.pageSize, queryTitle: this.queryTitle, queryType: this.queryType, queryTag: this.queryTag })
+      // },
       handleEdit(row) {
         console.log(row)
         this.$router.push({ path: `/article/edit/${row._id}` })
@@ -209,7 +250,7 @@
                 message: res.msg,
                 type: 'success'
               })
-              this._getArticles({ currentPage: this.currentPage, pageSize: this.pageSize })
+              this._getArticle({ currentPage: this.currentPage, pageSize: this.pageSize })
             }else{
               this.$message({
                 message: res.msg,
