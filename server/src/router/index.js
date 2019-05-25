@@ -36,16 +36,16 @@ router.put('/link/:id', checkToken, L.putLink)
 router.delete('/link/:id', checkToken, L.deleteLink)
 
 // 文章管理 
-router.get('/article', A.getArticle)
-router.get('/article/:id', A.getArticleById)
-router.post('/article', checkToken, A.postArticle)
-router.put('/article', checkToken, A.putArticle)
-router.delete('/article/:id', checkToken, A.deleteArticle)
+router.get('/article', A.getArticle)                                           // 文章列表
+router.get('/article/:id', A.getArticleById)																	// 文章详情
+router.post('/article', checkToken, A.postArticle)														// 添加文章
+router.put('/article', checkToken, A.putArticle)															// 修改文章	
+router.delete('/article/:id', checkToken, A.deleteArticle)										// 删除文章
 router.patch('/article/:id', checkToken, A.patchArticle)											// 修改文章状态
 //upload.array设置多文件上传 20为限制上传数量
-router.post('/uploadArticlePics', checkToken, upload.array('file', 20), A.uploadArticlePics)
+router.post('/uploadArticlePics', checkToken, upload.array('file', 20), A.uploadArticlePics) // 上传文章图片
 // 注：delete方法只能再url上拼参数，无法将参数放在请求body里
-router.post('/removeArticlePics', checkToken, A.removeArticlePics)
+router.post('/removeArticlePics', checkToken, A.removeArticlePics) // 删除文章图片
 
 // 留言管理
 router.get('/getMessageById', checkToken, M.getMessageById)
