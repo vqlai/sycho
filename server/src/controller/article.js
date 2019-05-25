@@ -4,6 +4,7 @@
 // 文章控制器
 const Article = require('../model/article.js')
 const { handleSuccess, handleError } = require('../utils/handle')
+const { CustomError, HttpError } = require('../utils/customError.js')
 const fs = require('fs')
 
 // ctx.req.files  ctx.req.body  文件上传
@@ -24,14 +25,14 @@ class articleController{
 			pageSize = 10,
       date,
 			hot } = ctx.query
-
+			console.log(ctx.query)
 		// 过滤条件
 		const options = {
 			sort: { createTime: -1 },
 			page: Number(currentPage),
 			limit: Number(pageSize),
-			populate: ['tag'],
-			select: '-content'
+			// populate: ['tag'],
+			select: '-content'  // 加这个content被过滤掉，不会返回到前端
 		}
 
 		// 参数
@@ -42,8 +43,8 @@ class articleController{
 			const keywordReg = new RegExp(keyword)
 			querys['$or'] = [
 				{ 'title': keywordReg },
-				{ 'content': keywordReg },
-				{ 'description': keywordReg }
+				// { 'content': keywordReg },
+				{ 'desc': keywordReg }
 			]
 		}
 
@@ -82,12 +83,20 @@ class articleController{
 			}
 		}
 
-		if (tag) querys.tag = tag
+		// if (tag) querys.tag = tag
+		if (tag) querys.tag = { $regex: tag }
+
+		// 如果是前台请求，则重置公开状态和发布状态
+		// if (!authIsVerified(ctx.request)) {
+		// 	querys.state = 1
+		// 	querys.publish = 1
+		// }
 
 		// 查询
 		const result = await Article
 			.paginate(querys, options)
 			.catch(err => {
+				console.log(err)
 				// ctx.throw(500, '服务器内部错误')
 				throw new CustomError(500, '服务器内部错误')
 				return false
@@ -99,9 +108,9 @@ class articleController{
 				data: {
 					pagination: {
 						total: result.total,
-						current_page: result.page,
-						total_page: result.pages,
-						page_size: result.limit
+						currentPage: result.page,
+						totalPage: result.pages,
+						pageSize: result.limit
 					},
 					list: result.docs
 				},
@@ -168,88 +177,117 @@ class articleController{
 		// }
 	}
 
-	// 获取文章内容
+	// 获取指定id的文章内容
 	static async getArticleById(ctx) {
-		let id = ctx.query.id
-		if (!id) {
-			handleError({ ctx, msg: '参数无效，查询失败！' })
+		let _id = ctx.params.id
+		if (!_id) {
+			handleError({ ctx, msg: '无效参数' })
 			return false
 		}
 		const result = await Article
-			.findOne({ '_id': id })
-			.exec() // 执行sql语句
+			.findById({ _id })
+			// .populate('tag')
+			// .exec() // 执行sql语句
 			.catch(err => {
-				ctx.throw(500, '服务器内部错误-findArticleById错误！')
+				console.log(err)
+				// ctx.throw(500, '服务器内部错误-findArticleById错误！')
+				throw new CustomError(500, '服务器内部错误')
+				return false
 			})
 		console.log(result)
 		if (result) {
-			handleSuccess({
-				ctx, msg: '数据获取成功！',
-				data: result
-			})
+			// 每次请求，views 都增加一次
+			result.meta.views += 1
+			result.save()
+			handleSuccess({ ctx, msg: '文章获取成功', data: result })
 		} else {
-			handleError({ ctx, msg: '数据获取失败！' })
+			handleError({ ctx, msg: '文章获取失败' })
 		}
 	}
 
 	// 发布文章
 	static async postArticle(ctx) {
-		//es6对象解构赋值
-		const { title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body //请求参数放在请求体
-		if (!title) {
-			handleError({ ctx, msg: '文章标题不能为空！' })
-			return false
-		}else if (!author) {
-			handleError({ ctx, msg: '作者不能为空！' })
-			return false
-		} else if (!type) {
-			handleError({ ctx, msg: '文章类型不能为空！' })
-			return false
-		} else if (!tag) {
-			handleError({ ctx, msg: '文章标签不能为空！' })
-			return false
-		} else if (typeof likeNum === "underfined") {
-			handleError({ ctx, msg: '点赞数不能为空！' })
-			return false
-		} else if (typeof lookNum === "underfined") {
-			handleError({ ctx, msg: '浏览数不能为空！' })
-			return false
-		} else if (!releaseTime) {
-			handleError({ ctx, msg: '发布时间不能为空！' })
-			return false
-		} else if (!content) {
-			handleError({ ctx, msg: '文章内容为空！' })
-			return false
-		}
-		let oneArticle = await Article
-			.findOne({ 'title': title })
-			.exec() // 执行sql语句
+		// ctx.request.body.tag = ctx.request.body.tag.join()
+		// ctx.request.body.tag = 'xyz'
+		console.log(ctx.request.body)
+		const result = await new Article(ctx.request.body)
+			.save()
 			.catch(err => {
-				ctx.throw(500, '服务器内部错误-findOneArticle错误！')
+				console.log(err)
+				throw new CustomError(500, '服务器内部错误')
+				return false
 			})
-		console.log(oneArticle)
-		if (oneArticle === null) {
-			const article = new Article({
-				title,
-				author,
-				type,
-				tag,
-				likeNum,
-				lookNum,
-				releaseTime,
-				content,
-				createTime: new Date().getTime()
-			})
-			let result = await article.save().catch((err) => {
-				ctx.throw(500, '服务器内部错误-addArticle错误！')
-			})
-			handleSuccess({
-				ctx, msg: '文章发布成功！',
-				data: result
-			})
-		} else {
-			handleError({ ctx, msg: '文章名已存在！' })
-		}
+		console.log(result)
+		if (result) {
+			handleSuccess({ ctx, msg: '添加文章成功', data: result })
+
+			// 百度 seo push
+			// request.post({
+			// 	url: `http://data.zz.baidu.com/urls?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	headers: { 'Content-Type': 'text/plain' },
+			// 	body: `${config.INFO.site}/article/${res._id}`
+			// }, (error, response, body) => {
+			// 	console.log('推送结果：', body)
+			// })
+			
+		} else handleError({ ctx, message: '添加文章失败' })
+		
+		//es6对象解构赋值
+		// const { title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body //请求参数放在请求体
+		// if (!title) {
+		// 	handleError({ ctx, msg: '文章标题不能为空！' })
+		// 	return false
+		// }else if (!author) {
+		// 	handleError({ ctx, msg: '作者不能为空！' })
+		// 	return false
+		// } else if (!type) {
+		// 	handleError({ ctx, msg: '文章类型不能为空！' })
+		// 	return false
+		// } else if (!tag) {
+		// 	handleError({ ctx, msg: '文章标签不能为空！' })
+		// 	return false
+		// } else if (typeof likeNum === "underfined") {
+		// 	handleError({ ctx, msg: '点赞数不能为空！' })
+		// 	return false
+		// } else if (typeof lookNum === "underfined") {
+		// 	handleError({ ctx, msg: '浏览数不能为空！' })
+		// 	return false
+		// } else if (!releaseTime) {
+		// 	handleError({ ctx, msg: '发布时间不能为空！' })
+		// 	return false
+		// } else if (!content) {
+		// 	handleError({ ctx, msg: '文章内容为空！' })
+		// 	return false
+		// }
+		// let oneArticle = await Article
+		// 	.findOne({ 'title': title })
+		// 	.exec() // 执行sql语句
+		// 	.catch(err => {
+		// 		ctx.throw(500, '服务器内部错误-findOneArticle错误！')
+		// 	})
+		// console.log(oneArticle)
+		// if (oneArticle === null) {
+		// 	const article = new Article({
+		// 		title,
+		// 		author,
+		// 		type,
+		// 		tag,
+		// 		likeNum,
+		// 		lookNum,
+		// 		releaseTime,
+		// 		content,
+		// 		createTime: new Date().getTime()
+		// 	})
+		// 	let result = await article.save().catch((err) => {
+		// 		ctx.throw(500, '服务器内部错误-addArticle错误！')
+		// 	})
+		// 	handleSuccess({
+		// 		ctx, msg: '文章发布成功！',
+		// 		data: result
+		// 	})
+		// } else {
+		// 	handleError({ ctx, msg: '文章名已存在！' })
+		// }
 	}
 
 	// 编辑文章
@@ -306,22 +344,73 @@ class articleController{
 	}
 
 	// 修改文章状态
-	static async patchArticle(ctx) { }
+	static async patchArticle(ctx) { 
+		const _id = ctx.params.id
+
+		const { state, publish } = ctx.request.body
+
+		const querys = {}
+
+		if (state) querys.state = state
+
+		if (publish) querys.publish = publish
+
+		if (!_id) {
+			handleError({ ctx, message: '无效参数' })
+			return false
+		}
+
+		const result = await Article
+			.findByIdAndUpdate(_id, querys)
+			.catch(err => {
+				throw new CustomError(500, '服务器内部错误')
+				return false
+			})
+		if (result) handleSuccess({ ctx, msg: '更新文章状态成功' })
+		else handleError({ ctx, msg: '更新文章状态失败' })
+	}
 
 	// 删除文章
 	static async deleteArticle(ctx) {
-		const id = ctx.params.id
-		if (!id) {
-			handleError({ ctx, msg: '参数无效，删除失败！' })
+		const _id = ctx.params.id
+
+		if (!_id) {
+			handleError({ ctx, message: '无效参数' })
 			return false
 		}
-		const result = await Article
-			.findByIdAndRemove(id)
+
+		const res = await Article
+			.findByIdAndRemove(_id)
 			.catch(err => {
-				ctx.throw(500, '服务器内部错误-deleteArticle错误！')
+				// ctx.throw(500, '服务器内部错误')
+				throw new CustomError(500, '服务器内部错误')
+				return false
 			})
-		if (result) handleSuccess({ ctx, msg: '删除成功！', data: result })
-		else handleError({ ctx, msg: '删除失败！' })
+		if (res) {
+			handleSuccess({ ctx, msg: '删除文章成功' })
+
+			// 百度推送
+			// request.post({
+			// 	url: `http://data.zz.baidu.com/del?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	headers: { 'Content-Type': 'text/plain' },
+			// 	body: `${config.INFO.site}/article/${_id}`
+			// }, (error, response, body) => {
+			// 	console.log('百度删除结果：', body);
+			// })
+		} else handleError({ ctx, msg: '删除文章失败' })
+
+		// const id = ctx.params.id
+		// if (!id) {
+		// 	handleError({ ctx, msg: '参数无效，删除失败！' })
+		// 	return false
+		// }
+		// const result = await Article
+		// 	.findByIdAndRemove(id)
+		// 	.catch(err => {
+		// 		ctx.throw(500, '服务器内部错误-deleteArticle错误！')
+		// 	})
+		// if (result) handleSuccess({ ctx, msg: '删除成功！', data: result })
+		// else handleError({ ctx, msg: '删除失败！' })
 	}
 
 

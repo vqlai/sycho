@@ -11,21 +11,21 @@ autoIncrement.initialize(mongoose.connection)
 
 const articleSchema = new mongoose.Schema({
 	title: { type: String, required: true },
+	desc: { type: String, required: false, default: '' },
 	author: { type: String, required: true },
 	type: { type: Number, required: true}, // 文章类型
 	tag: { type: String, required: true}, // 文章标签
 	// likeNum: { type: Number, required: true },
 	// lookNum: { type: Number, required: true },
-	desc: { type: String, required: false },
-	content: { type: String, required: true },
-	thumb: String, // 文章缩略图 
 	// 状态 1 发布 2 草稿
 	state: { type: Number, default: 1 },
 	// 文章公开状态 1 公开 2 私密
 	publish: { type: Number, default: 1 },
 	// releaseTime: { type: String, required: true },
-	updateTime: { type: String, required: true },
-	createTime: { type: String, required: true }, // 因为类型是Date，无法保存时间戳,废弃Date类型
+	thumb: String, // 文章缩略图 
+	content: { type: String, required: true },
+	updateTime: { type: Date, default: Date.now() },
+	createTime: { type: Date, default: Date.now() }, // 因为类型是Date，无法保存时间戳,废弃Date类型
 	// 其他元信息
 	meta: {
 		views: { type: Number, default: 0 },
@@ -35,7 +35,7 @@ const articleSchema = new mongoose.Schema({
 })
 
 // 转化成普通 JavaScript 对象
-articleSchema.set('toObject', { getters: true })
+// articleSchema.set('toObject', { getters: true })
 
 // 翻页 + 自增ID插件配置
 articleSchema.plugin(mongoosePaginate)

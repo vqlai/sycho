@@ -21,7 +21,7 @@ class userController{
 	static async login(ctx){
 		// 获取参数，get通过ctx.query;post通过ctx.request.body
 		const {username, password} = ctx.request.body
-		console.log(ctx.request.body)
+		// console.log(ctx.request.body)
 		if(!username){
 			throw new CustomError(500, '用户名不能为空')
 			// 需返回false，否则会往下执行
@@ -47,7 +47,7 @@ class userController{
 				// {expiresIn} === {expiresIn: config.jwt.expiresIn} 使用es6对象解构赋值
 				// 生成的token在node内存里，token过期jsonwebtoken插件会自动删除
 				let token = jwt.sign({id: result._id}, privateKey, {expiresIn})
-				console.log(token)
+				// console.log(token)
 
 				handleSuccess({ ctx, msg: '登录成功！', data: { token } })
 			}else{
@@ -60,13 +60,13 @@ class userController{
 
  	// 获取用户登录信息（头像/名称/角色/介绍等）
 	static async getUserInfo(ctx){
-		console.log(ctx.header.authorization)
-		console.log(ctx.query)
+		// console.log(ctx.header.authorization)
+		// console.log(ctx.query)
 		// const ip = ctx.request.get('X-Forwarded-For') || ctx.request.get('X-Real-IP')
 		// console.log(ip)
 		let token = ctx.header.authorization.split(' ')[1]
 		let decoded = jwt.verify(token, config.jwt.secret)
-		console.log(decoded)
+		// console.log(decoded)
 		let result = await User.findOne({ _id: decoded.id  }).exec().catch(err => {
 			// ctx.throw(500, '内部错误-findUser错误！')
 			throw new CustomError(500, '服务器内部错误')
@@ -89,7 +89,8 @@ class userController{
 		const options = {
 			sort: { createDate: -1 }, // 按时间倒序
 			page: Number(currentPage), // 当前页
-			limit: Number(pageSize) // 每页数
+			limit: Number(pageSize), // 每页数
+			select: '-password' // 过滤密码
 		}
 
 		// 查询参数
