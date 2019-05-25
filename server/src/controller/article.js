@@ -230,7 +230,7 @@ class articleController{
 			// 	console.log('推送结果：', body)
 			// })
 			
-		} else handleError({ ctx, message: '添加文章失败' })
+		} else handleError({ ctx, msg: '添加文章失败' })
 		
 		//es6对象解构赋值
 		// const { title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body //请求参数放在请求体
@@ -292,55 +292,97 @@ class articleController{
 
 	// 编辑文章
 	static async putArticle(ctx) {
-		const { id, title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body 
+		const _id = ctx.params.id
+
+		// const { title, keyword, tag } = ctx.request.body
+		const { title} = ctx.request.body
+
+		delete ctx.request.body.createTime
+		// delete ctx.request.body.update_at
+		// delete ctx.request.body.meta
+
+		if (!_id) {
+			handleError({ ctx, msg: '无效参数' })
+			return false
+		}
+
+		// if (!title || !keyword) {
 		if (!title) {
-			handleError({ ctx, msg: '文章标题不能为空！' })
-			return false
-		} else if (!author) {
-			handleError({ ctx, msg: '作者不能为空！' })
-			return false
-		} else if (!type) {
-			handleError({ ctx, msg: '文章类型不能为空！' })
-			return false
-		} else if (!tag) {
-			handleError({ ctx, msg: '文章标签不能为空！' })
-			return false
-		} else if (typeof likeNum === "underfined") {
-			handleError({ ctx, msg: '点赞数不能为空！' })
-			return false
-		} else if (typeof lookNum === "underfined") {
-			handleError({ ctx, msg: '浏览数不能为空！' })
-			return false
-		} else if (!releaseTime) {
-			handleError({ ctx, msg: '发布时间不能为空！' })
-			return false
-		} else if (!content) {
-			handleError({ ctx, msg: '文章内容为空！' })
+			handleError({ ctx, msg: 'title必填' })
 			return false
 		}
-		let result = null
-		if (id) {
-			result = await Article.findByIdAndUpdate(id, {
-				title,
-				author,
-				type,
-				tag,
-				likeNum,
-				lookNum,
-				releaseTime,
-				content
-			}, { new: true })
-				.exec() // 执行查询，并将查询结果传入回调函数,可以传人一个函数，会返回成为一个完整的 promise 对象
-				.catch((err) => {
-					ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!')
-				})
-			if (result) {
-				handleSuccess({
-					ctx, msg: '修改成功！',
-					data: result
-				})
-			}
-		}
+
+		const res = await Article
+			.findByIdAndUpdate(_id, ctx.request.body)
+			.catch(err => {
+				// ctx.throw(500, '服务器内部错误')
+				console.log(err)
+				throw new CustomError(500, '服务器内部错误')
+				return false
+			})
+		if (res) {
+			handleSuccess({ ctx, message: '更新文章成功' })
+
+			// 百度推送
+			// request.post({
+			// 	url: `http://data.zz.baidu.com/update?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	headers: { 'Content-Type': 'text/plain' },
+			// 	body: `${config.INFO.site}/article/${_id}`
+			// }, (error, response, body) => {
+			// 	console.log('百度删除结果：', body);
+			// })
+		} else handleError({ ctx, message: '更新文章失败' })
+
+
+		// const { id, title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body 
+		// if (!title) {
+		// 	handleError({ ctx, msg: '文章标题不能为空！' })
+		// 	return false
+		// } else if (!author) {
+		// 	handleError({ ctx, msg: '作者不能为空！' })
+		// 	return false
+		// } else if (!type) {
+		// 	handleError({ ctx, msg: '文章类型不能为空！' })
+		// 	return false
+		// } else if (!tag) {
+		// 	handleError({ ctx, msg: '文章标签不能为空！' })
+		// 	return false
+		// } else if (typeof likeNum === "underfined") {
+		// 	handleError({ ctx, msg: '点赞数不能为空！' })
+		// 	return false
+		// } else if (typeof lookNum === "underfined") {
+		// 	handleError({ ctx, msg: '浏览数不能为空！' })
+		// 	return false
+		// } else if (!releaseTime) {
+		// 	handleError({ ctx, msg: '发布时间不能为空！' })
+		// 	return false
+		// } else if (!content) {
+		// 	handleError({ ctx, msg: '文章内容为空！' })
+		// 	return false
+		// }
+		// let result = null
+		// if (id) {
+		// 	result = await Article.findByIdAndUpdate(id, {
+		// 		title,
+		// 		author,
+		// 		type,
+		// 		tag,
+		// 		likeNum,
+		// 		lookNum,
+		// 		releaseTime,
+		// 		content
+		// 	}, { new: true })
+		// 		.exec() // 执行查询，并将查询结果传入回调函数,可以传人一个函数，会返回成为一个完整的 promise 对象
+		// 		.catch((err) => {
+		// 			ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!')
+		// 		})
+		// 	if (result) {
+		// 		handleSuccess({
+		// 			ctx, msg: '修改成功！',
+		// 			data: result
+		// 		})
+		// 	}
+		// }
 	}
 
 	// 修改文章状态
@@ -356,7 +398,7 @@ class articleController{
 		if (publish) querys.publish = publish
 
 		if (!_id) {
-			handleError({ ctx, message: '无效参数' })
+			handleError({ ctx, msg: '无效参数' })
 			return false
 		}
 
@@ -375,7 +417,7 @@ class articleController{
 		const _id = ctx.params.id
 
 		if (!_id) {
-			handleError({ ctx, message: '无效参数' })
+			handleError({ ctx, msg: '无效参数' })
 			return false
 		}
 

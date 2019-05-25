@@ -44,7 +44,6 @@
       </el-col>
       <el-col :span="6">
         <el-button type="primary" icon="el-icon-search" round @click.native="_getArticle">搜索</el-button>
-        <!-- <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button> -->
       </el-col>
     </el-row>
     <el-row class="content">
@@ -80,6 +79,12 @@
             label="作者">
           </el-table-column>
           <el-table-column
+            prop="desc"
+            align="center"
+            show-overflow-tooltip
+            label="描述">
+          </el-table-column>
+          <el-table-column
             prop="type"
             :formatter="formatType"
             align="center"
@@ -89,17 +94,17 @@
             prop="tag"
             :formatter="formatTag"
             align="center"
-            width="280"
+            width="200"
             show-overflow-tooltip
             label="标签">
           </el-table-column>
           <el-table-column
-            prop="likeNum"
+            prop="meta.likes"
             align="center"
             label="点赞数">
           </el-table-column>
           <el-table-column
-            prop="lookNum"
+            prop="meta.views"
             align="center"
             label="浏览数">
           </el-table-column>
@@ -108,17 +113,35 @@
             label="状态">
           </el-table-column> -->
           <el-table-column
-            prop="releaseTime"
-            align="center"
-            label="发布时间"
-            width="160">
+            label="公开状态"
+            label-class-name="head">
+            <template slot-scope="scope">
+              {{ scope.row.publish === 1 ? '公开' : '私密' }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="状态"
+            label-class-name="head">
+            <template slot-scope="scope">
+              {{ scope.row.state === 1 ? '已发布' : '草稿' }}
+            </template>
           </el-table-column>
           <el-table-column
             prop="createTime"
             align="center"
-            :formatter="formatTime"
             label="创建时间"
             width="160">
+            <template slot-scope="scope">
+              {{ scope.row.createTime | formatterTime}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="更新时间"
+            width="160">
+            <template slot-scope="scope">
+              {{ scope.row.updateTime | formatterTime}}
+            </template>
           </el-table-column>
           <!-- <el-table-column
             prop="address"
@@ -128,8 +151,12 @@
             fixed="right"
             label="操作"
             align="center"
-            width="140">
+            min-width="200">
             <template slot-scope="scope">
+              <el-button type="text" size="small" v-if="scope.row.publish === 1"  @click="handleState(scope.row, 'publish', 2)">私密</el-button>
+              <el-button type="text" size="small" v-else  @click="handleState(scope.row, 'publish', 1)">公开</el-button>
+              <el-button type="text" size="small" v-if="scope.row.state === 2" @click="handleState(scope.row, 'state', 1)">发布</el-button>
+              <el-button type="text" size="small" v-else  @click="handleState(scope.row, 'state', 2)">草稿</el-button>
               <el-button type="text" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
               <el-button type="text" size="small" icon="el-icon-edit" @click="handleDelete(scope.row)">删除</el-button>
             </template>
@@ -139,10 +166,10 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="400">
+          :page-size="pageSize"
+          :total="total"
+          :page-sizes="[10, 30, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper">
         </el-pagination>
       </el-col>
     </el-row>
@@ -152,6 +179,7 @@
 <script>
   import moment from 'moment'
   import data from '@/assets/js/data'
+  import { formatterTime } from '@/assets/js/filter.js'
   export default {
     name: 'list',
     data(){
@@ -182,6 +210,9 @@
         loading: false,
       }
     },
+    filters: {
+      formatterTime
+    },
     created(){
       this._getArticle()
     },
@@ -195,6 +226,7 @@
         return this.articleTypes[cellValue].label
       },
       formatTag(row, column, cellValue, inde){
+        // console.log(cellValue.split(','))
         // 箭头函数省去return
         return cellValue.split(',').map(item => this.articleTags[parseInt(item)].label).join()
       },
@@ -212,11 +244,12 @@
         this.$store.dispatch('GetArticle', params).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
+            console.log(this.tableData)
             this.total = res.data.pagination.total
             this.pageSize = res.data.pagination.pageSize
             this.currentPage = res.data.pagination.currentPage
           }else{
-            this.$message(res.msg)
+            this.$message.error(res.msg)
           }
         }).then(() => {
           this.loading = false
@@ -230,9 +263,20 @@
         this.currentPage = val
         this._getArticle()
       },
-      // handleSearch(){
-      //   this._getArticle({ currentPage: 1, pageSize: this.pageSize, queryTitle: this.queryTitle, queryType: this.queryType, queryTag: this.queryTag })
-      // },
+      // 修改文章状态
+      handleState(row, type, state){
+        let params = {}
+        params._id = row._id
+        params[type] = state
+        this.$store.dispatch('PatchArticle', params).then(res => {
+          if(res.success){
+            this.$message.success(res.msg)
+            this._getArticle({ currentPage: this.currentPage, pageSize: this.pageSize })
+          }else{
+            this.$message.error(res.msg)
+          }
+        })
+      },
       handleEdit(row) {
         console.log(row)
         this.$router.push({ path: `/article/edit/${row._id}` })
@@ -246,16 +290,10 @@
         }).then(() => {
           this.$store.dispatch('DeleteArticle', row._id).then(res => {
             if(res.success){
-              this.$message({
-                message: res.msg,
-                type: 'success'
-              })
+              this.$message.success(res.msg)
               this._getArticle({ currentPage: this.currentPage, pageSize: this.pageSize })
             }else{
-              this.$message({
-                message: res.msg,
-                type: 'error'
-              })
+              this.$message.error(res.msg)
             }
           })
         }).catch(() => {

@@ -25,8 +25,17 @@ export function getArticle(params) {
 // 新增文章
 export async function postArticle(data) {
   return await request({
-    url: `/article/${data._id}`,
+    url: '/article',
     method: 'post',
+    data: { ...data }
+  })
+}
+
+// 修改文章状态
+export async function patchArticle(data) {
+  return await request({
+    url: `/article/${data._id}`,
+    method: 'patch',
     data: { ...data }
   })
 }
@@ -34,7 +43,7 @@ export async function postArticle(data) {
 // 修改文章
 export async function putArticle(data) {
   return await request({
-    url: '/article',
+    url: `/article/${data._id}`,
     method: 'put',
     data: { ...data }
   })
@@ -43,7 +52,7 @@ export async function putArticle(data) {
 // 删除文章(注：delete方法只能再url上拼参数，无法将参数放在请求body里)
 export async function deleteArticle(data) {
   return await request({
-    url: `/deleteArticle/${data}`,
+    url: `/article/${data}`,
     method: 'delete',
   })
 }

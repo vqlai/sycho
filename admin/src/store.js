@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { login, logout, getUserInfo, getUser, postUser, putUser, deleteUser } from '@/api/user'
 import { getLink, postLink, putLink, deleteLink } from '@/api/link'
-import { getArticleById, getArticle, postArticle, putArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
+import { getArticleById, getArticle, postArticle, patchArticle, putArticle, deleteArticle, uploadArticlePics, removeArticlePics } from '@/api/article'
 import { getCommentById, getComment, postComment, putComment, deleteComment } from '@/api/comment'
 import { getMessage, postMessage, putMessage, patchMessage, deleteMessage } from '@/api/message'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
@@ -164,6 +164,16 @@ const store = new Vuex.Store({
     PostArticle({ commit }, params) {
       return new Promise((resolve, reject) => {
         postArticle(params).then(res => {
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    PatchArticle({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        patchArticle(params).then(res => {
           resolve(res)
         }).catch(error => {
           reject(error)
