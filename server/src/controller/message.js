@@ -1,6 +1,7 @@
 /**
  * Created by laiweiqang on 2019/04/26
  */
+
 // 留言控制器
 const Message = require('../model/message.js')
 const { handleSuccess, handleError } = require('../utils/handle')
@@ -9,6 +10,7 @@ const { CustomError, HttpError } = require('../utils/customError.js')
 // const constants = require('../utils/constants.js')
 
 class messageController {
+
   // 获取留言列表
   static async getMessage(ctx) {
     let { currentPage = 1, pageSize = 10, keyword = '', state = '' } = ctx.query
@@ -61,7 +63,7 @@ class messageController {
   // 新增留言
   static async postMessage(ctx) {
     let { body: message } = ctx.request
-    // console.log(message)
+
     // 获取ip地址以及物理地理地址
     const ip = (ctx.req.headers['x-forwarded-for'] ||
       ctx.req.headers['x-real-ip'] ||
@@ -127,7 +129,7 @@ class messageController {
     const _id = ctx.params.id
 
     if (!_id) {
-      // handleError({ ctx, message: '无效参数' })
+      // handleError({ ctx, msg: '无效参数' })
       throw new CustomError(401, '参数无效')
       return false
     }

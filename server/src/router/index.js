@@ -48,12 +48,12 @@ router.post('/uploadArticlePics', checkToken, upload.array('file', 20), A.upload
 router.post('/removeArticlePics', checkToken, A.removeArticlePics) // 删除文章图片
 
 // 留言管理
-router.get('/getMessageById', checkToken, M.getMessageById)
-router.get('/message', checkToken, M.getMessage) // 获取留言
-router.post('/message', checkToken, M.postMessage)	// 添加留言
-router.patch('/message', checkToken, M.patchMessage) // 修改留言墙状态	
-router.delete('/message/:id', checkToken, M.deleteMessage) // 删除留言
-router.put('/message', checkToken, M.putMessage)	// 修改留言
+// router.get('/getMessageById', checkToken, M.getMessageById)
+router.get('/message', checkToken, M.getMessage) 						// 获取留言
+router.post('/message', checkToken, M.postMessage)					// 添加留言
+router.patch('/message', checkToken, M.patchMessage) 				// 修改留言墙状态	
+router.delete('/message/:id', checkToken, M.deleteMessage) 	// 删除留言
+// router.put('/message', checkToken, M.putMessage)	// 修改留言
 
 // 评论管理
 router.get('/getCommentById', checkToken, C.getCommentById)
@@ -63,6 +63,6 @@ router.put('/editComment', checkToken, C.editComment)
 router.delete('/deleteComment/:id', checkToken, C.deleteComment)
 
 //upload.array设置多文件上传（该方法已废弃）
-router.post('/article/release', checkToken, upload.array('file', 20), A.release)
+// router.post('/article/release', checkToken, upload.array('file', 20), A.release)
 
 module.exports = router

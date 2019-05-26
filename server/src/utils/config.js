@@ -60,6 +60,17 @@ let config = {
 		port: process.env.PORT || 1008, // server端口
 		routerBaseApi: '/v1', // 接口基础路径
 		LIMIT: 16,
+	},
+	BAIDU: {
+		site: 'your_baidu_site',
+		token: 'your_baidu_token'
+	},
+	INFO: {
+		name: 'sycho_blog',
+		version: '1.0.0',
+		author: 'vqlai',
+		site: 'https://sycho.cn',
+		powered: ['Vue2', 'Nuxt.js', 'Node.js', 'MongoDB', 'koa', 'Nginx']
 	}
 }
 

@@ -15,6 +15,8 @@ const mongoosePaginate = require('mongoose-paginate')
 const config = require('./utils/config.js')
 const router = require('./router')
 const mongodb = require('./mongodb')
+// const redis = require('./redis')
+
 // 处理自动抛出的异常
 // import { CustomError, HttpError } from './utils/customError'
 const { CustomError, HttpError } = require('./utils/customError.js')
@@ -24,6 +26,8 @@ const app = new koa()
 
 // 连接数据库
 mongodb()
+// redis.connect()
+
 mongoosePaginate.paginate.options = {
 	limit: config.app.LIMIT
 }

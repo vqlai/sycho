@@ -1,6 +1,6 @@
 {
   "name": "sycho-koa2-node-server",
-  "version": "v2.0.0",
+  "version": "v1.0.0",
   "description": "koa2-node-server for sycho api",
   "main": "index.js",
   "scripts": {
@@ -29,6 +29,8 @@
     "md5": "^2.2.1",
     "mongoose": "^5.2.22",
     "mongoose-auto-increment": "^5.0.1",
-    "mongoose-paginate": "^5.0.3"
+    "mongoose-auto-increment-fix": "^5.0.2",
+    "mongoose-paginate": "^5.0.3",
+    "redis": "^2.8.0"
   }
 }

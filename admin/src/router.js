@@ -8,7 +8,7 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/assets/js/auth' // getToken from localstroge
 
 /* Layout */
-import Layout from '@/views/layout/Layout'
+import Layout from '@/views/layout'
 
 // in development-env not use lazy-loading, because lazy-loading too many pages will cause webpack hot update too slow. so only in production use lazy-loading;
 // detail: https://panjiachen.github.io/vue-element-admin-site/#/lazy-loading
@@ -16,34 +16,56 @@ import Layout from '@/views/layout/Layout'
 Vue.use(Router)
 
 /**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
-    title: 'title'               the name show in subMenu and breadcrumb (recommend set)
+ * Note: sub-menu only appear when route children.length >= 1
+ * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
+ *
+ * hidden: true                   if set true, item will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu
+ *                                if not set alwaysShow, when item has more than one children route,
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
+    roles: ['admin','editor']    control the page roles (you can set multiple roles)
+    title: 'title'               the name show in sidebar and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar
-    breadcrumb: false            if false, the item will hidden in breadcrumb(default is true)
-    auth: false, // 是否需要登录
-    keepAlive: true // 是否缓存组件
+    noCache: true                if set true, the page will no be cached(default is false)
+    affix: true                  if set true, the tag will affix in the tags-view
+    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
+    activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
   }
-**/
-export const constantRouterMap = [
-  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('@/views/404'), hidden: true },
+ */
 
+/**
+* constantRoutes
+* a base page that does not have permission requirements
+* all roles can be accessed
+*/
+export const constantRoutes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
+  { path: '/404', component: () => import('@/views/error-page/404'), hidden: true },
+  { path: '/401', component: () => import('@/views/error-page/401'), hidden: true },
   {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: false, // 是否隐藏
-    meta: { title: 'Dashboard', icon: 'dashboard', keepAlive: true },
+    hidden: false, // 隐藏侧边栏item，默认值是false，不隐藏
     children: [{
       path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
+      component: () => import('@/views/dashboard/index'),
+      name: 'Dashboard',
+      meta: { title: 'Dashboard', icon: 'dashboard', keepAlive: true },
     }]
   },
 
@@ -52,8 +74,11 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/article/list',
     name: 'Article',
-    hidden: false,
-    meta: { title: 'Article', icon: 'article' },
+    meta: {
+      title: 'Article',
+      icon: 'article',
+      roles: ['2', '3'] // you can set roles in root nav
+    },
     children: [
       {
         path: 'list',
@@ -66,11 +91,12 @@ export const constantRouterMap = [
         component: () => import('@/views/article/create'),
         meta: { title: 'Create', icon: 'article-edit', keepAlive: true }
       }, {
+        // path: 'edit/:id(\\d+)',
         path: 'edit/:id',
         name: 'Edit',
-        hidden: true,
         component: () => import('@/views/article/edit'),
-        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list', keepAlive: false }
+        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list', keepAlive: false },
+        hidden: true,
       }
     ]
   },
@@ -83,7 +109,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Message',
         component: () => import('@/views/message/index'),
-        meta: { title: 'Message', icon: 'message', keepAlive: true }
+        meta: { title: 'Message', icon: 'message', roles: ['2', '3'], keepAlive: true }
       }
     ]
   },
@@ -96,7 +122,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Link',
         component: () => import('@/views/link/index'),
-        meta: { title: 'Link', icon: 'link', keepAlive: true }
+        meta: { title: 'Link', icon: 'link', roles: ['2', '3'], keepAlive: true }
       }
     ]
   },
@@ -109,7 +135,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'User',
         component: () => import('@/views/user/index'),
-        meta: { title: 'User', icon: 'user', keepAlive: true }
+        meta: { title: 'User', icon: 'user', roles: ['3'], keepAlive: true }
       }
     ]
   },
@@ -146,7 +172,6 @@ export const constantRouterMap = [
     children: [
       {
         path: 'https://www.sycho.cn',
-        // path: 'dashboard',
         meta: { title: 'sycho Link', icon: 'link' }
       }
     ]
@@ -156,100 +181,77 @@ export const constantRouterMap = [
 ]
 
 /**
- * 测试&demo路由
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
  */
-export const testRouterMap = [
+export const asyncRoutes = [
   {
-    path: '/example',
+    path: '/article',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    hidden: false,
+    redirect: '/article/list',
+    name: 'Article',
     meta: {
-      title: 'Example', icon: 'example' },
+      title: 'Article',
+      icon: 'article',
+      roles: ['2', '3'] // you can set roles in root nav
+    },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/test/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/test/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'list',
+        name: 'List',
+        component: () => import('@/views/article/list'),
+        meta: { title: 'List', icon: 'article-list', keepAlive: true }
+      }, {
+        path: 'create',
+        name: 'Create',
+        component: () => import('@/views/article/create'),
+        meta: { title: 'Create', icon: 'article-edit', keepAlive: true }
+      }, {
+        // path: 'edit/:id(\\d+)',
+        path: 'edit/:id',
+        name: 'Edit',
+        component: () => import('@/views/article/edit'),
+        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list', keepAlive: false },
+        hidden: true,
       }
     ]
   },
 
   {
-    path: '/form',
+    path: '/message',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Form',
-        component: () => import('@/views/test/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        name: 'Message',
+        component: () => import('@/views/message/index'),
+        meta: { title: 'Message', icon: 'message', roles: ['2', '3'], keepAlive: true }
       }
     ]
   },
 
   {
-    path: '/nested',
+    path: '/link',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
     children: [
       {
-        path: 'menu1',
-        component: () => import('@/views/test/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/test/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/test/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/test/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/test/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/test/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
+        path: 'index',
+        name: 'Link',
+        component: () => import('@/views/link/index'),
+        meta: { title: 'Link', icon: 'link', roles: ['2', '3'], keepAlive: true }
+      }
+    ]
+  },
+
+  {
+    path: '/user',
+    component: Layout,
+    children: [
       {
-        path: 'menu2',
-        component: () => import('@/views/test/nested/menu2/index'),
-        meta: { title: 'menu2' }
+        path: 'index',
+        name: 'User',
+        component: () => import('@/views/user/index'),
+        meta: { title: 'User', icon: 'user', roles: ['3'], keepAlive: true }
       }
     ]
   },
@@ -259,53 +261,52 @@ const router = new Router({
   // mode: 'history', // 后端支持可开
   scrollBehavior: () => ({ y: 0 }),
   routes: [
-    ...constantRouterMap,
-    // ...testRouterMap // 测试路由
+    ...constantRoutes,
+    // ...asyncRoutes,
+    // ...testRouters // 测试路由
   ]
 })
 
 NProgress.configure({ showSpinner: false }) // NProgress configuration
 const whiteList = ['/login'] // 不重定向白名单
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   NProgress.start()
-  // let auth = to.meta.auth
-  // if (auth) { // 需要登录
-    if (getToken()) {
-      if (to.path === '/login') {
-        next({ path: '/' })
-        NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
-      } else {
-        // 路由跳转前判断用户角色是否为空拉取用户信息
-        // vuex一刷新数据就被清空，这里每次刷新页面就会调用后台接口
-        if (!store.getters.name) {
-          // 拉取用户信息
-          store.dispatch('GetUserInfo').then(res => {
-            console.log(res)
-            next()
-          }).catch(err => {
-            console.log(err)
-            store.dispatch('FedLogOut').then(() => {
-              // Message.error(err || 'Verification failed, please login again')
-              next({ path: '/' })
-            })
-          })
-        } else {
-          next()
+  if (getToken()) {
+    if (to.path === '/login') {
+      next({ path: '/' })
+      NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
+    } else {
+      // 路由跳转前判断用户角色是否为空拉取用户信息
+      // vuex一刷新数据就被清空，这里每次刷新页面就会调用后台接口
+      // determine whether the user has obtained his permission roles through getInfo
+      if (store.getters.name) {
+        next()
+      }else{
+        try {
+          // get user info
+          await store.dispatch('GetUserInfo')
+          // hack method to ensure that addRoutes is complete
+          // set the replace: true, so the navigation will not leave a history record
+          next({ ...to, replace: true })
+        } catch (err) {
+          await store.dispatch('FedLogOut')
+          // Message.error(error || 'Has Error')
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
         }
       }
-    } else {
-      // 无token未登录
-      if (whiteList.indexOf(to.path) !== -1) {
-        next()
-      } else {
-        // 否则全部重定向到登录页
-        next(`/login?redirect=${to.path}`)
-        NProgress.done()
-      }
     }
-  // } else { // 无需登录
-  //   next()
-  // }
+  } else {
+    /* has no token */
+    if (whiteList.indexOf(to.path) !== -1) {
+      // in the free login whitelist, go directly
+      next()
+    } else {
+      // other pages that do not have permission to access are redirected to the login page.
+      next(`/login?redirect=${to.path}`)
+      NProgress.done()
+    }
+  }
 })
 
 router.afterEach(() => {

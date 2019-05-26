@@ -27,7 +27,7 @@ module.exports = async (ctx, next) => {
 			}
 			//token验证失败
 			// ctx.throw(401, 'invalid token')
-			throw new CustomError(constants.HTTP_CODE.UNAUTHORIZED, 'invalid token')
+			throw new CustomError(constants.HTTP_CODE.UNAUTHORIZED, 'token验证失败')
 		}
 	}else{
 		// header缺少token

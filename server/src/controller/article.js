@@ -6,6 +6,7 @@ const Article = require('../model/article.js')
 const { handleSuccess, handleError } = require('../utils/handle')
 const { CustomError, HttpError } = require('../utils/customError.js')
 const fs = require('fs')
+const config = require('../utils/config')
 
 // ctx.req.files  ctx.req.body  文件上传
 // ctx.request.body POST/PUT
@@ -15,16 +16,7 @@ class articleController{
 
 	// 获取文章列表
 	static async getArticle(ctx) {
-		const {
-			keyword = '',
-			tag,
-			type,
-			publish = 1,
-			state = 1,
-			currentPage = 1,
-			pageSize = 10,
-      date,
-			hot } = ctx.query
+		const { keyword = '', tag, type, publish = 1, state = 1, currentPage = 1, pageSize = 10, date, hot } = ctx.query
 			console.log(ctx.query)
 		// 过滤条件
 		const options = {
@@ -194,7 +186,7 @@ class articleController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
-		console.log(result)
+		// console.log(result)
 		if (result) {
 			// 每次请求，views 都增加一次
 			result.meta.views += 1
@@ -207,9 +199,9 @@ class articleController{
 
 	// 发布文章
 	static async postArticle(ctx) {
-		// ctx.request.body.tag = ctx.request.body.tag.join()
-		// ctx.request.body.tag = 'xyz'
-		console.log(ctx.request.body)
+		//es6对象解构赋值
+		//请求参数放在请求体
+		// console.log(ctx.request.body)
 		const result = await new Article(ctx.request.body)
 			.save()
 			.catch(err => {
@@ -217,7 +209,7 @@ class articleController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
-		console.log(result)
+		// console.log(result)
 		if (result) {
 			handleSuccess({ ctx, msg: '添加文章成功', data: result })
 
@@ -232,33 +224,6 @@ class articleController{
 			
 		} else handleError({ ctx, msg: '添加文章失败' })
 		
-		//es6对象解构赋值
-		// const { title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body //请求参数放在请求体
-		// if (!title) {
-		// 	handleError({ ctx, msg: '文章标题不能为空！' })
-		// 	return false
-		// }else if (!author) {
-		// 	handleError({ ctx, msg: '作者不能为空！' })
-		// 	return false
-		// } else if (!type) {
-		// 	handleError({ ctx, msg: '文章类型不能为空！' })
-		// 	return false
-		// } else if (!tag) {
-		// 	handleError({ ctx, msg: '文章标签不能为空！' })
-		// 	return false
-		// } else if (typeof likeNum === "underfined") {
-		// 	handleError({ ctx, msg: '点赞数不能为空！' })
-		// 	return false
-		// } else if (typeof lookNum === "underfined") {
-		// 	handleError({ ctx, msg: '浏览数不能为空！' })
-		// 	return false
-		// } else if (!releaseTime) {
-		// 	handleError({ ctx, msg: '发布时间不能为空！' })
-		// 	return false
-		// } else if (!content) {
-		// 	handleError({ ctx, msg: '文章内容为空！' })
-		// 	return false
-		// }
 		// let oneArticle = await Article
 		// 	.findOne({ 'title': title })
 		// 	.exec() // 执行sql语句
@@ -312,7 +277,7 @@ class articleController{
 			return false
 		}
 
-		const res = await Article
+		const result = await Article
 			.findByIdAndUpdate(_id, ctx.request.body)
 			.catch(err => {
 				// ctx.throw(500, '服务器内部错误')
@@ -320,8 +285,8 @@ class articleController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
-		if (res) {
-			handleSuccess({ ctx, message: '更新文章成功' })
+		if (result) {
+			handleSuccess({ ctx, msg: '更新文章成功', data: result })
 
 			// 百度推送
 			// request.post({
@@ -331,58 +296,7 @@ class articleController{
 			// }, (error, response, body) => {
 			// 	console.log('百度删除结果：', body);
 			// })
-		} else handleError({ ctx, message: '更新文章失败' })
-
-
-		// const { id, title, author, type, tag, likeNum, lookNum, releaseTime, content } = ctx.request.body 
-		// if (!title) {
-		// 	handleError({ ctx, msg: '文章标题不能为空！' })
-		// 	return false
-		// } else if (!author) {
-		// 	handleError({ ctx, msg: '作者不能为空！' })
-		// 	return false
-		// } else if (!type) {
-		// 	handleError({ ctx, msg: '文章类型不能为空！' })
-		// 	return false
-		// } else if (!tag) {
-		// 	handleError({ ctx, msg: '文章标签不能为空！' })
-		// 	return false
-		// } else if (typeof likeNum === "underfined") {
-		// 	handleError({ ctx, msg: '点赞数不能为空！' })
-		// 	return false
-		// } else if (typeof lookNum === "underfined") {
-		// 	handleError({ ctx, msg: '浏览数不能为空！' })
-		// 	return false
-		// } else if (!releaseTime) {
-		// 	handleError({ ctx, msg: '发布时间不能为空！' })
-		// 	return false
-		// } else if (!content) {
-		// 	handleError({ ctx, msg: '文章内容为空！' })
-		// 	return false
-		// }
-		// let result = null
-		// if (id) {
-		// 	result = await Article.findByIdAndUpdate(id, {
-		// 		title,
-		// 		author,
-		// 		type,
-		// 		tag,
-		// 		likeNum,
-		// 		lookNum,
-		// 		releaseTime,
-		// 		content
-		// 	}, { new: true })
-		// 		.exec() // 执行查询，并将查询结果传入回调函数,可以传人一个函数，会返回成为一个完整的 promise 对象
-		// 		.catch((err) => {
-		// 			ctx.throw(500, '服务器内部错误-findByIdAndUpdate错误!')
-		// 		})
-		// 	if (result) {
-		// 		handleSuccess({
-		// 			ctx, msg: '修改成功！',
-		// 			data: result
-		// 		})
-		// 	}
-		// }
+		} else handleError({ ctx, msg: '更新文章失败' })
 	}
 
 	// 修改文章状态
@@ -440,19 +354,6 @@ class articleController{
 			// 	console.log('百度删除结果：', body);
 			// })
 		} else handleError({ ctx, msg: '删除文章失败' })
-
-		// const id = ctx.params.id
-		// if (!id) {
-		// 	handleError({ ctx, msg: '参数无效，删除失败！' })
-		// 	return false
-		// }
-		// const result = await Article
-		// 	.findByIdAndRemove(id)
-		// 	.catch(err => {
-		// 		ctx.throw(500, '服务器内部错误-deleteArticle错误！')
-		// 	})
-		// if (result) handleSuccess({ ctx, msg: '删除成功！', data: result })
-		// else handleError({ ctx, msg: '删除失败！' })
 	}
 
 
@@ -509,57 +410,6 @@ class articleController{
 			ctx, msg: '删除成功！',
 			data: 'remove successful。'
 		})
-	}
-
-	// 发布文章
-	static async release(ctx){
-		// console.log(`http://${ctx.req.headers.host}`)
-		console.log(ctx.req.files) // 获取批量上传数组
-		console.log(ctx.req.body)
-		let { title, type, content } = ctx.req.body
-		const files = ctx.req.files
-		if(!title){
-			handleError({ ctx, msg: '标题不能为空！' })
-			// if(files.length){
-			// 	for(let item of files){
-			// 		fs.unlinkSync(item.path) // 验证失败删除已上传的头像
-			// 	}
-			// }
-			return false
-		}
-		if(files.length){
-			let host = `http://${ctx.req.headers.host}/upload/article`
-			let reg = /!\[(.*?)\]\((.*?)\)/g
-			let originImgs = []
-			let cacheImg = null
-			while ((cacheImg = reg.exec(content)) !== null){
-				originImgs.push(cacheImg[0])
-			}
-			for (let [index, item] of originImgs.entries()){
-				content = content.replace(item, `![图片${index}](${host}/${files[index].filename})`)
-			}
-			// console.log(content)
-		}
-		let oneArticle = await Article
-			.findOne({ 'title': title })
-			.exec() // 执行sql语句
-			.catch(err => {
-				ctx.throw(500, '服务器内部错误-findOneArticle错误！')
-			})
-		if(oneArticle === null){
-			const article = new Article({
-				title,
-				type: 1,
-				content
-			})
-			let result = await article.save().catch((err) => {
-				ctx.throw(500, '服务器内部错误-addArticle错误！')
-			})
-			handleSuccess({
-				ctx, msg: '新增成功！',
-				data: result
-			})
-		}
 	}
 }
 
