@@ -44,7 +44,6 @@
           </el-col>
           <el-col :span="4"><span>点赞数：</span><el-input-number v-model="articleForm.meta.likes" :min="0" :max="100000000" label="请输入点赞数" controls-position="right" ></el-input-number> </el-col>
           <el-col :span="4"><span>浏览数：</span><el-input-number v-model="articleForm.meta.views" :min="0" :max="100000000" label="请输入浏览数" controls-position="right" ></el-input-number> </el-col>
-          <!-- <el-col :span="5"><span>发布时间：</span><el-date-picker v-model="releaseTime" type="datetime" placeholder="请选择日期" :editable="false" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"> </el-date-picker></el-col> -->
         </el-row>
         <el-row type="flex" align="middle">
           <el-col :span="12">
@@ -75,15 +74,6 @@
       let articleTypes = data.articleTypes
       let articleTags = data.articleTags
       return {
-        // _id: '',
-        // title: '',
-        // author: '',
-        // likeNum: 0,
-        // lookNum: 0,
-        // releaseTime: '',
-        // type: '',
-        // tag: [],
-        // content: '',
         articleTypes,
         articleTags,
         articleForm: {
@@ -118,26 +108,13 @@
     methods: {
       _getArticleById(){
         this.$store.dispatch('GetArticleById', { _id: this.$route.params.id }).then(res => {
-          console.log(res)
+          // console.log(res)
           if(res.success){
-            // let result = res.data
             this.articleForm = { ...res.data }
             this.articleForm.tag = res.data.tag.split(',')
             this.articleForm.type = String(res.data.type)
             this.articleForm.state = String(res.data.state)
             this.articleForm.publish = String(res.data.publish)
-            // this._id = result._id
-            // this.title = result.title
-            // this.author = result.author
-            // this.likeNum = result.likeNum
-            // this.lookNum = result.lookNum
-            // this.type = result.type
-            // this.tag = result.tag.split(',').map(item => {
-            //   return parseInt(item)
-            // })
-            // console.log(this.tag)
-            // this.releaseTime = result.releaseTime
-            // this.content = result.content
           }else{
             this.$message({ message: res.msg, type: 'error' })
           }
@@ -145,25 +122,14 @@
       },
       handleSubmit(){
         if(this.checkArticle()){
-          // let params = {
-          //   id: this.id,
-          //   title: this.title,
-          //   author: this.author,
-          //   type: this.type,
-          //   tag: this.tag.join(),
-          //   likeNum: this.likeNum,
-          //   lookNum: this.lookNum,
-          //   releaseTime: this.releaseTime,
-          //   content: this.content
-          // }
           this.$store.dispatch('PutArticle', this.articleForm).then(res => {
             if(res.success){
-              this.$message({ message: '发修改成功！', type: 'success' })
+              this.$message.success(res.msg)
               setTimeout(() => {
                 this.$router.push({ path: '/article/list' })
               }, 500)
             }else{
-              this.$message({ message: res.msg, type: 'error' })
+              this.$message.error(res.msg)
             }
           })
         }

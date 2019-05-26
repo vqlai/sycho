@@ -46,8 +46,18 @@
           <el-col :span="4"><span>浏览数：</span><el-input-number v-model="articleForm.meta.views" @change="handleChange" :min="0" :max="100000000" label="请输入浏览数" controls-position="right" ></el-input-number> </el-col>
         </el-row>
         <el-row type="flex" align="middle">
-          <el-col :span="12">
+          <el-col :span="12" style="display:flex;align-items:center;">
             <span>缩略图：</span>
+            <el-upload
+              style="display:inline-block;"
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="articleForm.thumb" :src="articleForm.thumb" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
           </el-col>
         </el-row>
       </div>
@@ -80,7 +90,7 @@
         articleForm: {
           title: '',
           desc: '',
-          author: '',
+          author: 'admin',
           type: '',
           tag: [],
           state: '1',
@@ -102,24 +112,25 @@
     destroyed(){},
     methods: {
       handleChange(){},
+      handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw)
+      },
+      beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg'
+        const isLt2M = file.size / 1024 / 1024 < 2
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!')
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!')
+        }
+        return isJPG && isLt2M
+      },
       handleSubmit(){
         if(this.checkArticle()){
-          // console.log(this.title.trim())
-          // console.log(this.content)
-          // console.log(this.likeNum)
-          // console.log(this.type)
-          // let params = {
-          //   title: this.articleForm.title,
-          //   author: this.articleForm.author,
-          //   type: this.articleForm.type,
-          //   tag: this.articleForm.tag.join(),
-          //   likeNum: this.articleForm.meta.likeNum,
-          //   lookNum: this.articleForm.lookNum,
-          //   content: this.articleForm.content
-          // }
-          console.log(this.articleForm)
           this.$store.dispatch('PostArticle', this.articleForm).then(res => {
-            console.log(res)
+            // console.log(res)
             if(res.success){
               this.$message.success('发布成功！')
               setTimeout(() => {
@@ -180,16 +191,35 @@
       background: #fff;
       .el-row{
         padding: 5px 0;
+        .avatar-uploader  {
+          /deep/ .el-upload{
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            &:hover {
+              border-color: #409EFF;
+            }
+          }
+        }
+        .avatar-uploader-icon {
+          font-size: 28px;
+          color: #8c939d;
+          width: 178px;
+          height: 178px;
+          line-height: 178px;
+          text-align: center;
+        }
+        .avatar {
+          width: 178px;
+          height: 178px;
+          display: block;
+        }
       }
       .v-footer{
         text-align: right;
       }
-    }
-    .quill-editor{
-      // /deep/ .ql-editor{
-      //   max-height: 600px;
-      //   overflow-y: scroll;
-      // }
     }
   }
 </style>

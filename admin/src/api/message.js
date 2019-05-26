@@ -46,10 +46,10 @@ export async function deleteMessage(data) {
 // }
 
 // 修改留言
-export async function putMessage(data) {
-  return await request({
-    url: '/message',
-    method: 'put',
-    data: { ...data }
-  })
-}
+// export async function putMessage(data) {
+//   return await request({
+//     url: '/message',
+//     method: 'put',
+//     data: { ...data }
+//   })
+// }
