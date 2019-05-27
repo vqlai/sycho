@@ -241,7 +241,7 @@
           currentPage: this.currentPage,
           pageSize: this.pageSize
         }
-        this.$store.dispatch('GetArticle', params).then(res => {
+        this.$store.dispatch('article/getArticle', params).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
             console.log(this.tableData)
@@ -268,7 +268,7 @@
         let params = {}
         params._id = row._id
         params[type] = state
-        this.$store.dispatch('PatchArticle', params).then(res => {
+        this.$store.dispatch('article/patchArticle', params).then(res => {
           if(res.success){
             this.$message.success(res.msg)
             this._getArticle({ currentPage: this.currentPage, pageSize: this.pageSize })
@@ -288,7 +288,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('DeleteArticle', row._id).then(res => {
+          this.$store.dispatch('article/deleteArticle', row._id).then(res => {
             if(res.success){
               this.$message.success(res.msg)
               this._getArticle({ currentPage: this.currentPage, pageSize: this.pageSize })

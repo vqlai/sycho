@@ -77,6 +77,14 @@
             </template>
           </el-table-column>
           <el-table-column
+            sortable
+            align="center"
+            label="更新时间">
+            <template slot-scope="scope">
+              {{ scope.row.updateDate | formatterTime}}
+            </template>
+          </el-table-column>
+          <el-table-column
             fixed="right"
             label="操作"
             align="center"
@@ -342,7 +350,7 @@
       // },
       _getUser(){
         this.loading = true
-        this.$store.dispatch('GetUser', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, role: this.role }).then(res => {
+        this.$store.dispatch('user/getUser', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, role: this.role }).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
             this.total = res.data.pagination.total
@@ -408,13 +416,13 @@
             // console.log(formData.get('username'))
             let action = ''
             if (this.userForm._id) {
-              action = 'PutUser'
+              action = 'user/putUser'
               formData.append('_id', this.userForm._id)
               formData.append('prePwd', this.userForm.prePwd)
               formData.append('newPwd', this.userForm.newPwd)
               formData.append('surePwd', this.userForm.confirmPwd)
             } else {
-              action = 'PostUser'
+              action = 'user/postUser'
               formData.append('curPwd', this.userForm.curPwd)
               formData.append('surePwd', this.userForm.surePwd)
             }
@@ -438,7 +446,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('DeleteUser', row._id).then(res => {
+          this.$store.dispatch('user/deleteUser', row._id).then(res => {
             if(res.success){
               this.$message.success(res.msg)
               this._getUser()

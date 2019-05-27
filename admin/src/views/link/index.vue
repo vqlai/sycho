@@ -193,7 +193,7 @@
       // },
       _getLink(){
         this.loading = true
-        this.$store.dispatch('GetLink', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, type: this.type }).then(res => {
+        this.$store.dispatch('link/getLink', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, type: this.type }).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
             console.log(this.tableData)
@@ -264,7 +264,7 @@
               desc: desc
             }
             if (this.linkForm._id) {
-              action = 'PutLink'
+              action = 'link/putLink'
               params._id = this.linkForm._id
               // params = Object.assign({}, {
               //   _id: this.linkForm._id,
@@ -274,7 +274,7 @@
               //   desc
               // })
             } else {
-              action = 'PostLink'
+              action = 'link/postLink'
               // params = { ...this.linkForm }
             }
             this.$store.dispatch(action, params).then(res => {
@@ -293,42 +293,6 @@
                 })
               }
             })
-            // if(this.dialogType === 1){
-            //   this.$store.dispatch('postLink', params).then(res => {
-            //     console.log(res)
-            //     if(res.success){
-            //       this._getLink()
-            //       this.dialogVisible = false
-            //       this.$message({
-            //         message: res.msg,
-            //         type: 'success'
-            //       })
-            //     }else{
-            //       this.$message({
-            //         message: res.msg,
-            //         type: 'error'
-            //       })
-            //     }
-            //   })
-            // }else if(this.dialogType === 2){
-            //   params.id = this.linkForm.id
-            //   this.$store.dispatch('putLink', params).then(res => {
-            //     console.log(res)
-            //     if(res.success){
-            //       this._getLink()
-            //       this.dialogVisible = false
-            //       this.$message({
-            //         message: res.msg,
-            //         type: 'success'
-            //       })
-            //     }else{
-            //       this.$message({
-            //         message: res.msg,
-            //         type: 'error'
-            //       })
-            //     }
-            //   })
-            // }
           } else {
             console.log('error submit!!')
             return false
@@ -341,7 +305,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('DeleteLink', row._id).then(res => {
+          this.$store.dispatch('link/deleteLink', row._id).then(res => {
             if(res.success){
               this.$message.success(res.msg)
               this._getLink()

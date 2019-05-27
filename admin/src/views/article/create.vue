@@ -129,7 +129,7 @@
       },
       handleSubmit(){
         if(this.checkArticle()){
-          this.$store.dispatch('PostArticle', this.articleForm).then(res => {
+          this.$store.dispatch('article/postArticle', this.articleForm).then(res => {
             // console.log(res)
             if(res.success){
               this.$message.success('发布成功！')

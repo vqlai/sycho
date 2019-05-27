@@ -225,7 +225,7 @@ import { checkEmail } from '@/assets/js/validate.js'
       // 根据条件获取留言
       _getMessage(params){
         this.loading = true
-        this.$store.dispatch('GetMessage', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, state: this.state }).then(res => {
+        this.$store.dispatch('message/getMessage', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, state: this.state }).then(res => {
           // console.log(res)
           if(res.success){
             this.tableData = [...res.data.list]
@@ -276,7 +276,7 @@ import { checkEmail } from '@/assets/js/validate.js'
           content: this.messageForm.content,
           agent: navigator.userAgent
         }
-        this.$store.dispatch('PostMessage', params).then(res => {
+        this.$store.dispatch('message/postMessage', params).then(res => {
           // console.log(res)
           if(res.success){
             this._getMessage() // 刷新页面数据
@@ -289,7 +289,7 @@ import { checkEmail } from '@/assets/js/validate.js'
       },
       // 修改状态
       handleState(row, code){
-        this.$store.dispatch('PatchMessage', { _id: row._id, state: code }).then(res => {
+        this.$store.dispatch('message/patchMessage', { _id: row._id, state: code }).then(res => {
           console.log(res)
           if(res.success){
             this.$message({
@@ -313,7 +313,7 @@ import { checkEmail } from '@/assets/js/validate.js'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('DeleteMessage', row._id).then(res => {
+          this.$store.dispatch('message/deleteMessage', row._id).then(res => {
             if(res.success){
               this.$message({
                 message: res.msg,

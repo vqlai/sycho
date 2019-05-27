@@ -107,7 +107,7 @@
     destroyed(){},
     methods: {
       _getArticleById(){
-        this.$store.dispatch('GetArticleById', { _id: this.$route.params.id }).then(res => {
+        this.$store.dispatch('article/getArticleById', { _id: this.$route.params.id }).then(res => {
           // console.log(res)
           if(res.success){
             this.articleForm = { ...res.data }
@@ -122,7 +122,7 @@
       },
       handleSubmit(){
         if(this.checkArticle()){
-          this.$store.dispatch('PutArticle', this.articleForm).then(res => {
+          this.$store.dispatch('article/putArticle', this.articleForm).then(res => {
             if(res.success){
               this.$message.success(res.msg)
               setTimeout(() => {
