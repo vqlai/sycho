@@ -1,40 +1,39 @@
 <template>
   <div v-if="!item.hidden" class="menu-wrapper">
+    <!-- 无子菜单 -->
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
+      <app-link :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
+          <item :meta="Object.assign({},item.meta,onlyOneChild.meta)" />
         </el-menu-item>
       </app-link>
     </template>
-
+    <!-- 有子菜单 -->
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+        <item :meta="item.meta" />
       </template>
       <sidebar-item
         v-for="child in item.children"
-        :key="child.path"
         :is-nest="true"
         :item="child"
+        :key="child.path"
         :base-path="resolvePath(child.path)"
-        class="nest-menu"
-      />
+        class="nest-menu" />
     </el-submenu>
   </div>
 </template>
 
 <script>
+// 侧边栏
 import path from 'path'
-import { isExternal } from '@/utils/validate'
+import { isExternal } from '@/assets/js/validate'
 import Item from './Item'
 import AppLink from './Link'
-import FixiOSBug from './FixiOSBug'
 
 export default {
   name: 'SidebarItem',
   components: { Item, AppLink },
-  mixins: [FixiOSBug],
   props: {
     // route object
     item: {
@@ -75,7 +74,7 @@ export default {
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
-        this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
+        this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
         return true
       }
 
@@ -84,9 +83,6 @@ export default {
     resolvePath(routePath) {
       if (isExternal(routePath)) {
         return routePath
-      }
-      if (isExternal(this.basePath)) {
-        return this.basePath
       }
       return path.resolve(this.basePath, routePath)
     }
