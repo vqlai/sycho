@@ -127,7 +127,7 @@ export default {
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
           console.log(this.listObj[objKeyArr[i]])
-          this.$store.dispatch('RemoveArticlePics', { url: this.listObj[objKeyArr[i]].preUrl }).then(res => {
+          this.$store.dispatch('article/removeArticlePics', { url: this.listObj[objKeyArr[i]].preUrl }).then(res => {
             console.log(res)
           })
           // delete 可以删除数组的元素
@@ -150,7 +150,7 @@ export default {
       // upload组件当多个文件自动上传时，默认会发起多个请求，一个个的上传文件到服务器，为了避免，需要做如下判断
       // if(this.fileArray.length === this.$refs.upload.uploadFiles.length){
         console.log(this.$refs.upload.uploadFiles)
-        this.$store.dispatch('UploadArticlePics', formData).then(res => {
+        this.$store.dispatch('article/uploadArticlePics', formData).then(res => {
           console.log(res)
           // console.log(this.fileList)  // 这里获取不到fileList
           if(res.success){
