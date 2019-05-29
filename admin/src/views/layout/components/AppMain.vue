@@ -22,11 +22,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-main {
+.app-main{
   /*50 = navbar  */
   min-height: calc(100vh - 50px);
   position: relative;
   overflow: hidden;
   background-color: #fafafa;
+}
+.hasTagsView .fixed-header+.app-main {
+    margin-top: 84px;
 }
 </style>
