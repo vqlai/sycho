@@ -52,7 +52,7 @@ service.interceptors.response.use(
     if (res.code !== 200) {
       // 处理自定义异常,400,401,token不合法等
       if (res.code === 401){
-        store.dispatch('FedLogOut').then(() => {
+        store.dispatch('user/logout').then(() => {
           // location.reload() // 为了重新实例化vue-router对象 避免bug
         })
       }

@@ -49,12 +49,12 @@ class userController{
 				let token = jwt.sign({id: result._id}, privateKey, {expiresIn})
 				// console.log(token)
 
-				handleSuccess({ ctx, msg: '登录成功！', data: { token } })
+				handleSuccess({ ctx, msg: '登录成功', data: { token } })
 			}else{
-				handleError({ ctx, msg: '密码错误！' })
+				handleError({ ctx, msg: '密码错误' })
 			}
 		}else{
-			handleError({ ctx, msg: '用户名不存在！' })
+			handleError({ ctx, msg: '用户名不存在' })
 		}
 	}
 

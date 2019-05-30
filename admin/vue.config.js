@@ -1,11 +1,11 @@
 'use strict'
 const path = require('path')
-const defaultSetting = require('./src/setting.js')
+const defaultSettings = require('./src/settings.js')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
-const name = defaultSetting.title || 'sychoAdmin' // page title
+const name = defaultSettings.title || 'sychoAdmin' // page title
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
@@ -29,7 +29,7 @@ module.exports = {
   // indexPath: 'index.html', // 指定生成的 index.html 的输出路径 (相对于 outputDir)。也可以是一个绝对路径。
   // filenameHashing: false, // 关闭资源文件添加hash值
   lintOnSave: process.env.NODE_ENV === 'development', // 是否开启eslint检查,只在开发环境开启
-  productionSourceMap: false, // 生产环境是否生成 sourceMap 文件
+  productionSourceMap: true, // 生产环境是否生成 sourceMap 文件
   devServer: {
     port: port, // 修改默认端口
     https: false, // https:{type:Boolean}

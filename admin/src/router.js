@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import store from '@/store'
+import store from './store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 // import { Message } from 'element-ui'
 import { getToken } from '@/assets/js/auth' // getToken from localstroge
+import getPageTitle from '@/assets/js/get-page-title'
 
 /* Layout */
 import Layout from '@/views/layout'
@@ -257,20 +258,38 @@ export const asyncRoutes = [
   },
 ]
 
-const router = new Router({
-  // mode: 'history', // 后端支持可开
+// const router = new Router({
+//   // mode: 'history', // 后端支持可开
+//   scrollBehavior: () => ({ y: 0 }),
+//   routes: [
+//     ...constantRoutes,
+//     // ...asyncRoutes,
+//     // ...testRouters // 测试路由
+//   ]
+// })
+
+const createRouter = () => new Router({
+  // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: [
-    ...constantRoutes,
-    // ...asyncRoutes,
-    // ...testRouters // 测试路由
-  ]
+  routes: constantRoutes
 })
+
+const router = createRouter()
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
 
 NProgress.configure({ showSpinner: false }) // NProgress configuration
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach(async(to, from, next) => {
+  // start progress bar
   NProgress.start()
+  // set page title
+  document.title = getPageTitle(to.meta.title)
+
   if (getToken()) {
     if (to.path === '/login') {
       next({ path: '/' })
@@ -284,17 +303,42 @@ router.beforeEach(async(to, from, next) => {
       }else{
         try {
           // get user info
-          await store.dispatch('GetUserInfo')
+          // note: roles must be a object array!
+          const { data } = await store.dispatch('user/getUserInfo')
+          console.log(data.role.split(','))
+          // generate accessible routes map based on roles
+          const accessRoutes = await store.dispatch('permission/generateRoutes', data.role.split(',').map(item => Number(item)))
+
+          // dynamically add accessible routes
+          router.addRoutes(accessRoutes)
+          // debugger
+
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
           next({ ...to, replace: true })
         } catch (err) {
-          await store.dispatch('FedLogOut')
+          await store.dispatch('user/logout')
           // Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
       }
+      console.log(store)
+      // if (!store.getters.name) {
+      //   // 拉取用户信息
+      //   store.dispatch('user/getUserInfo').then(res => {
+      //     console.log(res)
+      //     next()
+      //   }).catch(err => {
+      //     console.log(err)
+      //     store.dispatch('user/logout').then(() => {
+      //       // Message.error(err || 'Verification failed, please login again')
+      //       next({ path: '/' })
+      //     })
+      //   })
+      // } else {
+      //   next()
+      // }
     }
   } else {
     /* has no token */
