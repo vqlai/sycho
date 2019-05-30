@@ -11,11 +11,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
-  created(){
-    // this.$store.dispatch('GetInfo').then(res => {
-    //   console.log(res)
-    // })
-  },
+  created(){},
   computed: {
     ...mapGetters([
       'name',

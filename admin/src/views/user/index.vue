@@ -23,7 +23,8 @@
           :data="tableData"
           v-loading="loading"
           border
-          height="680"
+          height="560"
+          max-height="560"
           stripe
           fit
           highlight-current-row

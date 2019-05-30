@@ -1,9 +1,9 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <!-- or name="fade" -->
-      <!-- <router-view :key="key"></router-view> -->
-      <router-view :key="key"/>
+      <keep-alive :include="cachedViews">
+        <router-view :key="key" />
+      </keep-alive>
     </transition>
   </section>
 </template>
@@ -12,9 +12,10 @@
 export default {
   name: 'AppMain',
   computed: {
+    cachedViews() {
+      return this.$store.state.tagsView.cachedViews
+    },
     key() {
-      // return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date()
-      // 只要保证 key 唯一性就可以了，保证不同页面的 key 不相同
       return this.$route.fullPath
     }
   }
@@ -22,14 +23,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-main{
-  /*50 = navbar  */
+.app-main {
+  /* 50= navbar  50  */
   min-height: calc(100vh - 50px);
+  width: 100%;
   position: relative;
   overflow: hidden;
-  background-color: #fafafa;
 }
-.hasTagsView .fixed-header+.app-main {
-    margin-top: 84px;
+
+.fixed-header+.app-main {
+  padding-top: 50px;
+}
+
+.hasTagsView {
+  .app-main {
+    /* 84 = navbar + tags-view = 50 + 34 */
+    min-height: calc(100vh - 84px);
+  }
+
+  .fixed-header+.app-main {
+    padding-top: 84px;
+  }
+}
+</style>
+
+<style lang="scss">
+// fix css style bug in open el-dialog
+.el-popup-parent--hidden {
+  .fixed-header {
+    padding-right: 15px;
+  }
 }
 </style>
