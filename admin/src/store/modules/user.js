@@ -4,7 +4,7 @@
 // logout,
 import { login, getUserInfo, getUser, postUser, putUser, deleteUser } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
-// import router, { resetRouter } from '@/router'
+import router, { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
@@ -104,21 +104,27 @@ const actions = {
 
   // user logout
   logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      // logout(state.token).then(() => {
-      //   commit('SET_TOKEN', '')
-      //   commit('SET_ROLES', [])
-      //   removeToken()
-      //   resetRouter()
-      //   resolve()
-      // }).catch(error => {
-      //   reject(error)
-      // })
-      commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
-      removeToken()
-      resolve()
-    })
+    commit('SET_TOKEN', '')
+    commit('SET_ROLES', [])
+    removeToken()
+    resetRouter()
+    router.push('/login')
+    // return new Promise((resolve, reject) => {
+    //   // logout(state.token).then(() => {
+    //   //   commit('SET_TOKEN', '')
+    //   //   commit('SET_ROLES', [])
+    //   //   removeToken()
+    //   //   resetRouter()
+    //   //   resolve()
+    //   // }).catch(error => {
+    //   //   reject(error)
+    //   // })
+    //   commit('SET_TOKEN', '')
+    //   commit('SET_ROLES', [])
+    //   removeToken()
+    //   resetRouter()
+    //   resolve()
+    // })
   },
 
   // remove token
@@ -128,6 +134,31 @@ const actions = {
       commit('SET_ROLES', [])
       // commit('SET_ROLE', '')
       removeToken()
+      resolve()
+    })
+  },
+
+  // dynamically modify permissions（未使用）
+  changeRoles({ commit, dispatch }, role) {
+    return new Promise(async resolve => {
+      const token = role + '-token'
+
+      commit('SET_TOKEN', token)
+      setToken(token)
+
+      const { roles } = await dispatch('getUserInfo')
+
+      resetRouter()
+
+      // generate accessible routes map based on roles
+      const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
+
+      // dynamically add accessible routes
+      router.addRoutes(accessRoutes)
+
+      // reset visited views and cached views
+      dispatch('tagsView/delAllViews', null, { root: true })
+
       resolve()
     })
   },

@@ -68,8 +68,14 @@ export const constantRoutes = [
       name: 'Dashboard',
       meta: { title: 'Dashboard', icon: 'dashboard', keepAlive: true },
     }]
-  },
+  }
+]
 
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
   {
     path: '/article',
     component: Layout,
@@ -149,7 +155,8 @@ export const constantRoutes = [
         path: 'index',
         name: 'Comment',
         component: () => import('@/views/comment/index'),
-        meta: { title: 'Comment', icon: 'message', keepAlive: true }
+        meta: { title: 'Comment', icon: 'message', keepAlive: true },
+        roles: ['2', '3']
       }
     ]
   },
@@ -162,7 +169,8 @@ export const constantRoutes = [
         path: 'index',
         name: 'Tag',
         component: () => import('@/views/tag/index'),
-        meta: { title: 'Tag', icon: 'tag', keepAlive: true }
+        meta: { title: 'Tag', icon: 'tag', keepAlive: true },
+        roles: ['2', '3']
       }
     ]
   },
@@ -173,89 +181,13 @@ export const constantRoutes = [
     children: [
       {
         path: 'https://www.sycho.cn',
-        meta: { title: 'sycho Link', icon: 'link' }
+        meta: { title: 'sycho', icon: 'link' }
       }
     ]
   },
 
+  // 404 page must be placed at the end !!! 必须放在最后
   { path: '*', redirect: '/404', hidden: true }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
-  {
-    path: '/article',
-    component: Layout,
-    redirect: '/article/list',
-    name: 'Article',
-    meta: {
-      title: 'Article',
-      icon: 'article',
-      roles: ['2', '3'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'list',
-        name: 'List',
-        component: () => import('@/views/article/list'),
-        meta: { title: 'List', icon: 'article-list', keepAlive: true }
-      }, {
-        path: 'create',
-        name: 'Create',
-        component: () => import('@/views/article/create'),
-        meta: { title: 'Create', icon: 'article-edit', keepAlive: true }
-      }, {
-        // path: 'edit/:id(\\d+)',
-        path: 'edit/:id',
-        name: 'Edit',
-        component: () => import('@/views/article/edit'),
-        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list', keepAlive: false },
-        hidden: true,
-      }
-    ]
-  },
-
-  {
-    path: '/message',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Message',
-        component: () => import('@/views/message/index'),
-        meta: { title: 'Message', icon: 'message', roles: ['2', '3'], keepAlive: true }
-      }
-    ]
-  },
-
-  {
-    path: '/link',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Link',
-        component: () => import('@/views/link/index'),
-        meta: { title: 'Link', icon: 'link', roles: ['2', '3'], keepAlive: true }
-      }
-    ]
-  },
-
-  {
-    path: '/user',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'User',
-        component: () => import('@/views/user/index'),
-        meta: { title: 'User', icon: 'user', roles: ['3'], keepAlive: true }
-      }
-    ]
-  },
 ]
 
 // const router = new Router({
@@ -283,62 +215,55 @@ export function resetRouter() {
 }
 
 NProgress.configure({ showSpinner: false }) // NProgress configuration
-const whiteList = ['/login'] // 不重定向白名单
+
+const whiteList = ['/login', '/auth-redirect'] // 不重定向白名单
+
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
+
   // set page title
   document.title = getPageTitle(to.meta.title)
 
   if (getToken()) {
     if (to.path === '/login') {
+      // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
     } else {
       // 路由跳转前判断用户角色是否为空拉取用户信息
       // vuex一刷新数据就被清空，这里每次刷新页面就会调用后台接口
       // determine whether the user has obtained his permission roles through getInfo
-      if (store.getters.name) {
+      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      if (hasRoles) {
         next()
       }else{
         try {
           // get user info
           // note: roles must be a object array!
           const { data } = await store.dispatch('user/getUserInfo')
-          console.log(data.role.split(','))
+          // console.log(data.role.split(','))
+          // debugger
+
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', data.role.split(',').map(item => Number(item)))
-
+          console.log(accessRoutes)
           // dynamically add accessible routes
           router.addRoutes(accessRoutes)
+          console.log(router)
           // debugger
 
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
           next({ ...to, replace: true })
         } catch (err) {
-          await store.dispatch('user/logout')
+          // remove token and go to login page to re-login
+          await store.dispatch('user/resetToken')
           // Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
       }
-      console.log(store)
-      // if (!store.getters.name) {
-      //   // 拉取用户信息
-      //   store.dispatch('user/getUserInfo').then(res => {
-      //     console.log(res)
-      //     next()
-      //   }).catch(err => {
-      //     console.log(err)
-      //     store.dispatch('user/logout').then(() => {
-      //       // Message.error(err || 'Verification failed, please login again')
-      //       next({ path: '/' })
-      //     })
-      //   })
-      // } else {
-      //   next()
-      // }
     }
   } else {
     /* has no token */

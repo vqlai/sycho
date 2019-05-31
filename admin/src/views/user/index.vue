@@ -24,7 +24,6 @@
           v-loading="loading"
           border
           height="560"
-          max-height="560"
           stripe
           fit
           highlight-current-row
@@ -59,9 +58,9 @@
             prop="avatar"
             label="头像"
             align="center"
-            width="280">
+            width="220">
               <template slot-scope="scope">
-                <img style="width: auto;max-width: 100%;max-height:80px;" :src="reUrl+scope.row.avatar" alt="">
+                <img style="width: auto;max-width: 100%;max-height:60px;" :src="reUrl+scope.row.avatar" alt="">
               </template>
           </el-table-column>
           <el-table-column
