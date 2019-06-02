@@ -8,8 +8,9 @@ const config = require('../utils/config.js'),
 			U = require('../controller/user.js'),
 			L = require('../controller/link.js'),
 			A = require('../controller/article.js'),
-			C = require('../controller/comment.js')
-			M = require('../controller/message.js')
+			C = require('../controller/comment.js'),
+			M = require('../controller/message.js'),
+			S = require('../controller/sts.js')
 /*HTTP动词
 	GET     //查询 
 	POST    //新增
@@ -17,6 +18,9 @@ const config = require('../utils/config.js'),
 	PATCH   //更新
 	DELETE  //删除
 */
+// STS
+router.get('/sts', S.getSts)
+
 // 用户管理
 router.post('/login', U.login)
 router.get('/getUserInfo', checkToken, U.getUserInfo)
