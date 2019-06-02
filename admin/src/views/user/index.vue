@@ -183,7 +183,7 @@
             </el-upload>
             <ul class="upload-tip">
               <li>每次只能上传1张图片。</li>
-              <li>每个文件大小不超过 500kb。</li>
+              <li>每张图片大小不超过 200kb。</li>
               <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
             </ul>
             <el-dialog :visible.sync="avatarVisible" width="35%" append-to-body>
@@ -459,8 +459,8 @@
         })
       },
       beforeAvatarUpload(file) {
-        if(file.size > 500 * 1000){
-          this.$message({ message: `文件${file.name}太大，不能超过 500kb`, type: 'warning' })
+        if(file.size > 200 * 1000){
+          this.$message({ message: `文件${file.name}太大，不能超过 200kb`, type: 'warning' })
           return false
         }
         console.log(file)

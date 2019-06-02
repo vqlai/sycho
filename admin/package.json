@@ -23,6 +23,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
+    "cos-js-sdk-v5": "^0.5.17",
     "echarts": "^4.2.1",
     "element-ui": "^2.8.2",
     "moment": "^2.24.0",

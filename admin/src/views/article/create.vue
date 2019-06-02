@@ -49,15 +49,34 @@
           <el-col :span="12" style="display:flex;align-items:center;">
             <span>缩略图：</span>
             <el-upload
-              style="display:inline-block;"
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action=""
               :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload">
-              <img v-if="articleForm.thumb" :src="articleForm.thumb" class="avatar">
+              accept=".jpg, .jpeg, .png"
+              :limit="1"
+              :on-success="handleThumbSuccess"
+              :before-upload="beforeThumbUpload">
+              <div v-if="thumbImgUrl" :class="['avatar-box',{'hover': thumbImgHover}]"
+                @mouseenter="thumbImgHover = true"
+                @mouseleave="thumbImgHover = false">
+                <img :src="thumbImgUrl" class="avatar">
+                <div v-if="thumbImgHover" class="imgHoverBtns">
+                  <i class="el-icon-zoom-in" @click.stop="thumbVisible=true"></i>
+                  <i class="el-icon-delete" @click.stop="handleThumbRemove"></i>
+                </div>
+              </div>
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
+            <ul class="upload-tip">
+              <li>每次只能上传1张图片。</li>
+              <li>每张图片大小不超过 200kb。</li>
+              <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
+            </ul>
+            <el-dialog :visible.sync="thumbVisible" width="35%">
+              <div style="text-align: center;">
+                <img :src="thumbImgUrl" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
+              </div>
+            </el-dialog>
           </el-col>
         </el-row>
       </div>
@@ -79,6 +98,7 @@
 <script>
   import tinymce from '@/components/Tinymce'
   import data from '@/assets/js/data'
+  import COS from 'cos-js-sdk-v5'
   export default {
     name: 'create',
     data(){
@@ -103,33 +123,106 @@
           },
           thumb: ''
         },
+        cos: null,
+        fileObj: null,
+        thumbImgUrl: '', // 头像路径
+        thumbVisible: false, // 预览图片弹窗
+        thumbImgHover: false
       }
     },
     computed: {
     },
     created(){
-      this.$store.dispatch('cos/getSts', {}).then(res => {
-        console.log(res)
-      })
+      // let cos = new COS({
+      //   secretId: 'AKIDoW3yABjRWWO5n5D8qLQ1ScnmyvZ0arLb',
+      //   secretKey: 'CD0sUt3A4jAAwSlxyrUqcBIF3iFdQ6Zv',
+      // })
+      // 获取sts
+      // this.$store.dispatch('cos/getSts', {}).then(res => {
+      //     if(res.success){
+      //       let result = res.data
+      //       console.log(result)
+      //     }else{
+      //       console.log(res)
+      //     }
+      //   })
     },
     mounted(){},
     destroyed(){},
     methods: {
       handleChange(){},
-      handleAvatarSuccess(res, file) {
+      handleThumbSuccess(res, file) {
         this.imageUrl = URL.createObjectURL(file.raw)
       },
-      beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg'
-        const isLt2M = file.size / 1024 / 1024 < 2
-
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!')
+      handleThumbRemove(){
+        // { Bucket: '', Region: '', Key: '' }
+        this.cos.deleteObject(this.thumbParams, function(err, data) {
+          console.log(err || data)
+        })
+      },
+      beforeThumbUpload(file) {
+        console.log(file)
+        if(file.size > 200 * 1000){
+          this.$message.warning(`文件${file.name}太大，不能超过 200kb`)
+          return false
         }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!')
-        }
-        return isJPG && isLt2M
+        // this.thumbImgUrl = URL.createObjectURL(file)
+        // this.fileObj = file
+        // let result = null
+        // this.cos = new COS({ getAuthorization: (options, callback) => {
+        //     this.$store.dispatch('cos/getSts', {}).then(res => {
+        //       if(res.success){
+        //         result = res.data
+        //         console.log(result)
+        //         callback({
+        //           TmpSecretId: result.credentials.tmpSecretId,
+        //           TmpSecretKey: result.credentials.tmpSecretKey,
+        //           XCosSecurityToken: result.credentials.sessionToken,
+        //           ExpiredTime: result.expiredTime
+        //         })
+        //       }else{
+        //         console.log(res)
+        //       }
+        //     })
+        //   }
+        // })
+        this.$store.dispatch('cos/getSts', {}).then(res => {
+          if(res.success){
+            let result = res.data
+            this.cos = new COS({ getAuthorization: (options, callback) => {
+                callback({
+                  TmpSecretId: result.credentials.tmpSecretId,
+                  TmpSecretKey: result.credentials.tmpSecretKey,
+                  XCosSecurityToken: result.credentials.sessionToken,
+                  ExpiredTime: result.expiredTime
+                })
+              }
+            })
+            this.thumbParams = {
+              Bucket: result.bucket,
+              Region: result.region,
+              Key: '/' + result.dir + '/' + file.name
+            }
+            this.cos.putObject({
+              Bucket: result.bucket,
+              Region: result.region,
+              Key: '/' + result.dir + '/' + file.name,
+              StorageClass: 'STANDARD',
+              Body: file, // 上传文件对象
+              onProgress: (progressData) => {
+                  console.log(JSON.stringify(progressData))
+                }
+              },
+              (err, data) => {
+                console.log(err || data)
+                console.log(data.Location)
+                this.thumbImgUrl = 'https://' + data.Location
+              })
+          }else{
+            console.log(res)
+          }
+        })
+        return false // 加了return false组件的action就不会发起post请求了
       },
       handleSubmit(){
         if(this.checkArticle()){
@@ -169,16 +262,15 @@
         }else if(typeof this.articleForm.meta.views === 'undefined'){
           this.$message.error('请输入浏览数')
           return false
+        }else if(!this.articleForm.thumb){
+          this.$message.error('请选中缩略图')
+          return false
         }else if(!this.articleForm.content.trim()){
           this.$message.error('请输入文章内容')
           return false
         }else{
           return true
         }
-        // else if(!this.articleForm.thumb){
-        //   this.$message.error('请选中缩略图')
-        //   return false
-        // }
       },
     },
     components: {
@@ -204,6 +296,32 @@
             overflow: hidden;
             &:hover {
               border-color: #409EFF;
+              &::after{
+                content: ' ';
+                position: absolute;
+                top:0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10;
+                background: rgba($color: #222, $alpha: .3)
+              }
+              .imgHoverBtns{
+                position: absolute;
+                top:0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 11;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                i{
+                  color: #fff;
+                  font-size: 18px;
+                  padding: 0 4px;
+                }
+              }
             }
           }
         }
@@ -219,6 +337,14 @@
           width: 178px;
           height: 178px;
           display: block;
+        }
+        ul.upload-tip{
+          list-style-type: none;
+          margin: 0;
+          padding: 0 30px 0;
+          li{
+            line-height: 30px;
+          }
         }
       }
       .v-footer{
