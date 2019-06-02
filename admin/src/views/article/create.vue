@@ -107,7 +107,11 @@
     },
     computed: {
     },
-    created(){},
+    created(){
+      this.$store.dispatch('cos/getSts', {}).then(res => {
+        console.log(res)
+      })
+    },
     mounted(){},
     destroyed(){},
     methods: {

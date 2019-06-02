@@ -54,9 +54,21 @@ export const constantRoutes = [
       }
     ]
   },
-  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('@/views/error-page/404'), hidden: true },
-  { path: '/401', component: () => import('@/views/error-page/401'), hidden: true },
+  {
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/error-page/404'),
+    hidden: true
+  },
+  {
+    path: '/401',
+    component: () => import('@/views/error-page/401'),
+    hidden: true
+  },
   {
     path: '/',
     component: Layout,
@@ -66,7 +78,7 @@ export const constantRoutes = [
       path: 'dashboard',
       component: () => import('@/views/dashboard/index'),
       name: 'Dashboard',
-      meta: { title: 'Dashboard', icon: 'dashboard', keepAlive: true },
+      meta: { title: 'Dashboard', icon: 'dashboard', affix: true },
     }]
   }
 ]
@@ -80,6 +92,7 @@ export const asyncRoutes = [
     path: '/article',
     component: Layout,
     redirect: '/article/list',
+    // alwaysShow: true, // will always show the root menu
     name: 'Article',
     meta: {
       title: 'Article',
@@ -91,18 +104,18 @@ export const asyncRoutes = [
         path: 'list',
         name: 'List',
         component: () => import('@/views/article/list'),
-        meta: { title: 'List', icon: 'article-list', keepAlive: true }
+        meta: { title: 'List', icon: 'article-list' }
       }, {
         path: 'create',
         name: 'Create',
         component: () => import('@/views/article/create'),
-        meta: { title: 'Create', icon: 'article-edit', keepAlive: true }
+        meta: { title: 'Create', icon: 'article-edit' }
       }, {
         // path: 'edit/:id(\\d+)',
         path: 'edit/:id',
         name: 'Edit',
         component: () => import('@/views/article/edit'),
-        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list', keepAlive: false },
+        meta: { title: 'Edit', icon: 'article-edit', noCache: true, activeMenu: '/article/list' },
         hidden: true,
       }
     ]
@@ -116,7 +129,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'Message',
         component: () => import('@/views/message/index'),
-        meta: { title: 'Message', icon: 'message', roles: ['2', '3'], keepAlive: true }
+        meta: { title: 'Message', icon: 'message', roles: ['2', '3'] }
       }
     ]
   },
@@ -129,7 +142,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'Link',
         component: () => import('@/views/link/index'),
-        meta: { title: 'Link', icon: 'link', roles: ['2', '3'], keepAlive: true }
+        meta: { title: 'Link', icon: 'link', roles: ['2', '3'] }
       }
     ]
   },
@@ -142,7 +155,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'User',
         component: () => import('@/views/user/index'),
-        meta: { title: 'User', icon: 'user', roles: ['3'], keepAlive: true }
+        meta: { title: 'User', icon: 'user', roles: ['3'] }
       }
     ]
   },
@@ -155,7 +168,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'Comment',
         component: () => import('@/views/comment/index'),
-        meta: { title: 'Comment', icon: 'message', keepAlive: true },
+        meta: { title: 'Comment', icon: 'message' },
         roles: ['2', '3']
       }
     ]
@@ -169,7 +182,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'Tag',
         component: () => import('@/views/tag/index'),
-        meta: { title: 'Tag', icon: 'tag', keepAlive: true },
+        meta: { title: 'Tag', icon: 'tag' },
         roles: ['2', '3']
       }
     ]

@@ -1,6 +1,3 @@
-// import { login, logout, getInfo } from '@/api/user'
-// import { getToken, setToken, removeToken } from '@/utils/auth'
-// import router, { resetRouter } from '@/router'
 // logout,
 import { login, getUserInfo, getUser, postUser, putUser, deleteUser } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/assets/js/auth'
@@ -10,9 +7,7 @@ const state = {
   token: getToken(),
   name: '',
   avatar: '',
-  // role: '',
   desc: '',
-  // introduction: '',
   roles: []
 }
 
@@ -20,9 +15,6 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  // SET_INTRODUCTION: (state, introduction) => {
-  //   state.introduction = introduction
-  // },
   SET_NAME: (state, name) => {
     state.name = name
   },
@@ -32,9 +24,6 @@ const mutations = {
   SET_ROLES: (state, roles) => {
     state.roles = roles
   },
-  // SET_ROLE: (state, role) => {
-  //   state.role = role
-  // },
   SET_DESC: (state, desc) => {
     state.desc = desc
   }
@@ -50,11 +39,11 @@ const actions = {
         // commit('SET_TOKEN', data.token)
         // setToken(data.token)
         // resolve()
-        console.log(res)
+        // console.log(res)
         if (res.success) {
           setToken(res.data.token) // 把token存在cookie
           commit('SET_TOKEN', res.data.token)
-          console.log(res.data.token)
+          // console.log(res.data.token)
         }
         resolve(res)
       }).catch(error => {
@@ -110,20 +99,15 @@ const actions = {
     resetRouter()
     router.push('/login')
     // return new Promise((resolve, reject) => {
-    //   // logout(state.token).then(() => {
-    //   //   commit('SET_TOKEN', '')
-    //   //   commit('SET_ROLES', [])
-    //   //   removeToken()
-    //   //   resetRouter()
-    //   //   resolve()
-    //   // }).catch(error => {
-    //   //   reject(error)
-    //   // })
-    //   commit('SET_TOKEN', '')
-    //   commit('SET_ROLES', [])
-    //   removeToken()
-    //   resetRouter()
-    //   resolve()
+    //   logout(state.token).then(() => {
+    //     commit('SET_TOKEN', '')
+    //     commit('SET_ROLES', [])
+    //     removeToken()
+    //     resetRouter()
+    //     resolve()
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
     // })
   },
 
@@ -132,8 +116,8 @@ const actions = {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
-      // commit('SET_ROLE', '')
       removeToken()
+      router.push('/login')
       resolve()
     })
   },
