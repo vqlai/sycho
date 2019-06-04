@@ -46,8 +46,36 @@
           <el-col :span="4"><span>浏览数：</span><el-input-number v-model="articleForm.meta.views" :min="0" :max="100000000" label="请输入浏览数" controls-position="right" ></el-input-number> </el-col>
         </el-row>
         <el-row type="flex" align="middle">
-          <el-col :span="12">
+          <el-col :span="12" style="display:flex;align-items:center;">
             <span>缩略图：</span>
+            <el-upload
+              class="avatar-uploader"
+              action=""
+              :show-file-list="false"
+              accept=".jpg, .jpeg, .png"
+              :limit="1"
+              :before-upload="beforeThumbUpload">
+              <div v-if="articleForm.thumb" :class="['avatar-box',{'hover': thumbImgHover}]"
+                @mouseenter="thumbImgHover = true"
+                @mouseleave="thumbImgHover = false">
+                <img :src="articleForm.thumb" class="avatar">
+                <div v-if="thumbImgHover" class="imgHoverBtns">
+                  <i class="el-icon-zoom-in" @click.stop="thumbVisible=true"></i>
+                  <i class="el-icon-delete" @click.stop="handleThumbRemove"></i>
+                </div>
+              </div>
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <ul class="upload-tip">
+              <li>每次只能上传1张图片。</li>
+              <li>每张图片大小不超过 200kb。</li>
+              <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
+            </ul>
+            <el-dialog :visible.sync="thumbVisible" width="35%">
+              <div style="text-align: center;">
+                <img :src="articleForm.thumb" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
+              </div>
+            </el-dialog>
           </el-col>
         </el-row>
       </div>
@@ -68,6 +96,7 @@
 <script>
   import tinymce from '@/components/Tinymce'
   import data from '@/assets/js/data'
+  import COS from 'cos-js-sdk-v5'
   export default {
     name: 'edit',
     data(){
@@ -93,6 +122,11 @@
           },
           thumb: ''
         },
+        cacheThumb: '',
+        cos: null,
+        fileObj: null,
+        thumbVisible: false, // 预览图片弹窗
+        thumbImgHover: false
       }
     },
     computed: {
@@ -111,6 +145,7 @@
           // console.log(res)
           if(res.success){
             this.articleForm = { ...res.data }
+            this.cacheThumb = res.data.thumb
             this.articleForm.tag = res.data.tag.split(',')
             this.articleForm.type = String(res.data.type)
             this.articleForm.state = String(res.data.state)
@@ -120,7 +155,75 @@
           }
         })
       },
-      handleSubmit(){
+      beforeThumbUpload(file){
+        if(file.size > 200 * 1000){
+          this.$message.warning(`文件${file.name}太大，不能超过 200kb`)
+          return false
+        }
+        this.articleForm.thumb = URL.createObjectURL(file)
+        this.fileObj = file
+        return false
+      },
+      handleThumbRemove(){
+        this.articleForm.thumb = ''
+        // this.cos.deleteObject({ Bucket: 'sycho1-1256277347', Region: 'ap-guangzhou', Key: '' }, (err, data) => {
+        //   console.log(err || data)
+        //   let res = err || data
+        //   if(res.statusCode === 200 || res.statusCode === 204){
+        //     this.articleForm.thumb = ''
+        //     this.$message.success('成功删除预览图')
+        //   }else{
+        //     this.$message.error(res)
+        //   }
+        // })
+      },
+      async handleSubmit(){
+        if(!this.fileObj && this.cacheThumb){
+          // this.articleForm.thumb = await new Promise((resolve, reject) => {
+          // })
+          await new Promise((resolve, reject) => {
+            this.$store.dispatch('cos/getSts', {}).then(res => {
+              if(res.success){
+                let result = res.data
+                this.cos = new COS({ getAuthorization: (options, callback) => {
+                    callback({
+                      TmpSecretId: result.credentials.tmpSecretId,
+                      TmpSecretKey: result.credentials.tmpSecretKey,
+                      XCosSecurityToken: result.credentials.sessionToken,
+                      ExpiredTime: result.expiredTime
+                    })
+                  }
+                })
+                let arr = this.cacheThumb.split('/')
+                this.cos.deleteObject({ Bucket: 'sycho1-1256277347', Region: 'ap-guangzhou', Key: `${arr[arr.length - 2]}${arr[arr.length - 1]}` }, (err, data) => {
+                  console.log(err || data)
+                  let res = err || data
+                  if(res.statusCode === 200 || res.statusCode === 204){
+                    this.articleForm.thumb = ''
+                    this.$message.success('成功删除预览图')
+                  }else{
+                    this.$message.error(res)
+                  }
+                })
+                this.cos.putObject({
+                  Bucket: 'sycho1-1256277347',
+                  Region: 'ap-guangzhou',
+                  Key: `/${arr[arr.length - 2]}/${new Date().getTime()}.${this.fileObj.name.split('.')[1]}`,
+                  StorageClass: 'STANDARD',
+                  Body: this.fileObj, // 上传文件对象
+                  onProgress: (progressData) => {
+                      console.log(JSON.stringify(progressData))
+                    }
+                  },
+                  (err, data) => {
+                    console.log(err || data)
+                    console.log(data.Location)
+                    this.articleForm.thumb = 'https://' + data.Location
+                  })
+              }
+            })
+          })
+        }
         if(this.checkArticle()){
           this.$store.dispatch('article/putArticle', this.articleForm).then(res => {
             if(res.success){
@@ -178,6 +281,65 @@
       background: #fff;
       .el-row{
         padding: 5px 0;
+        .avatar-uploader  {
+          /deep/ .el-upload{
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            &:hover {
+              border-color: #409EFF;
+              &::after{
+                content: ' ';
+                position: absolute;
+                top:0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 10;
+                background: rgba($color: #222, $alpha: .3)
+              }
+              .imgHoverBtns{
+                position: absolute;
+                top:0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 11;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                i{
+                  color: #fff;
+                  font-size: 18px;
+                  padding: 0 4px;
+                }
+              }
+            }
+            .avatar-uploader-icon {
+              font-size: 28px;
+              color: #8c939d;
+              width: 178px;
+              height: 178px;
+              line-height: 178px;
+              text-align: center;
+            }
+            .avatar {
+              width: 178px;
+              height: 178px;
+              display: block;
+            }
+          }
+        }
+        ul.upload-tip{
+          list-style-type: none;
+          margin: 0;
+          padding: 0 30px 0;
+          li{
+            line-height: 30px;
+          }
+        }
       }
       .v-footer{
         text-align: right;

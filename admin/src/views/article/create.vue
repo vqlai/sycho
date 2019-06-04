@@ -48,18 +48,18 @@
         <el-row type="flex" align="middle">
           <el-col :span="12" style="display:flex;align-items:center;">
             <span>缩略图：</span>
+            <!-- :on-success="handleThumbSuccess" -->
             <el-upload
               class="avatar-uploader"
               action=""
               :show-file-list="false"
               accept=".jpg, .jpeg, .png"
               :limit="1"
-              :on-success="handleThumbSuccess"
               :before-upload="beforeThumbUpload">
-              <div v-if="thumbImgUrl" :class="['avatar-box',{'hover': thumbImgHover}]"
+              <div v-if="articleForm.thumb" :class="['avatar-box',{'hover': thumbImgHover}]"
                 @mouseenter="thumbImgHover = true"
                 @mouseleave="thumbImgHover = false">
-                <img :src="thumbImgUrl" class="avatar">
+                <img :src="articleForm.thumb" class="avatar">
                 <div v-if="thumbImgHover" class="imgHoverBtns">
                   <i class="el-icon-zoom-in" @click.stop="thumbVisible=true"></i>
                   <i class="el-icon-delete" @click.stop="handleThumbRemove"></i>
@@ -74,7 +74,7 @@
             </ul>
             <el-dialog :visible.sync="thumbVisible" width="35%">
               <div style="text-align: center;">
-                <img :src="thumbImgUrl" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
+                <img :src="articleForm.thumb" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
               </div>
             </el-dialog>
           </el-col>
@@ -124,8 +124,8 @@
           thumb: ''
         },
         cos: null,
-        fileObj: null,
-        thumbImgUrl: '', // 头像路径
+        // fileObj: null,
+        // thumbImgUrl: '', // 头像路径
         thumbVisible: false, // 预览图片弹窗
         thumbImgHover: false
       }
@@ -151,41 +151,30 @@
     destroyed(){},
     methods: {
       handleChange(){},
-      handleThumbSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw)
-      },
+      // handleThumbSuccess(res, file) {
+      //   this.imageUrl = URL.createObjectURL(file.raw)
+      // },
       handleThumbRemove(){
         // { Bucket: '', Region: '', Key: '' }
-        this.cos.deleteObject(this.thumbParams, function(err, data) {
+        this.cos.deleteObject(this.thumbParams, (err, data) => {
           console.log(err || data)
+          let res = err || data
+          if(res.statusCode === 200 || res.statusCode === 204){
+            this.articleForm.thumb = ''
+            this.$message.success('成功删除预览图')
+          }else{
+            this.$message.error(res)
+          }
         })
       },
       beforeThumbUpload(file) {
-        console.log(file)
+        // console.log(file)
         if(file.size > 200 * 1000){
           this.$message.warning(`文件${file.name}太大，不能超过 200kb`)
           return false
         }
-        // this.thumbImgUrl = URL.createObjectURL(file)
+        // this.articleForm.thumb = URL.createObjectURL(file)
         // this.fileObj = file
-        // let result = null
-        // this.cos = new COS({ getAuthorization: (options, callback) => {
-        //     this.$store.dispatch('cos/getSts', {}).then(res => {
-        //       if(res.success){
-        //         result = res.data
-        //         console.log(result)
-        //         callback({
-        //           TmpSecretId: result.credentials.tmpSecretId,
-        //           TmpSecretKey: result.credentials.tmpSecretKey,
-        //           XCosSecurityToken: result.credentials.sessionToken,
-        //           ExpiredTime: result.expiredTime
-        //         })
-        //       }else{
-        //         console.log(res)
-        //       }
-        //     })
-        //   }
-        // })
         this.$store.dispatch('cos/getSts', {}).then(res => {
           if(res.success){
             let result = res.data
@@ -201,12 +190,12 @@
             this.thumbParams = {
               Bucket: result.bucket,
               Region: result.region,
-              Key: '/' + result.dir + '/' + file.name
+              Key: `/${result.dir}/${new Date().getTime()}.${file.name.split('.')[1]}`
             }
             this.cos.putObject({
               Bucket: result.bucket,
               Region: result.region,
-              Key: '/' + result.dir + '/' + file.name,
+              Key: `/${result.dir}/${new Date().getTime()}.${file.name.split('.')[1]}`,
               StorageClass: 'STANDARD',
               Body: file, // 上传文件对象
               onProgress: (progressData) => {
@@ -216,7 +205,7 @@
               (err, data) => {
                 console.log(err || data)
                 console.log(data.Location)
-                this.thumbImgUrl = 'https://' + data.Location
+                this.articleForm.thumb = 'https://' + data.Location
               })
           }else{
             console.log(res)
@@ -242,7 +231,6 @@
       checkArticle(){
         if(!this.articleForm.title.trim()){
           this.$message.error('请输入标题')
-          // this.$message({ message: '请输入标题', type: 'error' })
           return false
         }else if(!this.articleForm.desc.trim()){
           this.$message.error('请输入描述')
@@ -262,15 +250,16 @@
         }else if(typeof this.articleForm.meta.views === 'undefined'){
           this.$message.error('请输入浏览数')
           return false
-        }else if(!this.articleForm.thumb){
-          this.$message.error('请选中缩略图')
-          return false
         }else if(!this.articleForm.content.trim()){
           this.$message.error('请输入文章内容')
           return false
         }else{
           return true
         }
+        // else if(!this.articleForm.thumb){
+        //   this.$message.error('请选中缩略图')
+        //   return false
+        // }
       },
     },
     components: {
@@ -323,20 +312,20 @@
                 }
               }
             }
+            .avatar-uploader-icon {
+              font-size: 28px;
+              color: #8c939d;
+              width: 178px;
+              height: 178px;
+              line-height: 178px;
+              text-align: center;
+            }
+            .avatar {
+              width: 178px;
+              height: 178px;
+              display: block;
+            }
           }
-        }
-        .avatar-uploader-icon {
-          font-size: 28px;
-          color: #8c939d;
-          width: 178px;
-          height: 178px;
-          line-height: 178px;
-          text-align: center;
-        }
-        .avatar {
-          width: 178px;
-          height: 178px;
-          display: block;
         }
         ul.upload-tip{
           list-style-type: none;

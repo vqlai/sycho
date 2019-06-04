@@ -13,7 +13,7 @@ class cosController {
       secretKey: 'CD0sUt3A4jAAwSlxyrUqcBIF3iFdQ6Zv',
       proxy: '',
       durationSeconds: 1800,
-      bucket: 'sycho-1256277347',
+      bucket: 'sycho1-1256277347',
       region: 'ap-guangzhou',
       allowPrefix: 'article/*',
       // 密钥的权限列表
@@ -22,6 +22,8 @@ class cosController {
         // 简单上传
         'name/cos:PutObject',
         'name/cos:PostObject',
+        'name/cos:GetObject',
+        'name/cos:DeleteObject',
         // 分片上传
         'name/cos:InitiateMultipartUpload',
         'name/cos:ListMultipartUploads',
@@ -30,7 +32,7 @@ class cosController {
         'name/cos:CompleteMultipartUpload'
       ],
     };
-    console.log(ctx)
+    // console.log(ctx)
     // TODO 这里根据自己业务需要做好放行判断
     // if (config.allowPrefix === '_ALLOW_DIR_/*') {
     //   console.log({ error: '请修改 allowPrefix 配置项，指定允许上传的路径前缀' });
@@ -50,29 +52,28 @@ class cosController {
           'qcs::cos:ap-guangzhou:uid/' + AppId + ':prefix//' + AppId + '/' + ShortBucketName + '/' + config.allowPrefix,
         ],
       }],
-    };
-    console.log(STS)
-    console.log(config)
-    // let result = ''
-    let result = await STS.getCredential({
-      secretId: config.secretId,
-      secretKey: config.secretKey,
-      proxy: config.proxy,
-      durationSeconds: config.durationSeconds,
-      policy: policy,
-    }, (err, tempKeys) => {
-        console.log(JSON.stringify(err || tempKeys) || '')
-      // let result = JSON.stringify(err || tempKeys) || ''
-      // res.send(result);
-      // return new Promise((resolve,reject)=>{
-      //   resolve(JSON.stringify(err || tempKeys) || '')
-      // })
-        // result = err || tempKeys || ''
-        return Promise.resolve(err || tempKeys || '')
+    }
+    // 异步函数要善于利用promise和async/await
+    let result = await new Promise((resolve, reject) => {
+      STS.getCredential({
+        secretId: config.secretId,
+        secretKey: config.secretKey,
+        proxy: config.proxy,
+        durationSeconds: config.durationSeconds,
+        policy: policy,
+      }, (err, tempKeys) => {
+        // console.log(JSON.stringify(err || tempKeys) || '')
+        // let result = JSON.stringify(err || tempKeys) || ''
+        // res.send(result)
+        // return Promise.resolve(err || tempKeys || '')
+        resolve(err || tempKeys || '')
+      })
     })
-    console.log(111)
-    handleSuccess({ ctx, msg: '获取成功', data: result })
-    console.log(222)
+    result.bucket = config.bucket
+    result.region = config.region
+    result.dir = 'article'
+    // ctx.body = { success: false, code: 200, msg: '获取成功', data: result } 
+    handleSuccess({ ctx, msg: '获取成功', data: { ...result } })
   }
 }
 
