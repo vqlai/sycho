@@ -166,6 +166,7 @@
       },
       handleThumbRemove(){
         this.articleForm.thumb = ''
+        this.fileObj = null
         // this.cos.deleteObject({ Bucket: 'sycho1-1256277347', Region: 'ap-guangzhou', Key: '' }, (err, data) => {
         //   console.log(err || data)
         //   let res = err || data
@@ -178,10 +179,9 @@
         // })
       },
       async handleSubmit(){
-        if(!this.fileObj && this.cacheThumb){
-          // this.articleForm.thumb = await new Promise((resolve, reject) => {
-          // })
-          await new Promise((resolve, reject) => {
+        if(this.checkArticle()){
+          //  判断上传控制是否有新选择的图片，没有上传动作则直接提交表单
+          if(this.fileObj){
             this.$store.dispatch('cos/getSts', {}).then(res => {
               if(res.success){
                 let result = res.data
@@ -194,48 +194,59 @@
                     })
                   }
                 })
-                let arr = this.cacheThumb.split('/')
-                this.cos.deleteObject({ Bucket: 'sycho1-1256277347', Region: 'ap-guangzhou', Key: `${arr[arr.length - 2]}${arr[arr.length - 1]}` }, (err, data) => {
-                  console.log(err || data)
-                  let res = err || data
-                  if(res.statusCode === 200 || res.statusCode === 204){
-                    this.articleForm.thumb = ''
-                    this.$message.success('成功删除预览图')
-                  }else{
-                    this.$message.error(res)
-                  }
-                })
-                this.cos.putObject({
-                  Bucket: 'sycho1-1256277347',
-                  Region: 'ap-guangzhou',
-                  Key: `/${arr[arr.length - 2]}/${new Date().getTime()}.${this.fileObj.name.split('.')[1]}`,
-                  StorageClass: 'STANDARD',
-                  Body: this.fileObj, // 上传文件对象
-                  onProgress: (progressData) => {
-                      console.log(JSON.stringify(progressData))
+                // 判断是否有已上传图，有则先删除再上传,无则直接上传
+                if(this.cacheThumb){
+                  let arr = this.cacheThumb.split('/')
+                  this.cos.deleteObject({ Bucket: 'sycho1-1256277347', Region: 'ap-guangzhou', Key: `/${arr[arr.length - 2]}/${arr[arr.length - 1]}` }, (err, data) => {
+                    // console.log(err || data)
+                    let res = err || data
+                    if(res.statusCode === 200 || res.statusCode === 204){
+                      this.articleForm.thumb = ''
+                      this.handleUpdateThumb()
+                    }else{
+                      this.$message.error(res)
                     }
-                  },
-                  (err, data) => {
-                    console.log(err || data)
-                    console.log(data.Location)
-                    this.articleForm.thumb = 'https://' + data.Location
                   })
+                }else{
+                  this.handleUpdateThumb()
+                }
               }
             })
-          })
+          }else{
+            this.handleUpdateForm()
+          }
         }
-        if(this.checkArticle()){
-          this.$store.dispatch('article/putArticle', this.articleForm).then(res => {
-            if(res.success){
-              this.$message.success(res.msg)
-              setTimeout(() => {
-                this.$router.push({ path: '/article/list' })
-              }, 500)
-            }else{
-              this.$message.error(res.msg)
+      },
+      handleUpdateThumb(){
+        this.cos.putObject({
+          Bucket: 'sycho1-1256277347',
+          Region: 'ap-guangzhou',
+          Key: `/article/${new Date().getTime()}.${this.fileObj.name.split('.')[1]}`,
+          StorageClass: 'STANDARD',
+          Body: this.fileObj, // 上传文件对象
+          onProgress: (progressData) => {
+              // console.log(JSON.stringify(progressData))
             }
-          })
-        }
+          }, (err, data) => {
+            console.log(err || data)
+            // console.log(data.Location)
+            if(data.Location){
+              this.articleForm.thumb = 'https://' + data.Location
+              this.handleUpdateForm()
+            }
+        })
+      },
+      handleUpdateForm(){
+        this.$store.dispatch('article/putArticle', this.articleForm).then(res => {
+          if(res.success){
+            this.$message.success(res.msg)
+            setTimeout(() => {
+              this.$router.push({ path: '/article/list' })
+            }, 500)
+          }else{
+            this.$message.error(res.msg)
+          }
+        })
       },
       checkArticle(){
         if(!this.articleForm.title.trim()){

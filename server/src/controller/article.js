@@ -261,7 +261,8 @@ class articleController{
 
 		// const { title, keyword, tag } = ctx.request.body
 		const { title} = ctx.request.body
-
+		console.log(ctx.request.body)
+		// 去除不更新的字段
 		delete ctx.request.body.createTime
 		// delete ctx.request.body.update_at
 		// delete ctx.request.body.meta
