@@ -17,7 +17,7 @@ class articleController{
 	// 获取文章列表
 	static async getArticle(ctx) {
 		const { keyword = '', tag, type, publish = 1, state = 1, currentPage = 1, pageSize = 10, date, hot } = ctx.query
-			console.log(ctx.query)
+		// console.log(ctx.query)
 		// 过滤条件
 		const options = {
 			sort: { createTime: -1 },
@@ -205,7 +205,7 @@ class articleController{
 		const result = await new Article(ctx.request.body)
 			.save()
 			.catch(err => {
-				console.log(err)
+				// console.log(err)
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
@@ -261,7 +261,7 @@ class articleController{
 
 		// const { title, keyword, tag } = ctx.request.body
 		const { title} = ctx.request.body
-		console.log(ctx.request.body)
+		// console.log(ctx.request.body)
 		// 去除不更新的字段
 		delete ctx.request.body.createTime
 		// delete ctx.request.body.update_at

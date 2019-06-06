@@ -14,6 +14,12 @@ const data = {
       label: '购物'
     }, {
       value: '4',
+      label: '前端'
+    }, {
+      value: '5',
+      label: '后台'
+    }, {
+      value: '6',
       label: '友链'
     }
   ],
@@ -68,7 +74,19 @@ const data = {
       label: 'canvas'
     }, {
       value: '6',
-      label: 'koa2&express'
+      label: 'express'
+    }, {
+      value: '7',
+      label: 'koa2'
+    }, {
+      value: '8',
+      label: 'node'
+    }, {
+      value: '9',
+      label: '小程序'
+    }, {
+      value: '10',
+      label: 'app'
     }
   ]
 }

@@ -156,16 +156,18 @@
       // },
       handleThumbRemove(){
         // { Bucket: '', Region: '', Key: '' }
-        this.cos.deleteObject(this.thumbParams, (err, data) => {
-          console.log(err || data)
-          let res = err || data
-          if(res.statusCode === 200 || res.statusCode === 204){
-            this.articleForm.thumb = ''
-            this.$message.success('成功删除预览图')
-          }else{
-            this.$message.error(res)
-          }
-        })
+        // this.cos.deleteObject(this.thumbParams, (err, data) => {
+        //   console.log(err || data)
+        //   let res = err || data
+        //   if(res.statusCode === 200 || res.statusCode === 204){
+        //     this.articleForm.thumb = ''
+        //     this.$message.success('成功删除预览图')
+        //   }else{
+        //     this.$message.error(res)
+        //   }
+        // })
+        this.articleForm.thumb = ''
+        this.fileObj = null
       },
       beforeThumbUpload(file) {
         // console.log(file)
@@ -173,60 +175,66 @@
           this.$message.warning(`文件${file.name}太大，不能超过 200kb`)
           return false
         }
-        // this.articleForm.thumb = URL.createObjectURL(file)
-        // this.fileObj = file
-        this.$store.dispatch('cos/getSts', {}).then(res => {
-          if(res.success){
-            let result = res.data
-            this.cos = new COS({ getAuthorization: (options, callback) => {
-                callback({
-                  TmpSecretId: result.credentials.tmpSecretId,
-                  TmpSecretKey: result.credentials.tmpSecretKey,
-                  XCosSecurityToken: result.credentials.sessionToken,
-                  ExpiredTime: result.expiredTime
-                })
-              }
-            })
-            this.thumbParams = {
-              Bucket: result.bucket,
-              Region: result.region,
-              Key: `/${result.dir}/${new Date().getTime()}.${file.name.split('.')[1]}`
-            }
-            this.cos.putObject({
-              Bucket: result.bucket,
-              Region: result.region,
-              Key: `/${result.dir}/${new Date().getTime()}.${file.name.split('.')[1]}`,
-              StorageClass: 'STANDARD',
-              Body: file, // 上传文件对象
-              onProgress: (progressData) => {
-                  console.log(JSON.stringify(progressData))
-                }
-              },
-              (err, data) => {
-                console.log(err || data)
-                console.log(data.Location)
-                this.articleForm.thumb = 'https://' + data.Location
-              })
-          }else{
-            console.log(res)
-          }
-        })
+        this.articleForm.thumb = URL.createObjectURL(file)
+        this.fileObj = file
         return false // 加了return false组件的action就不会发起post请求了
       },
       handleSubmit(){
         if(this.checkArticle()){
-          this.$store.dispatch('article/postArticle', this.articleForm).then(res => {
-            // console.log(res)
-            if(res.success){
-              this.$message.success('发布成功！')
-              setTimeout(() => {
-                this.$router.push({ path: '/article/list' })
-              }, 500)
-            }else{
-              this.$message.error(res.msg)
-            }
-          })
+          if(this.fileObj){
+            this.$store.dispatch('cos/getSts', {}).then(res => {
+              if(res.success){
+                let result = res.data
+                this.cos = new COS({ getAuthorization: (options, callback) => {
+                    callback({
+                      TmpSecretId: result.credentials.tmpSecretId,
+                      TmpSecretKey: result.credentials.tmpSecretKey,
+                      XCosSecurityToken: result.credentials.sessionToken,
+                      ExpiredTime: result.expiredTime
+                    })
+                  }
+                })
+                this.thumbParams = {
+                  Bucket: result.bucket,
+                  Region: result.region,
+                  Key: `/${result.dir}/${new Date().getTime()}.${this.fileObj.name.split('.')[1]}`
+                }
+                this.cos.putObject({
+                  Bucket: result.bucket,
+                  Region: result.region,
+                  Key: `/${result.dir}/${new Date().getTime()}.${this.fileObj.name.split('.')[1]}`,
+                  StorageClass: 'STANDARD',
+                  Body: this.fileObj, // 上传文件对象
+                  onProgress: (progressData) => {
+                      // console.log(JSON.stringify(progressData))
+                    }
+                  },
+                  (err, data) => {
+                    console.log(err || data)
+                    // console.log(data.Location)
+                    this.articleForm.thumb = 'https://' + data.Location
+                    this.handlePostArticle()
+                  })
+              }else{
+                console.log(res)
+              }
+            })
+          }else{
+            this.handlePostArticle()
+          }
         }
+      },
+      handlePostArticle(){
+        this.$store.dispatch('article/postArticle', this.articleForm).then(res => {
+          if(res.success){
+            this.$message.success('发布成功！')
+            setTimeout(() => {
+              this.$router.push({ path: '/article/list' })
+            }, 500)
+          }else{
+            this.$message.error(res.msg)
+          }
+        })
       },
       checkArticle(){
         if(!this.articleForm.title.trim()){

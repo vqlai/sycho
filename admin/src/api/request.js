@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { Message, MessageBox } from 'element-ui'
+// MessageBox
+import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/assets/js/auth'
 
@@ -49,17 +50,22 @@ service.interceptors.response.use(
 
     // if the custom code is not 200, it is judged as an error.
     if (res.code !== 200) {
+      Message({
+        message: res.msg || 'Error',
+        type: 'error',
+        duration: 3 * 1000
+      })
       // 处理自定义异常,400,401,token不合法、过期等
       if (res.code === 401){
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload() // 为了重新实例化vue-router对象 避免bug
-          })
-        })
+        // MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+        //   confirmButtonText: 'Re-Login',
+        //   cancelButtonText: 'Cancel',
+        //   type: 'warning'
+        // }).then(() => {
+        //   store.dispatch('user/resetToken').then(() => {
+        //     location.reload() // 为了重新实例化vue-router对象 避免bug
+        //   })
+        // })
       }
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
@@ -76,11 +82,6 @@ service.interceptors.response.use(
       //   })
       // }
 
-      Message({
-        message: res.msg || 'Error',
-        type: 'error',
-        duration: 3 * 1000
-      })
       return Promise.reject(new Error(res.msg || 'Error'))
     } else {
       return res
