@@ -129,13 +129,14 @@
         <el-form-item label="确认密码" required prop="surePwd" v-if="dialogType === 1" >
           <el-input v-model="userForm.surePwd" type="password" placeholder="请再次输入密码" clearable></el-input>
         </el-form-item>
-        <el-form-item label="原始密码" required prop="prePwd" v-if="dialogType === 2" autocomplete="off">
+        <!-- required -->
+        <el-form-item label="原始密码" prop="prePwd" v-if="dialogType === 2" autocomplete="off">
           <el-input v-model="userForm.prePwd" type="password" placeholder="请输入原始密码" clearable></el-input>
         </el-form-item>
-        <el-form-item label="新密码" required prop="newPwd" v-if="dialogType === 2">
+        <el-form-item label="新密码" prop="newPwd" v-if="dialogType === 2">
           <el-input v-model="userForm.newPwd" type="password" placeholder="请输入新密码" clearable></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" required prop="confirmPwd" v-if="dialogType === 2">
+        <el-form-item label="确认密码" prop="confirmPwd" v-if="dialogType === 2">
           <el-input v-model="userForm.confirmPwd" type="password" placeholder="请再次输入新密码" clearable></el-input>
         </el-form-item>
         <el-form-item label="角色" required prop="role">
@@ -210,15 +211,15 @@
     name: 'user',
     data(){
       let checkAddPwd1 = (rule, value, callback) => {
-        if (value === '') {
+        if (value === '' || typeof value === 'undefined') {
           callback(new Error('请输入密码'))
         } else if (value.length < 6){
           callback(new Error('密码不能少于6位'))
-        } else {
-          if (this.userForm.surePwd !== '') {
-            this.$refs.userForm.validateField('surePwd') // 校验确认密码
-          }
+        } else if (!this.userForm.surePwd) {
+          this.$refs.userForm.validateField('surePwd') // 校验确认密码
           callback()
+        } else {
+          callback() // 一定要callback验证完才会打勾，否则一直转圈loading状态
         }
       }
       let checkAddPwd2 = (rule, value, callback) => {
@@ -228,39 +229,60 @@
           callback(new Error('密码不能少于6位'))
         } else if (value !== this.userForm.curPwd) {
           callback(new Error('两次密码输入不一致!'))
-        }else {
+        } else {
           callback()
         }
       }
       let checkEditPwd1 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'))
-        } else if (value.length < 6){
-          callback(new Error('密码不能少于6位'))
-        } else {
+        if(this.userForm.newPwd || this.userForm.prePwd || this.userForm.confirmPwd){
+          if (value === '' || typeof value === 'undefined') {
+            callback(new Error('请输入原始密码'))
+          } else if (value.length < 6){
+            callback(new Error('密码不能少于6位'))
+          } else {
+            if (!this.userForm.newPwd) {
+              this.$refs.userForm.validateField('newPwd') // 校验新密码
+            } else if (!this.userForm.confirmPwd) {
+              this.$refs.userForm.validateField('confirmPwd') // 校验确认密码
+            }
+            callback()
+          }
+        }else{
           callback()
         }
       }
       let checkEditPwd2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'))
-        } else if (value.length < 6){
-          callback(new Error('密码不能少于6位'))
-        } else {
-          if (this.userForm.confirmPwd !== '') {
+        if(this.userForm.newPwd || this.userForm.prePwd || this.userForm.confirmPwd){
+          if (value === '' || typeof value === 'undefined') {
+            callback(new Error('请输入新密码'))
+          } else if (value.length < 6){
+            callback(new Error('密码不能少于6位'))
+          } else {
             this.$refs.userForm.validateField('confirmPwd') // 校验确认密码
+            callback()
           }
+        }else{
           callback()
         }
       }
       let checkEditPwd3 = (rule, value, callback) => {
-        if (value === '' || typeof value === 'undefined') {
-          callback(new Error('请再次输入密码'))
-        } else if (value.length < 6){
-          callback(new Error('密码不能少于6位'))
-        } else if (value !== this.userForm.newPwd) {
-          callback(new Error('两次密码输入不一致!'))
-        } else {
+        if(this.userForm.newPwd || this.userForm.prePwd || this.userForm.confirmPwd){
+          if (value === '' || typeof value === 'undefined') {
+            callback(new Error('请再次输入密码'))
+          } else if (value.length < 6){
+            callback(new Error('密码不能少于6位'))
+          } else if (!this.userForm.newPwd) {
+            this.$refs.userForm.validateField('newPwd') // 校验新密码
+            callback()
+          } else if (value !== this.userForm.newPwd) {
+            callback(new Error('两次密码输入不一致!'))
+          } else {
+            if (!this.userForm.prePwd) {
+              this.$refs.userForm.validateField('prePwd') // 校验原始密码
+            }
+            callback()
+          }
+        }else{
           callback()
         }
       }
@@ -295,15 +317,15 @@
             { validator: checkAddPwd2, trigger: 'change' }
           ],
           prePwd: [
-            { validator: checkEditPwd1, trigger: 'blur' },
+            // { validator: checkEditPwd1, trigger: 'blur' },
             { validator: checkEditPwd1, trigger: 'change' }
           ],
           newPwd: [
-            { validator: checkEditPwd2, trigger: 'blur' },
+            // { validator: checkEditPwd2, trigger: 'blur' },
             { validator: checkEditPwd2, trigger: 'change' }
           ],
           confirmPwd: [
-            { validator: checkEditPwd3, trigger: 'blur' },
+            // { validator: checkEditPwd3, trigger: 'blur' },
             { validator: checkEditPwd3, trigger: 'change' }
           ],
           role: [
@@ -418,9 +440,11 @@
             if (this.userForm._id) {
               action = 'user/putUser'
               formData.append('_id', this.userForm._id)
-              formData.append('prePwd', this.userForm.prePwd)
-              formData.append('newPwd', this.userForm.newPwd)
-              formData.append('surePwd', this.userForm.confirmPwd)
+              if(this.userForm.prePwd){
+                formData.append('prePwd', this.userForm.prePwd)
+                formData.append('newPwd', this.userForm.newPwd)
+                formData.append('surePwd', this.userForm.confirmPwd)
+              }
             } else {
               action = 'user/postUser'
               formData.append('curPwd', this.userForm.curPwd)

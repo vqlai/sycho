@@ -93,7 +93,6 @@ class articleController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
-		console.log(result)
 		if (result) {
 			handleSuccess({
 				ctx,
@@ -109,64 +108,6 @@ class articleController{
 				msg: '列表数据获取成功!'
 			})
 		} else handleError({ ctx, msg: '获取列表数据失败' })
-
-		// console.log(ctx.query)
-		// console.log(ctx.query.currentPage)
-		// let currentPage = parseInt(ctx.query.currentPage)
-		// let pageSize = parseInt(ctx.query.pageSize)
-		// let queryTitle = ctx.query.queryTitle
-		// let queryType = parseInt(ctx.query.queryType)
-		// let queryTag = parseInt(ctx.query.queryTag)
-		// let result = null, total = 0
-		// currentPage = currentPage <= 0 ? 1 : currentPage
-		// // 组合搜索内容
-		// const querys = {}
-		// // 组合查询
-		// if (queryTitle) {
-		// 	querys['$or'] = [
-		// 		{ 'title': { $regex: queryTitle } }, // 使用正则模糊搜索,可在数组添加多个条件
-		// 	]
-		// }
-		// // 权限查询
-		// if (queryType) { querys.type = queryType }
-		// if (queryTag) { 
-		// 	querys.tag = { $regex: queryTag } // 使用正则模糊搜索,可在数组添加多个条件
-		// }
-		// console.log(querys)
-		// result = await Article
-		// 	.find(querys) // 模糊搜索
-		// 	.sort({ 'createTime': -1 }) // 排序，-1为倒序
-		// 	.skip(pageSize * (currentPage - 1)) // 跳过数
-		// 	.limit(pageSize) // 限制每页显示数
-		// 	.exec() // 执行sql语句
-		// 	.catch(err => {
-		// 		ctx.throw(500, '服务器内部错误-getArticles错误！')
-		// 	})
-		// console.log(result)
-		// if (result.length) {
-		// 	total = await Article // 获取分页总数
-		// 		// .count() // 5.2版本已废弃
-		// 		.countDocuments()
-		// 		.exec()
-		// 		.catch(err => {
-		// 			ctx.throw(500, '服务器内部错误-Article分页总数查询错误!')
-		// 		})
-		// }
-		// if (result) {
-		// 	handleSuccess({
-		// 		ctx, msg: '数据获取成功！',
-		// 		data: {
-		// 			pagination: {
-		// 				total,
-		// 				currentPage,
-		// 				pageSize
-		// 			},
-		// 			list: result
-		// 		}
-		// 	})
-		// } else {
-		// 	handleError({ ctx, msg: '数据获取失败！' })
-		// }
 	}
 
 	// 获取指定id的文章内容
@@ -223,36 +164,6 @@ class articleController{
 			// })
 			
 		} else handleError({ ctx, msg: '添加文章失败' })
-		
-		// let oneArticle = await Article
-		// 	.findOne({ 'title': title })
-		// 	.exec() // 执行sql语句
-		// 	.catch(err => {
-		// 		ctx.throw(500, '服务器内部错误-findOneArticle错误！')
-		// 	})
-		// console.log(oneArticle)
-		// if (oneArticle === null) {
-		// 	const article = new Article({
-		// 		title,
-		// 		author,
-		// 		type,
-		// 		tag,
-		// 		likeNum,
-		// 		lookNum,
-		// 		releaseTime,
-		// 		content,
-		// 		createTime: new Date().getTime()
-		// 	})
-		// 	let result = await article.save().catch((err) => {
-		// 		ctx.throw(500, '服务器内部错误-addArticle错误！')
-		// 	})
-		// 	handleSuccess({
-		// 		ctx, msg: '文章发布成功！',
-		// 		data: result
-		// 	})
-		// } else {
-		// 	handleError({ ctx, msg: '文章名已存在！' })
-		// }
 	}
 
 	// 编辑文章
