@@ -7,6 +7,7 @@
       <a-menu-item key="tech" ><nuxt-link to="/tech"><a-icon type="rocket" />技术</nuxt-link></a-menu-item>
       <a-menu-item key="life" ><nuxt-link to="/life"><a-icon type="coffee" />生活</nuxt-link></a-menu-item>
       <a-menu-item key="link" ><nuxt-link to="/link"><a-icon type="chrome" />导航</nuxt-link></a-menu-item>
+      <!-- <a-menu-item key="link" ><nuxt-link to="/link"><a-icon type="chrome" />留言墙</nuxt-link></a-menu-item> -->
       <a-menu-item key="about"><nuxt-link to="/about"><a-icon type="user" />关于我</nuxt-link></a-menu-item> 
       <!-- disabled -->
       <!-- <a-sub-menu>

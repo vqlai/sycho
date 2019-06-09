@@ -2,8 +2,8 @@ import request from '@/api/request'
 
 // 传参方式: post方式用 data: {...data} ，get方式用 params: {...params}
 // 获取链接列表
-export function getLink(params) {
-  return request({
+export async function getLink(params) {
+  return await request({
     url: '/link',
     method: 'get',
     params: { ...params }

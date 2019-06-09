@@ -1,20 +1,25 @@
 <template>
   <section class="index container">
-    <a-carousel autoplay>
-      <div><h3>sycho coming soon</h3></div>
-      <div><h3>精彩绝伦</h3></div>
-      <div><h3>无与伦比</h3></div>
-      <div><h3>即将闪爆你的eyes</h3></div>
-    </a-carousel>
-    <!-- <h3 :style="{ marginBottom: '16px' }">Default Size</h3> -->
+    <no-ssr>
+      <a-carousel autoplay>
+        <div><h3>sycho coming soon</h3></div>
+        <div><h3>精彩绝伦</h3></div>
+        <div><h3>无与伦比</h3></div>
+        <div><h3>即将闪爆你的eyes</h3></div>
+      </a-carousel>
+    </no-ssr>
+    <!-- <a-carousel autoplay>
+      <div><h3>1</h3></div>
+      <div><h3>2</h3></div>
+      <div><h3>3</h3></div>
+      <div><h3>4</h3></div>
+    </a-carousel> -->
     <a-list :pagination="pagination" :data-source="listData" item-layout="vertical" size="large" >
-      <!-- <div slot="footer"><b>ant design vue</b> footer part</div> -->
-      <a-list-item slot="renderItem" slot-scope="item, index" key="item.title">
+      <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
         <img slot="extra" width="272" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"/>
         
         <a-list-item-meta :description="item.description" >
           <a slot="title" :href="item.href">{{ item.title }}</a>
-          <!-- <a-avatar slot="avatar" :src="item.avatar" /> -->
         </a-list-item-meta>
         {{ item.content }}
         <template v-for="{type, text} in actions" slot="actions">
@@ -44,9 +49,7 @@ for (let i = 0; i < 23; i++) {
   })
 }
 export default {
-  // 注意components属性要在data后面，但asyncData属性可以再components属性前
-  components: {
-  }, 
+  
   head () {
     return {
       title: 'sycho-首页',
@@ -55,22 +58,16 @@ export default {
       ]
     }
   },
-  // asyncData () {
-  //   return axios.get('/api/api/getLink?currentPage=1&pageSize=10').then(res=>{
-  //     console.log(res)
-  //   })
-  // },
-  // async asyncData() {
-  //   debugger
-  //   let {data} = await axios.get('/api/api/getLink?currentPage=1&pageSize=10')
-  //   console.log(data)
-  //   return { data }
-  // },
-  // asyncData ({app}) {
-  //   return app.$axios.$get('/api/getLink?currentPage=1&pageSize=10')
+
+  // 在asyncData中，不能直接使用this引用，这里引入context是上下文参数，代替了this，
+  // 因为在asyncData方法是在组件初始化时调用，所以没法通过this来引用组件实例对象。
+  // 不写全路径也是走代理请求，写全路径则不会
+  // asyncData ({app}) {   
+  //   return app.$axios.$get('https://app.sycho.cn/api/getLink?currentPage=1&pageSize=10')
+  //   // return app.$axios.$get("/article?currentPage=1&pageSize=10")
   //   .then((res) => {
-  //     console.log(res)
-  //     console.log(111)
+  //     // console.log(res)
+  //     // console.log(111)
   //     // callback(null, { title: res.data.title })
   //     return { aData: res.data }
   //   }).catch((e) => {
@@ -78,47 +75,14 @@ export default {
   //     console.log(e)
   //   })
   // },
-  // 在asyncData中，不能直接使用this引用，这里引入context是上下文参数，代替了this，
-  // 因为在asyncData方法是在组件初始化时调用，所以没法通过this来引用组件实例对象。
-  // async asyncData(context){
-  //   console.log(context)
-  //   let {data} = await context.$axios.$get('/api/getLink?currentPage=1&pageSize=10')
-  //   console.log(data)
-  //   return {aData: data}
-  // },
-  // async asyncData ({ store, error }) {
-  //   // console.log(store)
-  //   let res = await store.dispatch('link', {currentPage:1, pageSize:10}).then(res => {
-  //     console.log(111)
-  //     // callback(null, { title: res.data.title })
-  //     return { aData: res.data }
-  //   }).catch((error) => {
-  //     // error({ statusCode: 404, message: 'Post not found' })
-  //     // console.log(error)
-  //   })
-  //   return {
-  //     links: res
-  //   }
-  // },
-  // fetch({ store, params, error }) {
-  //   return Promise.all([
-  //     store.dispatch('link', {currentPage:1, pageSize:10}).catch(err => {
-  //       error({ statusCode: 404, message: '众里寻他 我已不再' })
-  //     }),
-  //   ])
-  // },
-  asyncData ({app}) {
-    return app.$axios.$get('https://app.sycho.cn/api/getLink?currentPage=1&pageSize=10')
-    .then((res) => {
-      // console.log(res)
-      console.log(111)
-      // callback(null, { title: res.data.title })
-      return { aData: res.data }
-    }).catch((e) => {
-      // error({ statusCode: 404, message: 'Post not found' })
-      console.log(e)
-    })
+
+  fetch ({ store, params }) {
+    return store.dispatch('getArticle', params)
   },
+
+  // 注意eslint规则，components属性要在data后面，但asyncData属性可以再components属性前 
+  components: {},
+
   data () {
     return { 
       listData,
@@ -137,13 +101,15 @@ export default {
       current: ['mail'],
     }
   },
+ 
   mounted: function () {
-    this.$message.info('welcome to sycho');
-    console.log(this.aData)
-    this.$axios.$get("/api/getLink?currentPage=1&pageSize=10").then(res=>{
+    this.$message.info('welcome to sycho')
+    // console.log(this.aData)
+    // console.log(this.$store)
+    // 没写全路径无论测试环境还是正式环境都会走代理方式请求后台接口
+    this.$axios.$get("/article?currentPage=1&pageSize=10").then(res=>{
       console.log(res)
     })
-    // console.log(this.$store)
   },
   methods: {
 

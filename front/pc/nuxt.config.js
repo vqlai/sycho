@@ -2,12 +2,19 @@ const pkg = require('./package')
 
 module.exports = {
   mode: 'universal',
+  
+  // 自定义端口号
+  server: {
+    port: 9000, // default: 9000
+    host: '0.0.0.0' // default: localhost
+  },
 
   /*
   ** Headers of the page
   */
   head: {
-    title: pkg.name, // 获取到package.json的name值
+    // 获取到package.json的name值
+    title: pkg.name,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -28,7 +35,7 @@ module.exports = {
   */
   css: [
     // 项目里要使用的 LESS 文件
-    '@/assets/css/reset.less',
+    '@/assets/less/reset.less',
     // 切记导入antd样式
     'ant-design-vue/dist/antd.css', 
   ],
@@ -40,7 +47,7 @@ module.exports = {
     // '~/plugins/axios',
     { src: '~plugins/axios', ssr: true },
     // 注册antd框架
-    { src: '~/plugins/antd.js', ssr: true }
+    { src: '~/plugins/antd', ssr: true }
   ],
 
   /*
@@ -50,13 +57,13 @@ module.exports = {
     // Doc: https://github.com/nuxt-community/axios-module#usage
     '@nuxtjs/axios'
   ],
-
   /*
   ** Axios module configuration
   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
-    prefix: '/api', // 设置接口前缀，没有前缀可以去掉。
+    // prefix: '/api/v1/', // 设置接口前缀，没有前缀可以去掉。
+    // baseURL: '', // baseURL和proxy不能一起使用，需用prefix替代
     proxy: true,
     // credentials: true
   },
@@ -65,15 +72,17 @@ module.exports = {
   ** 代理
   */
   proxy: {
-    '/api': { 
-      target: 'https://app.sycho.cn', // 代理地址
+    '/api': {
+      // target: 'https://app.sycho.cn', // 代理地址
+      target: 'http://127.0.0.1:1008/', // 代理地址
+      // target: '',
       // changeOrigin: true,
       pathRewrite: {
         '^/api': '', //将 /api 替换掉
       }
     }
   },
-    
+  
   /*
   ** Build configuration
   */
@@ -81,7 +90,7 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
-    vendor: ['axios'], // 在页面中使用axios，配置vendor使其只打包一次
+    vendor: ['axios', 'antd'], // 在页面中使用axios，配置vendor使其只打包一次
     extend(config, ctx) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {

@@ -4,8 +4,8 @@ import request from '@/api/request'
 // 增删改查 post delete put get
 
 // 根据id获取指定文章
-export function getArticleById(params) {
-  return request({
+export async function getArticleById(params) {
+  return await request({
     url: `/article/${params._id}`,
     method: 'get',
     params: { ...params }
@@ -13,9 +13,9 @@ export function getArticleById(params) {
 }
 
 // 获取文章列表
-export function getArticle(params) {
-  console.log(params)
-  return request({
+export async function getArticle(params) {
+  // console.log(params)
+  return await request({
     url: '/article',
     method: 'get',
     params: { ...params }

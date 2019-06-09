@@ -1,6 +1,6 @@
 # pc
 
-> shyco for pc
+> sycho for pc
 
 ## Build Setup
 
@@ -43,4 +43,3 @@ For detailed explanation on how things work, checkout [Nuxt.js docs](https://nux
           └──┴──┘       └──┴──┘
                  神兽保佑
                 代码无BUG!
- 

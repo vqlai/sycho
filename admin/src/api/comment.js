@@ -1,8 +1,8 @@
 import request from '@/api/request'
 
 // 根据id获取指定wenz
-export function getCommentById(params) {
-  return request({
+export async function getCommentById(params) {
+  return await request({
     url: '/getCommentById',
     method: 'get',
     params: { ...params }
@@ -10,9 +10,8 @@ export function getCommentById(params) {
 }
 
 // 获取文章列表
-export function getComment(params) {
-  console.log(params)
-  return request({
+export async function getComment(params) {
+  return await request({
     url: '/comment',
     method: 'get',
     params: { ...params }
