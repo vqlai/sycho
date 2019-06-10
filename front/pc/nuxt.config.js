@@ -60,28 +60,28 @@ module.exports = {
   /*
   ** Axios module configuration
   */
-  axios: {
-    // See https://github.com/nuxt-community/axios-module#options
-    // prefix: '/api/v1/', // 设置接口前缀，没有前缀可以去掉。
-    // baseURL: '', // baseURL和proxy不能一起使用，需用prefix替代
-    proxy: true,
-    // credentials: true
-  },
+  // axios: {
+  //   // See https://github.com/nuxt-community/axios-module#options
+  //   // prefix: '/api/v1/', // 设置接口前缀，没有前缀可以去掉。
+  //   // baseURL: '', // baseURL和proxy不能一起使用，需用prefix替代
+  //   proxy: true,
+  //   // credentials: true
+  // },
 
   /*
   ** 代理
   */
-  proxy: {
-    '/api': {
-      // target: 'https://app.sycho.cn', // 代理地址
-      target: 'http://127.0.0.1:1008/', // 代理地址
-      // target: '',
-      // changeOrigin: true,
-      pathRewrite: {
-        '^/api': '', //将 /api 替换掉
-      }
-    }
-  },
+  // proxy: {
+  //   '/api': {
+  //     // target: 'https://app.sycho.cn', // 代理地址
+  //     target: 'http://127.0.0.1:1008/', // 代理地址
+  //     // target: '',
+  //     // changeOrigin: true,
+  //     pathRewrite: {
+  //       '^/api': '', //将 /api 替换掉
+  //     }
+  //   }
+  // },
   
   /*
   ** Build configuration

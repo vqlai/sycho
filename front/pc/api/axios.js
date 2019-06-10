@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const ax = axios.create({
   // baseURL: config.API_ROOT
-  baseURL: process.env.NODE_ENV === 'production' ? 'http://127.0.0.1:1008/v1' : 'http://127.0.0.1:1008/v1'
+  baseURL: process.env.NODE_ENV === 'production' ? 'http://127.0.0.1:1008/v1' : '/api/v1'
 });
 
 // 拦截器

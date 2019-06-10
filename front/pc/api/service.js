@@ -1,5 +1,6 @@
+// import ax from './axios'
 import ax from './axios'
-
+// import ax from '~/plugins/axios'
 // 获取文章列表
 export function getArticle(params) {
   return ax.get('/article', { ...params }).then(res => res.data)

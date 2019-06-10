@@ -19,7 +19,7 @@ export default function ({ $axios, redirect }) {
   // 基本配置
   $axios.defaults.timeout = 10000
   $axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-  $axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? 'http://127.0.0.1:1008/v1':'/api/v1'
+  $axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? 'http://admin.sycho.cn/v1' : 'http://127.0.0.1:1008/v1'
 
   // 请求回调
   $axios.onRequest(config => {

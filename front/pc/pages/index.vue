@@ -8,20 +8,15 @@
         <div><h3>即将闪爆你的eyes</h3></div>
       </a-carousel>
     </no-ssr>
-    <!-- <a-carousel autoplay>
-      <div><h3>1</h3></div>
-      <div><h3>2</h3></div>
-      <div><h3>3</h3></div>
-      <div><h3>4</h3></div>
-    </a-carousel> -->
-    <a-list :pagination="pagination" :data-source="listData" item-layout="vertical" size="large" >
+    <a-list :pagination="pagination" :data-source="articleRes.list" item-layout="vertical" size="large" >
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
-        <img slot="extra" width="272" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"/>
-        
-        <a-list-item-meta :description="item.description" >
+        <!-- <img slot="extra" width="272" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"/> -->
+        <img slot="extra" :src="item.thumb" width="272" alt="logo"/>
+        <!-- <div style="width:272px;"><img :src="item.thumb" width="272" alt=""/></div> -->
+        <a-list-item-meta :description="item.desc" >
           <a slot="title" :href="item.href">{{ item.title }}</a>
         </a-list-item-meta>
-        {{ item.content }}
+        {{ item.desc }}
         <template v-for="{type, text} in actions" slot="actions">
           <span :key="type">
             <a-icon :type="type" style="margin-right: 8px" />
@@ -38,18 +33,18 @@
 // import axios from '~/plugins/axios' 
 // 因为nuxt配置文件注册了axios，所以可以直接this.$axios获取到axios对象，无需import，
 // 但在asyncDate没有this对象，通过context全局变量来代替
-const listData = []
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://vue.ant.design/',
-    title: `ant design vue part ${i}`,
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    description: 'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    content: 'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-  })
-}
+// const listData = []
+// for (let i = 0; i < 23; i++) {
+//   listData.push({
+//     href: 'https://vue.ant.design/',
+//     title: `ant design vue part ${i}`,
+//     avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+//     description: 'Ant Design, a design language for background applications, is refined by Ant UED Team.',
+//     content: 'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+//   })
+// }
 export default {
-  
+  name: 'Index',
   head () {
     return {
       title: 'sycho-首页',
@@ -77,7 +72,11 @@ export default {
   // },
 
   fetch ({ store, params }) {
-    return store.dispatch('getArticle', params)
+    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 1 })
+    // return Promise.all([
+    //   store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 }),
+    //   store.dispatch('getArticle', { currentPage: 1, pageSize: 10 })
+    // ])
   },
 
   // 注意eslint规则，components属性要在data后面，但asyncData属性可以再components属性前 
@@ -85,13 +84,13 @@ export default {
 
   data () {
     return { 
-      listData,
-      pagination: {
-        onChange: (page) => {
-          console.log(page);
-        },
-        pageSize: 5,
-      },
+      // listData,
+      // pagination: {
+      //   onChange: (page) => {
+      //     console.log(page);
+      //   },
+      //   pageSize: 5,
+      // },
       actions: [
         { type: 'star-o', text: '156' },
         { type: 'like-o', text: '156' },
@@ -101,15 +100,34 @@ export default {
       current: ['mail'],
     }
   },
- 
+  computed: {
+    articleRes() {
+      return this.$store.state.article.articleRes
+    },
+    pagination() {
+      return {
+        onChange: (page) => {
+          console.log(page);
+          this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
+        },
+        pageSize: 1,
+        total: this.$store.state.article.articleRes.pagination.total
+      }
+    },
+    // artTest() {
+    //   return this.$store.state.art
+    // }
+  },
   mounted: function () {
     this.$message.info('welcome to sycho')
     // console.log(this.aData)
     // console.log(this.$store)
     // 没写全路径无论测试环境还是正式环境都会走代理方式请求后台接口
-    this.$axios.$get("/article?currentPage=1&pageSize=10").then(res=>{
-      console.log(res)
-    })
+    // this.$axios.$get("/article?currentPage=1&pageSize=10").then(res=>{
+    //   console.log(res)
+    // })
+    console.log(this.articleRes)
+    // console.log(this.artTest)
   },
   methods: {
 
