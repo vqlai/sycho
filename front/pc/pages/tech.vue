@@ -6,7 +6,10 @@
 
 <script>
   export default {
-    
+    name: 'Tech',
+    head(){
+      return { title: '留言墙|Tech' }
+    }
   }
 </script>
 

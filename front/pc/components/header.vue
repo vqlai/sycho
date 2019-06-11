@@ -1,7 +1,8 @@
 <template>
   <header class="header">
     <h3>sycho</h3>
-    <p>欢喜勇猛，向死而生</p>
+    <!-- <p>欢喜勇猛，向死而生</p> -->
+    <p>打破平庸，欢喜生活。</p>
   </header>
 </template>
 

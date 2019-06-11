@@ -12,7 +12,10 @@
 
 <script>
   export default {
-    
+    name: 'About',
+    head(){
+      return { title: '关于我|About' }
+    }
   }
 </script>
 

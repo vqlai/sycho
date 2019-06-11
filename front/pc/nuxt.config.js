@@ -1,4 +1,4 @@
-const pkg = require('./package')
+// const pkg = require('./package')
 
 module.exports = {
   mode: 'universal',
@@ -14,11 +14,23 @@ module.exports = {
   */
   head: {
     // 获取到package.json的name值
-    title: pkg.name,
+    // title: pkg.name,
+    title: '前端，分享，自由',
+    titleTemplate: '%s | vqlai',
     meta: [
       { charset: 'utf-8' },
+      { 'http-equiv': 'cleartype', content: 'on' },
+      { 'http-equiv': 'x-dns-prefetch-control', content: 'on' },
+      { name: 'author', content: '695850246@qq.com' },
+      { name: 'MobileOptimized', content: '320' },
+      { name: 'HandheldFriendly', content: 'True' },
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
+      { name: 'apple-mobile-web-app-title', content: 'sycho.cn' },
+      { name: 'format-detection', content: 'telephone=no' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description }
+      { hid: 'keywords', name: 'keywords', content: 'vqlai，赖伟强，vue全家桶开发，小程序开发，前端工程师，javascript，js/es6技术' },
+      { hid: 'description', name: 'description', content: '打破平庸，欢喜生活，拥抱宇宙，递归升华。' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }

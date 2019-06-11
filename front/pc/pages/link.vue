@@ -10,6 +10,9 @@
 <script>
   export default {
     name: 'Link',
+    head(){
+      return { title: '导航|Link' }
+    },
     // fetch用来获取SSR数据，其他事件交互数据直接调用axios发起请求即可
     fetch ({ store, params }) {
       return store.dispatch('link/getLink', { currentPage: 1, pageSize: 10 })
@@ -28,6 +31,12 @@
     // },
     computed: {
       link() {
+        // let obj = {}
+        // for(let item of this.$store.state.link.link){
+        //   if(item.type == 1){
+
+        //   }
+        // }
         return this.$store.state.link.link
       },
     },

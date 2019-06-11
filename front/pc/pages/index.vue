@@ -2,10 +2,10 @@
   <section class="index container">
     <no-ssr>
       <a-carousel autoplay>
-        <div><h3>sycho coming soon</h3></div>
+        <div><h3>welcome to sycho</h3></div>
         <div><h3>精彩绝伦</h3></div>
         <div><h3>无与伦比</h3></div>
-        <div><h3>即将闪爆你的eyes</h3></div>
+        <div><h3>闪爆你的eyes...</h3></div>
       </a-carousel>
     </no-ssr>
     <a-list :pagination="pagination" :data-source="articleRes.list" item-layout="vertical" size="large" >
