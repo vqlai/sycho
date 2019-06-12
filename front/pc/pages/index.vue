@@ -1,7 +1,7 @@
 <template>
-  <section class="index container">
+  <section class="index">
     <no-ssr>
-      <a-carousel autoplay>
+      <a-carousel autoplay style="width: 910px;">
         <div><h3>welcome to sycho</h3></div>
         <div><h3>精彩绝伦</h3></div>
         <div><h3>无与伦比</h3></div>
@@ -144,16 +144,18 @@ export default {
     @{deep} .ant-list-pagination{
       text-align: center;
     }
-    .ant-carousel @{deep} .slick-slide {
-      text-align: center;
-      height: 160px;
-      line-height: 160px;
-      background: #364d79;
-      overflow: hidden;
-    }
-
-    .ant-carousel @{deep} .slick-slide h3 {
-      color: #fff;
+     @{deep} .ant-carousel  {
+      width: 100%;
+      .slick-slide{
+        text-align: center;
+        height: 160px;
+        line-height: 160px;
+        background: #364d79;
+        overflow: hidden;
+         h3 {
+          color: #fff;
+        }
+      }
     }
   }
 </style>
