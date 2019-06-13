@@ -11,9 +11,9 @@
     <a-list :pagination="pagination" :data-source="articleRes.list" item-layout="vertical" size="large" >
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
         <!-- <img slot="extra" width="272" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"/> -->
-        <img slot="extra" :src="item.thumb" width="272" alt="logo"/>
+        <!-- <img slot="extra" :src="item.thumb" width="272" alt="logo"/> -->
         <!-- <div style="width:272px;"><img :src="item.thumb" width="272" alt=""/></div> -->
-        <a-list-item-meta :description="item.desc" >
+        <!-- <a-list-item-meta :description="item.desc" >
           <a slot="title" :href="item.href">{{ item.title }}</a>
         </a-list-item-meta>
         {{ item.desc }}
@@ -22,7 +22,24 @@
             <a-icon :type="type" style="margin-right: 8px" />
             {{ text }}
           </span>
-        </template>
+        </template> -->
+        <a-row :gutter="16">
+          <a-col class="gutter-row" :span="8">
+            <img alt="logo" style="width: 100%;" :src="item.thumb"/>
+          </a-col>
+          <a-col class="gutter-row" :span="16">
+            <header>{{ item.title }}</header>
+            <section>{{ item.desc }}</section>
+            <footer>
+              <template v-for="{type, text} in actions">
+                <span :key="type">
+                  <a-icon :type="type" style="margin-right: 8px" />
+                  {{ text }}
+                </span>
+              </template>
+            </footer>
+          </a-col>
+        </a-row>
       </a-list-item>
     </a-list>
   </section>

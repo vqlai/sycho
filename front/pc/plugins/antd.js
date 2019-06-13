@@ -18,7 +18,7 @@ import Vue from 'vue'
 // import Avatar from 'ant-design-vue/lib/avatar'
 // import Carousel  from 'ant-design-vue/lib/carousel'
 // import Message  from 'ant-design-vue/lib/message'
-import { Button, Menu, Icon, List, Avatar, Carousel, message } from 'ant-design-vue'
+import { Button, Menu, Icon, List, Avatar, Carousel, message, Row, Col } from 'ant-design-vue'
 
-Vue.use(Button).use(Menu).use(Icon).use(List).use(Avatar).use(Carousel)
+Vue.use(Button).use(Menu).use(Icon).use(List).use(Avatar).use(Carousel).use(Row).use(Col)
 Vue.prototype.$message = message
