@@ -17,7 +17,7 @@ class articleController{
 	// 获取文章列表
 	static async getArticle(ctx) {
 		const { keyword = '', tag, type, publish = 1, state = 1, currentPage = 1, pageSize = 10, date, hot } = ctx.query
-		// console.log(ctx.query)
+		console.log(ctx.query)
 		// 过滤条件
 		const options = {
 			sort: { createTime: -1 },
