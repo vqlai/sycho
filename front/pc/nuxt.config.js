@@ -46,10 +46,10 @@ module.exports = {
   ** Global CSS
   */
   css: [
+    // 切记导入antd样式
+    'ant-design-vue/dist/antd.css',
     // 项目里要使用的 LESS 文件
     '@/assets/less/reset.less',
-    // 切记导入antd样式
-    'ant-design-vue/dist/antd.css', 
   ],
 
   /*

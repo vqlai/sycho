@@ -51,6 +51,9 @@
     display: flex;
     .left-panel{
       flex: 1;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 2px;
     }
     .right-panel{
       width: 260px;

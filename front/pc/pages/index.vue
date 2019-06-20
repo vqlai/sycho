@@ -1,7 +1,7 @@
 <template>
   <section class="index">
     <no-ssr>
-      <a-carousel autoplay style="width: 910px;">
+      <a-carousel autoplay style="width: 868px;margin: 0 auto;">
         <div><h3>welcome to sycho</h3></div>
         <div><h3>精彩绝伦</h3></div>
         <div><h3>无与伦比</h3></div>

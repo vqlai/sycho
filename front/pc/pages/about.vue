@@ -1,12 +1,12 @@
 <template>
   <div class="about container">
     关于我
-    <a-carousel vertical>
+    <!-- <a-carousel vertical>
       <div><h3>1</h3></div>
       <div><h3>2</h3></div>
       <div><h3>3</h3></div>
       <div><h3>4</h3></div>
-    </a-carousel>
+    </a-carousel> -->
   </div>
 </template>
 

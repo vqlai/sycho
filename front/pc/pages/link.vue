@@ -1,9 +1,12 @@
 <template>
   <div class="link container">
-    导航
-    <ul>
+    <!-- <ul>
       <li v-for="(item,index) in link.list" :key="index">name:{{ item.name }},url:{{ item.url }}</li>
-    </ul>
+    </ul> -->
+    <!-- <nuxt-link v-for="(item,index) in link.list" :key="index" :to="'https://'+item.url" tag="a" class="item">{{ item.name }}</nuxt-link> -->
+    <div class="list">
+      <a v-for="(item,index) in link.list" :key="index" :href="'https://'+item.url" target="_blank" class="item">{{ item.name }}</a>
+    </div>
   </div>
 </template>
 
@@ -47,5 +50,13 @@
 </script>
 
 <style lang="less" scoped>
-
+  .link{
+    .list{
+      display: flex;
+      flex-wrap: wrap;
+      .item{
+        padding: 0 20px 20px;
+      }
+    }
+  }
 </style>
