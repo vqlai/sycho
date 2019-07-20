@@ -1,6 +1,7 @@
 <template>
   <div class="message container">
     留言墙
+    <a-textarea placeholder="Basic usage" :rows="4"/>
   </div>
 </template>
 
