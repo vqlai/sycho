@@ -1,12 +1,21 @@
+<style lang="less" scoped>
+  .link{
+    .ant-tag{
+      font-size: 14px;
+      border: 0;
+      background-color: #fff;
+    }
+  }
+</style>
 <template>
   <div class="link container">
     <!-- <ul>
       <li v-for="(item,index) in link.list" :key="index">name:{{ item.name }},url:{{ item.url }}</li>
     </ul> -->
     <!-- <nuxt-link v-for="(item,index) in link.list" :key="index" :to="'https://'+item.url" tag="a" class="item">{{ item.name }}</nuxt-link> -->
-    <div class="list">
-      <a v-for="(item,index) in link.list" :key="index" :href="'https://'+item.url" target="_blank" class="item">{{ item.name }}</a>
-    </div>
+    <a-tag v-for="(item,index) in link.list" :key="index" >
+      <a :href="'https://'+item.url" target="_blank">{{ item.name }}</a>
+    </a-tag>
   </div>
 </template>
 
@@ -48,15 +57,3 @@
     }
   }
 </script>
-
-<style lang="less" scoped>
-  .link{
-    .list{
-      display: flex;
-      flex-wrap: wrap;
-      .item{
-        padding: 0 20px 20px;
-      }
-    }
-  }
-</style>

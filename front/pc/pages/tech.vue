@@ -9,6 +9,14 @@
     name: 'Tech',
     head(){
       return { title: '留言墙|Tech' }
+    },
+    data(){
+      return {
+      }
+    },
+    computed: {
+    },
+    methods: {
     }
   }
 </script>
