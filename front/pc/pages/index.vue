@@ -1,45 +1,65 @@
+<style lang="less" scoped>
+// /deep/即将废弃，less不支持<<<，通过less声明变量来实现<<<深度选择器
+@deep: ~'>>>'; 
+@bg: #fff2cb;
+@wth: 100px;
+  .index{
+    @{deep} .ant-list-pagination{
+      text-align: center;
+    }
+     @{deep} .ant-carousel  {
+      width: 100%;
+      .slick-slide{
+        text-align: center;
+        height: 160px;
+        line-height: 160px;
+        background: #364d79;
+        overflow: hidden;
+         h3 {
+          color: #fff;
+        }
+      }
+    }
+    @{deep} .ant-list{
+      .ant-list-item-extra-wrap{
+        flex-direction: row-reverse;
+        .ant-list-item-extra{
+          margin: 0 50px 0 0;
+        }
+      }
+    }
+  }
+</style>
+
 <template>
   <section class="index">
     <no-ssr>
-      <a-carousel autoplay style="width: 868px;margin: 0 auto;">
+      <a-carousel autoplay style="width: 860px;margin: 0 auto;">
         <div><h3>welcome to sycho</h3></div>
         <div><h3>精彩绝伦</h3></div>
         <div><h3>无与伦比</h3></div>
         <div><h3>闪爆你的eyes...</h3></div>
       </a-carousel>
     </no-ssr>
+    <a-divider dashed>热门文章</a-divider>
     <a-list :pagination="pagination" :data-source="articleRes.list" item-layout="vertical" size="large" >
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
-        <!-- <img slot="extra" width="272" alt="logo" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"/> -->
-        <!-- <img slot="extra" :src="item.thumb" width="272" alt="logo"/> -->
-        <!-- <div style="width:272px;"><img :src="item.thumb" width="272" alt=""/></div> -->
-        <!-- <a-list-item-meta :description="item.desc" >
-          <a slot="title" :href="item.href">{{ item.title }}</a>
-        </a-list-item-meta>
-        {{ item.desc }}
-        <template v-for="{type, text} in actions" slot="actions">
+        <div slot="extra">
+          <img width="272" alt="logo" :src="item.thumb" @click="gotoDetail(item)"/>
+        </div>
+        <template slot="actions" v-for="{type, text} in actions">
           <span :key="type">
             <a-icon :type="type" style="margin-right: 8px" />
-            {{ text }}
+            {{text}}
           </span>
-        </template> -->
-        <a-row :gutter="16">
-          <a-col class="gutter-row" :span="8">
-            <img alt="logo" style="width: 100%;" :src="item.thumb"/>
-          </a-col>
-          <a-col class="gutter-row" :span="16">
-            <header>{{ item.title }}</header>
-            <section>{{ item.desc }}</section>
-            <footer>
-              <template v-for="{type, text} in actions">
-                <span :key="type">
-                  <a-icon :type="type" style="margin-right: 8px" />
-                  {{ text }}
-                </span>
-              </template>
-            </footer>
-          </a-col>
-        </a-row>
+        </template>
+        
+        <a-list-item-meta :description="item.desc" >
+          <!-- :href="item.href" -->
+          <a slot="title" @click="gotoDetail(item)">{{item.title}}</a>
+          <!-- <a-avatar slot="avatar" :src="item.avatar" /> -->
+        </a-list-item-meta>
+        {{item.content}}
       </a-list-item>
     </a-list>
   </section>
@@ -89,7 +109,7 @@ export default {
   // },
 
   fetch ({ store, params }) {
-    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 1 })
+    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 })
     // return Promise.all([
     //   store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 }),
     //   store.dispatch('getArticle', { currentPage: 1, pageSize: 10 })
@@ -125,9 +145,9 @@ export default {
       return {
         onChange: (page) => {
           console.log(page);
-          this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
+          this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 10 })
         },
-        pageSize: 1,
+        pageSize: 10,
         total: this.$store.state.article.articleRes.pagination.total
       }
     },
@@ -136,44 +156,30 @@ export default {
     // }
   },
   mounted: function () {
-    this.$message.info('welcome to sycho')
-    // console.log(this.aData)
-    // console.log(this.$store)
-    // 没写全路径无论测试环境还是正式环境都会走代理方式请求后台接口
-    // this.$axios.$get("/article?currentPage=1&pageSize=10").then(res=>{
-    //   console.log(res)
-    // })
-    console.log(this.articleRes)
-    // console.log(this.artTest)
+    this.$nextTick(()=>{
+      // this.$message.info('welcome to sycho')
+      this.$notification.open({
+        message: 'halo gays',
+        description: 'welcome to the sycho',
+        // icon: <a-icon type="smile" style="color: #108ee9" />,
+      })
+      // console.log(this.aData)
+      // console.log(this.$store)
+      // 没写全路径无论测试环境还是正式环境都会走代理方式请求后台接口
+      // this.$axios.$get("/article?currentPage=1&pageSize=10").then(res=>{
+      //   console.log(res)
+      // })
+      console.log(this.articleRes)
+      // console.log(this.artTest)
+      
+    })
   },
   methods: {
-
+    gotoDetail(article) {
+      console.log(article)
+      this.$router.push(`/article/${article.id}`)
+    },
   }
 }
 </script>
-
-<style lang="less" scoped>
-// /deep/即将废弃，less不支持<<<，通过less声明变量来实现<<<深度选择器
-@deep: ~'>>>'; 
-@bg: #fff2cb;
-@wth: 100px;
-  .index{
-    @{deep} .ant-list-pagination{
-      text-align: center;
-    }
-     @{deep} .ant-carousel  {
-      width: 100%;
-      .slick-slide{
-        text-align: center;
-        height: 160px;
-        line-height: 160px;
-        background: #364d79;
-        overflow: hidden;
-         h3 {
-          color: #fff;
-        }
-      }
-    }
-  }
-</style>
 

@@ -13,6 +13,7 @@
       <li v-for="(item,index) in link.list" :key="index">name:{{ item.name }},url:{{ item.url }}</li>
     </ul> -->
     <!-- <nuxt-link v-for="(item,index) in link.list" :key="index" :to="'https://'+item.url" tag="a" class="item">{{ item.name }}</nuxt-link> -->
+    <a-divider orientation="left">Left Text</a-divider>
     <a-tag v-for="(item,index) in link.list" :key="index" >
       <a :href="'https://'+item.url" target="_blank">{{ item.name }}</a>
     </a-tag>
