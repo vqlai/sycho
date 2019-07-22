@@ -10,7 +10,8 @@
         class="share-ejector"
         @click.prevent="shareWindow(social.name, social.url)"
       >
-        <i :class="`icon-${social.icon || social.class || social.name}`" class="iconfont" ></i>
+        <!-- <i :class="`icon-${social.icon || social.class || social.name}`" class="iconfont" ></i> -->
+        <a-icon type="wechat" />
       </a>
       <span class="share-ejector link" @click="copyPageUrl">
         <i class="iconfont icon-link"></i>
@@ -138,11 +139,10 @@
 
 <style lang="less" scoped>
   #share {
-
     .share-base {
 
       &.mobile {
-
+        
         > .share-ejector {
           display: none;
 

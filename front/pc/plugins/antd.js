@@ -7,8 +7,8 @@
 import Vue from 'vue'
 
 // 全部引入
-// import AntDesignVue from 'ant-design-vue'
-// Vue.use(AntDesignVue)
+import AntDesignVue from 'ant-design-vue'
+Vue.use(AntDesignVue)
 
 // 按需引入
 // import Button from 'ant-design-vue/lib/button'
@@ -18,7 +18,10 @@ import Vue from 'vue'
 // import Avatar from 'ant-design-vue/lib/avatar'
 // import Carousel  from 'ant-design-vue/lib/carousel'
 // import Message  from 'ant-design-vue/lib/message'
-import { Button, Menu, Icon, List, Avatar, Carousel, message, Row, Col, Input, Divider, Dropdown, Tag } from 'ant-design-vue'
 
-Vue.use(Button).use(Menu).use(Icon).use(List).use(Avatar).use(Carousel).use(Row).use(Col).use(Input).use(Divider).use(Dropdown).use(Tag)
+// import { Button, Menu, Icon, List, Avatar, Carousel, message, Row, Col, Input, Divider, Dropdown, Tag } from 'ant-design-vue'
+// Vue.use(Button).use(Menu).use(Icon).use(List).use(Avatar).use(Carousel).use(Row).use(Col).use(Input).use(Divider).use(Dropdown).use(Tag)
+
+import { message, notification } from 'ant-design-vue'
 Vue.prototype.$message = message
+Vue.prototype.$notification = notification
