@@ -24,7 +24,7 @@ class articleController{
 			page: Number(currentPage),
 			limit: Number(pageSize),
 			// populate: ['tag'],
-			select: '-content'  // 加这个content被过滤掉，不会返回到前端
+			// select: '-content'  // 加这个content被过滤掉，不会返回到前端
 		}
 
 		// 参数
