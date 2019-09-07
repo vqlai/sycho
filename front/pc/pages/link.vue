@@ -13,10 +13,12 @@
       <li v-for="(item,index) in link.list" :key="index">name:{{ item.name }},url:{{ item.url }}</li>
     </ul> -->
     <!-- <nuxt-link v-for="(item,index) in link.list" :key="index" :to="'https://'+item.url" tag="a" class="item">{{ item.name }}</nuxt-link> -->
-    <a-divider orientation="left">Left Text</a-divider>
-    <a-tag v-for="(item,index) in link.list" :key="index" >
-      <a :href="'https://'+item.url" target="_blank">{{ item.name }}</a>
-    </a-tag>
+    <div v-for="(item,index) in link" :key="index">
+      <a-divider orientation="left">{{item[0].desc}}</a-divider>
+      <a-tag v-for="(i, j) in item" :key="j">
+        <a :href="'https://'+i.url" target="_blank">{{ i.name }}</a>
+      </a-tag>
+    </div>
   </div>
 </template>
 
@@ -28,7 +30,7 @@
     },
     // fetch用来获取SSR数据，其他事件交互数据直接调用axios发起请求即可
     fetch ({ store, params }) {
-      return store.dispatch('link/getLink', { currentPage: 1, pageSize: 10 })
+      return store.dispatch('link/getLink', { currentPage: 1, pageSize: 100 })
     },
     // asyncData ({app}) {
     //   return app.$axios.$get('https://app.sycho.cn/api/getLink?currentPage=1&pageSize=10')
@@ -44,13 +46,15 @@
     // },
     computed: {
       link() {
-        // let obj = {}
-        // for(let item of this.$store.state.link.link){
-        //   if(item.type == 1){
-
-        //   }
-        // }
-        return this.$store.state.link.link
+        let obj = {}
+        for(let item of this.$store.state.link.link.list){
+          if(typeof obj[item.type] === 'undefined'){
+            obj[item.type] = []
+          }
+          obj[item.type].push(item)
+        }
+        return obj
+        // return this.$store.state.link.link.list
       },
     },
     mounted: function () {

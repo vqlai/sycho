@@ -58,6 +58,18 @@ export default {
   validate ({ params }) {
     // 必须是number类型
     return /^\d+$/.test(params.id)
+  },
+  fetch ({ store, params }) {
+    console.log(params.id)
+    return store.dispatch(`article/getArticleById`,{id: params.id})
+  },
+  // data() {
+  //   id: params.id
+  // },
+  mounted: function () {
+    this.$nextTick(()=>{
+      // console.log(this.$route.params.id)
+    })
   }
 }
 </script>

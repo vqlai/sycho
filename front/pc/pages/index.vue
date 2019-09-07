@@ -26,6 +26,12 @@
         .ant-list-item-extra{
           margin: 0 50px 0 0;
         }
+        .ant-list-item-main{
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+        }
       }
     }
   }
@@ -42,7 +48,7 @@
       </a-carousel>
     </no-ssr>
     <a-divider dashed>热门文章</a-divider>
-    <a-list :pagination="pagination" :data-source="articleRes.list" item-layout="vertical" size="large" >
+    <a-list :pagination="pagination" :data-source="articleList.list" item-layout="vertical" size="large" >
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
         <div slot="extra">
           <img width="272" alt="logo" :src="item.thumb" @click="gotoDetail(item)"/>
@@ -138,8 +144,8 @@ export default {
     }
   },
   computed: {
-    articleRes() {
-      return this.$store.state.article.articleRes
+    articleList() {
+      return this.$store.state.article.articleList
     },
     pagination() {
       return {
@@ -148,7 +154,7 @@ export default {
           this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 10 })
         },
         pageSize: 10,
-        total: this.$store.state.article.articleRes.pagination.total
+        total: this.$store.state.article.articleList.pagination.total
       }
     },
     // artTest() {
