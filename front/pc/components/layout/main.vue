@@ -40,10 +40,12 @@
       <Header/>
       <Nav/>
     </a-affix>
-    <section class="content">
-      <section class="left-panel"> <nuxt/> </section>
-      <section class="right-panel"> <Aside/> </section>
-    </section>
+    <a-locale-provider :locale="zh_CN">
+      <section class="content">
+        <section class="left-panel"> <nuxt/> </section>
+        <section class="right-panel"> <Aside/> </section>
+      </section>
+    </a-locale-provider>
     <ShareBox class="share"></ShareBox>
     <!-- <Footer/> -->
     <component :is="showWhat"></component>
@@ -57,6 +59,7 @@
   import Footer from '~/components/layout/footer'
   import Aside from '~/components/layout/aside'
   import ShareBox from '~/components/share'
+  import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN'
   export default {
     name: 'Main',
     components: {
@@ -68,7 +71,8 @@
     },
     data(){
       return {
-        showWhat: 'Footer'
+        showWhat: 'Footer',
+        zh_CN
       }
     },
     computed: {
