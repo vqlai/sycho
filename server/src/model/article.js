@@ -35,7 +35,7 @@ const articleSchema = new mongoose.Schema({
 })
 
 // 转化成普通 JavaScript 对象
-// articleSchema.set('toObject', { getters: true })
+articleSchema.set('toObject', { getters: true })
 
 // 翻页 + 自增ID插件配置
 articleSchema.plugin(mongoosePaginate)

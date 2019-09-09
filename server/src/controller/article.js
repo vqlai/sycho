@@ -110,7 +110,7 @@ class articleController{
 		} else handleError({ ctx, msg: '获取列表数据失败' })
 	}
 
-	// 获取指定id的文章内容
+	// 获取指定_id的文章内容
 	static async getArticleById(ctx) {
 		let _id = ctx.params.id
 		if (!_id) {
@@ -124,6 +124,31 @@ class articleController{
 			.catch(err => {
 				console.log(err)
 				// ctx.throw(500, '服务器内部错误-findArticleById错误！')
+				throw new CustomError(500, '服务器内部错误')
+				return false
+			})
+		// console.log(result)
+		if (result) {
+			// 每次请求，views 都增加一次
+			result.meta.views += 1
+			result.save()
+			handleSuccess({ ctx, msg: '文章获取成功', data: result })
+		} else {
+			handleError({ ctx, msg: '文章获取失败' })
+		}
+	}
+
+	// 获取指定id的文章内容
+	static async getArticleById2(ctx) {
+		let id = Number(ctx.params.id)
+		if (!id) {
+			handleError({ ctx, msg: '无效参数' })
+			return false
+		}
+		const result = await Article
+			.findOne({ id }).exec()
+			.catch(err => {
+				console.log(err)
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})

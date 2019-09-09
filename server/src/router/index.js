@@ -42,6 +42,7 @@ router.delete('/link/:id', checkToken, L.deleteLink)
 // 文章管理 
 router.get('/article', A.getArticle)                                          // 文章列表
 router.get('/article/:id', A.getArticleById)																	// 文章详情
+router.get('/article2/:id', A.getArticleById2)																// 文章详情
 router.post('/article', checkToken, A.postArticle)														// 添加文章
 router.put('/article/:id', checkToken, A.putArticle)															// 修改文章	
 router.delete('/article/:id', checkToken, A.deleteArticle)										// 删除文章
