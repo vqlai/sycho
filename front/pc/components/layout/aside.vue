@@ -56,7 +56,7 @@
 <template>
   <aside>
     <div class="search">
-      <a-input-search placeholder="input search text" @search="onSearch" enterButton />
+      <a-input-search placeholder="请输入搜索内容..." @search="onSearch" enterButton />
     </div>
     <a-carousel autoplay>
       <div>广告位1</div>
