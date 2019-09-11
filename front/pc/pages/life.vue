@@ -1,5 +1,5 @@
 <style lang="less" scoped>
-@deep: ~'>>>';
+  @deep: ~'>>>';
   .ant-carousel @{deep} .slick-slide {
     text-align: center;
     height: 160px;
@@ -7,28 +7,48 @@
     background: #364d79;
     overflow: hidden;
   }
-
   .ant-carousel @{deep} .slick-slide h3 {
     color: #fff;
   }
 </style>
 <template>
   <div class="life container">
-    生活
     <a-carousel vertical>
       <div><h3>1</h3></div>
       <div><h3>2</h3></div>
       <div><h3>3</h3></div>
       <div><h3>4</h3></div>
     </a-carousel>
+    <articleList :articleList="articleList" @onPagination="onPagination"></articleList>
   </div>
 </template>
 
 <script>
+  import articleList from '~/components/articleList'
   export default {
     name: 'Life',
     head(){
       return { title: '生活|Life' }
+    },
+    fetch ({ store, params }) {
+      return store.dispatch('article/getArticle', { type: 2, currentPage: 1, pageSize: 1 })
+    },
+    components: {
+      articleList
+    },
+    data(){
+      return {
+      }
+    },
+    computed: {
+      articleList() {
+        return this.$store.state.article.articleList
+      }
+    },
+    methods: {
+      onPagination(page) {
+        this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
+      }
     }
   }
 </script>

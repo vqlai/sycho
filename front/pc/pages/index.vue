@@ -4,9 +4,6 @@
 @bg: #fff2cb;
 @wth: 100px;
   .index{
-    @{deep} .ant-list-pagination{
-      text-align: center;
-    }
      @{deep} .ant-carousel  {
       width: 100%;
       .slick-slide{
@@ -20,54 +17,35 @@
         }
       }
     }
-    @{deep} .ant-list{
-      .ant-list-item-extra-wrap{
-        flex-direction: row-reverse;
-        .ant-list-item-extra{
-          margin: 0 50px 0 0;
-        }
-        .ant-list-item-main{
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-start;
-        }
-      }
-    }
+    // @{deep} .ant-list{
+    //   .ant-list-item-extra-wrap{
+    //     flex-direction: row-reverse;
+    //     .ant-list-item-extra{
+    //       margin: 0 50px 0 0;
+    //     }
+    //     .ant-list-item-main{
+    //       display: flex;
+    //       flex-direction: column;
+    //       justify-content: center;
+    //       align-items: flex-start;
+    //     }
+    //   }
+    // }
   }
 </style>
 
 <template>
   <section class="index">
-    <no-ssr>
+    <client-only>
       <a-carousel autoplay style="width: 860px;margin: 0 auto;">
         <div><h3>welcome to sycho</h3></div>
         <div><h3>精彩绝伦</h3></div>
         <div><h3>无与伦比</h3></div>
         <div><h3>闪爆你的eyes...</h3></div>
       </a-carousel>
-    </no-ssr>
+    </client-only>
     <a-divider dashed>热门文章</a-divider>
-    <a-list :pagination="pagination" :data-source="articleList.list" item-layout="vertical" size="large" >
-      <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
-        <div slot="extra">
-          <img width="272" alt="logo" :src="item.thumb" @click="gotoDetail(item)"/>
-        </div>
-        <template slot="actions" v-for="{type, text} in actions">
-          <span :key="type">
-            <a-icon :type="type" style="margin-right: 8px" />
-            {{text}}
-          </span>
-        </template>
-        
-        <a-list-item-meta :description="item.desc" >
-          <!-- :href="item.href" -->
-          <a slot="title" @click="gotoDetail(item)">{{item.title}}</a>
-          <!-- <a-avatar slot="avatar" :src="item.avatar" /> -->
-        </a-list-item-meta>
-        {{item.content}}
-      </a-list-item>
-    </a-list>
+    <articleList :articleList="articleList" @onPagination="onPagination"></articleList>
   </section>
 </template>
 
@@ -86,6 +64,7 @@
 //     content: 'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
 //   })
 // }
+import articleList from '~/components/articleList'
 export default {
   name: 'Index',
   head () {
@@ -115,7 +94,7 @@ export default {
   // },
 
   fetch ({ store, params }) {
-    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 })
+    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 1 })
     // return Promise.all([
     //   store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 }),
     //   store.dispatch('getArticle', { currentPage: 1, pageSize: 10 })
@@ -123,7 +102,9 @@ export default {
   },
 
   // 注意eslint规则，components属性要在data后面，但asyncData属性可以再components属性前 
-  components: {},
+  components: {
+    articleList
+  },
 
   data () {
     return { 
@@ -134,29 +115,30 @@ export default {
       //   },
       //   pageSize: 5,
       // },
-      actions: [
-        { type: 'star-o', text: '156' },
-        { type: 'like-o', text: '156' },
-        { type: 'message', text: '2' },
-      ],
-      foo: 'bar',
-      current: ['mail'],
+      // actions: [
+      //   { type: 'star-o', text: '156' },
+      //   { type: 'like-o', text: '156' },
+      //   { type: 'message', text: '2' },
+      // ],
+      // foo: 'bar',
+      // current: ['mail'],
     }
   },
   computed: {
     articleList() {
+      console.log(this.$store.state.article.articleList)
       return this.$store.state.article.articleList
     },
-    pagination() {
-      return {
-        onChange: (page) => {
-          console.log(page);
-          this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 10 })
-        },
-        pageSize: 10,
-        total: this.$store.state.article.articleList.pagination.total
-      }
-    },
+    // pagination() {
+    //   return {
+    //     onChange: (page) => {
+    //       console.log(page)
+    //       this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 10 })
+    //     },
+    //     pageSize: 10,
+    //     total: this.$store.state.article.articleList.pagination.total
+    //   }
+    // },
     // artTest() {
     //   return this.$store.state.art
     // }
@@ -175,16 +157,18 @@ export default {
       // this.$axios.$get("/article?currentPage=1&pageSize=10").then(res=>{
       //   console.log(res)
       // })
-      console.log(this.articleRes)
       // console.log(this.artTest)
       
     })
   },
   methods: {
-    gotoDetail(article) {
-      console.log(article)
-      this.$router.push(`/article/${article.id}`)
-    },
+    // gotoDetail(article) {
+    //   console.log(article)
+    //   this.$router.push(`/article/${article.id}`)
+    // },
+    onPagination(page) {
+      this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
+    }
   }
 }
 </script>
