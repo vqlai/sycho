@@ -1,7 +1,8 @@
 // 文章管理器
 export const state = () => ({
-  // vue页面访问this.$store.state.article.articleRes
-  articleRes: null
+  // vue页面访问this.$store.state.article.articleList
+  articleList: null,
+  article: null
 })
 
 export const getters = {
@@ -9,8 +10,11 @@ export const getters = {
 }
 
 export const mutations = {
-  SET_ARTICLE_RES(state, data) {
-    state.articleRes = data
+  SET_ARTICLE_List(state, data) {
+    state.articleList = data
+  },
+  SET_ARTICLE(state, data) {
+    state.article = data
   }
 }
 
@@ -20,7 +24,15 @@ export const actions = {
     return this.$axios.$get('/article', { params })
       .then(response => {
         console.log(response)
-        commit('SET_ARTICLE_RES', response.data || {})
+        commit('SET_ARTICLE_List', response.data || {})
+      })
+  },
+  getArticleById({ commit }, params) {
+    console.info('getArticleById', params)
+    return this.$axios.$get(`/article2/${params.id}`)
+      .then(response => {
+        console.log(response)
+        commit('SET_ARTICLE', response.data || {})
       })
   }
 }
