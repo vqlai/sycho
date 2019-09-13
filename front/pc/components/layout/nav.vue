@@ -48,5 +48,8 @@
 <style lang="less" scoped>
   nav {
     text-align: center;
+    .ant-menu{
+      opacity: .8;
+    }
   }
 </style>

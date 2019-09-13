@@ -22,7 +22,7 @@
 </style>
 <template>
   <section class="article">
-    <a-list :pagination="pagination" :data-source="articleList.list" item-layout="vertical" size="large" >
+    <a-list :pagination="pagination" :data-source="articleList.list" item-layout="vertical" size="large" :loading="listLoading">
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
         <div slot="extra">
           <nuxt-link :to="`/article/${item.id}`">
@@ -52,6 +52,10 @@
 <script>
   export default {
     props: {
+      listLoading: {
+        type: Boolean,
+        default: () => false
+      },
       articleList: {
         type: Object,
         default: () => null // eslint对组件的属性设置默认值要通过function返回

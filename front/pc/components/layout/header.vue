@@ -1,8 +1,8 @@
 <template>
   <header class="header">
     <h3>sycho</h3>
-    <!-- <p>欢喜勇猛，向死而生</p> -->
-    <p>打破平庸，欢喜生活。</p>
+    <!-- <p>打破平庸，欢喜生活。</p> -->
+    <p>让这风吹，哀伤通通带走，管风里是谁。</p>
   </header>
 </template>
 
@@ -23,5 +23,6 @@
     justify-content: center;
     align-items: center;
     background-color: #fff;
+    opacity: .8;
   }
 </style>
