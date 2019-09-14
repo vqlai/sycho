@@ -4,8 +4,10 @@
 
 <template>
   <div class="about container">
-    <a-row type="flex" justify="center">
-      <a-avatar :size="160" icon="user" />
+    <a-row type="flex" justify="center" align="middle" style="flex-direction: column;">
+      <a-avatar :size="160" icon="user" src="/images/avator.jpg"/>
+      <h3>Sycho</h3>
+      <p>JS Stack Developer</p>
     </a-row>
     <a-divider dashed>个人简介</a-divider>
     <a-timeline mode="alternate">
