@@ -54,7 +54,8 @@ router.post('/removeArticlePics', checkToken, A.removeArticlePics) // 删除文�
 
 // 留言管理
 // router.get('/getMessageById', checkToken, M.getMessageById)
-router.get('/message', checkToken, M.getMessage) 						// 获取留言
+// checkToken,
+router.get('/message', M.getMessage) 						// 获取留言
 router.post('/message', checkToken, M.postMessage)					// 添加留言
 router.patch('/message', checkToken, M.patchMessage) 				// 修改留言墙状态	
 router.delete('/message/:id', checkToken, M.deleteMessage) 	// 删除留言

@@ -1,0 +1,36 @@
+// ::selection选择器匹配元素中被用户选中或处于高亮状态的部分
+::selection {
+  background: red; 
+  color: #fff;
+}
+
+::-moz-selection {
+  background: red; 
+  color: #fff;
+}
+
+::-webkit-selection {
+  background: red; 
+  color: #fff;
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: .5rem;
+  height: .5rem;
+  background: hsla(0, 0%, 100%, 0.6);
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background-color: rgba(95,95,95,.4);
+  transition: background-color .15s;
+
+  &:hover {
+    background-color: rgba(95,95,95, .7);
+  }
+}
