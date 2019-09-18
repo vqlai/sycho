@@ -24,5 +24,9 @@
     align-items: center;
     background-color: #fff;
     opacity: .8;
+    h3{
+      margin: 10px 0;
+      font-size: 30px;
+    }
   }
 </style>

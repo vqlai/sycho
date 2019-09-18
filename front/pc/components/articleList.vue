@@ -29,11 +29,11 @@
             <img width="272" alt="logo" :src="item.thumb"/>
           </nuxt-link>
         </div>
-        <template slot="actions" v-for="{type, text} in actions">
-          <span :key="type">
-            <a-icon :type="type" style="margin-right: 8px" />
-            {{text}}
-          </span>
+        <!-- <template slot="actions" v-for="{type, text} in actions">
+          <span :key="type"> <a-icon :type="type" style="margin-right: 8px" /> {{text}} </span>
+        </template> -->
+        <template slot="actions">
+          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span><a-icon type="like-o" style="margin-right: 8px" />{{item.meta.likes}}</span><span><a-icon type="message" style="margin-right: 8px" />{{item.meta.comments}}</span>
         </template>
         
         <a-list-item-meta :description="item.desc" @click="gotoDetail(item)">
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     props: {
       listLoading: {
@@ -64,11 +65,13 @@
     },
     data() {
       return {
-        actions: [
-          { type: 'star-o', text: '156' },
-          { type: 'like-o', text: '156' },
-          { type: 'message', text: '2' },
-        ],
+        moment,
+        // actions: [
+        //   { type: 'clock-circle', text: '2019/9/15 16:10' },
+        //   { type: 'star-o', text: '156' },
+        //   { type: 'like-o', text: '156' },
+        //   { type: 'message', text: '2' },
+        // ],
       }
     },
     // fetch ({ store, params }) {

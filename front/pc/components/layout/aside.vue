@@ -58,6 +58,12 @@
     <div class="search">
       <a-input-search placeholder="请输入搜索内容..." @search="onSearch" enterButton />
     </div>
+    <section class="box">
+      <h3><a-icon type="fire" /> 热度榜</h3>
+      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章1</section> </nuxt-link>
+      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章2</section> </nuxt-link>
+      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章3</section> </nuxt-link>
+    </section>
     <a-carousel autoplay>
       <div>广告位1</div>
       <div>广告位2</div>
@@ -71,13 +77,7 @@
       <nuxt-link :to="`/article/${123}`" class="link"> <section>生活</section> </nuxt-link>
     </section> -->
     <section class="box">
-      <h3>热度榜</h3>
-      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章1</section> </nuxt-link>
-      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章2</section> </nuxt-link>
-      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章3</section> </nuxt-link>
-    </section>
-    <section class="box">
-      <h3>推荐榜</h3>
+      <h3><a-icon type="cloud" /> 推荐榜</h3>
       <nuxt-link :to="`/article/${123}`" class="link"> <section>文章1</section> </nuxt-link>
       <nuxt-link :to="`/article/${123}`" class="link"> <section>文章2</section> </nuxt-link>
       <nuxt-link :to="`/article/${123}`" class="link"> <section>文章3</section> </nuxt-link>

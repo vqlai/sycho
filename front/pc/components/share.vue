@@ -11,7 +11,7 @@
         @click.prevent="shareWindow(social.name, social.url)"
       >
         <!-- <i :class="`icon-${social.icon || social.class || social.name}`" class="iconfont" ></i> -->
-        <a-icon type="wechat" />
+        <a-icon :type="`${social.icon || social.class || social.name}`" />
       </a>
       <span class="share-ejector link" @click="copyPageUrl">
         <i class="iconfont icon-link"></i>
@@ -38,24 +38,25 @@
           },
           {
             name: 'QQ空间',
-            class: 'qzone',
+            // class: 'qzone',
+            class: 'qq',
             url: () => `http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${this.url}&title=${this.title()}&summary=${this.description()}&site=${this.url}`
           },
-          {
-            name: '豆瓣',
-            class: 'douban',
-            url: () => `https://www.douban.com/recommend/?url=${this.url}&title=${this.title()}`
-          },
-          {
-            name: '人人',
-            class: 'renren',
-            url: () => `http://widget.renren.com/dialog/share?resourceUrl=${this.url}&srcUrl=${this.url}&title=${this.title()}&description=${this.description()}`
-          },
-          {
-            name: '印象笔记',
-            class: 'evernote',
-            url: () => `https://www.evernote.com/clip.action?url=${this.url}&title=${this.title()}`
-          },
+          // {
+          //   name: '豆瓣',
+          //   class: 'douban',
+          //   url: () => `https://www.douban.com/recommend/?url=${this.url}&title=${this.title()}`
+          // },
+          // {
+          //   name: '人人',
+          //   class: 'renren',
+          //   url: () => `http://widget.renren.com/dialog/share?resourceUrl=${this.url}&srcUrl=${this.url}&title=${this.title()}&description=${this.description()}`
+          // },
+          // {
+          //   name: '印象笔记',
+          //   class: 'evernote',
+          //   url: () => `https://www.evernote.com/clip.action?url=${this.url}&title=${this.title()}`
+          // },
           {
             name: 'twitter',
             url: () => `http://twitter.com/share?text=${this.title()}&url=${this.url}`
@@ -73,7 +74,7 @@
     },
     computed: {
       url() {
-        return `https://surmon.me${this.$route.fullPath}`
+        return `https://sycho.cn${this.$route.fullPath}`
       },
       isMobile() {
         // return this.$store.state.global.isMobile
@@ -103,7 +104,7 @@
       },
       shareWindow(social, url) {
         const targetUrl = url().includes('mailto')
-          ? url().replace(/\s|\||Surmon.me/g, '')
+          ? url().replace(/\s|\||sycho.cn/g, '')
           : encodeURI(url())
         this.$ga.social(social, '分享', targetUrl)
         /*
@@ -115,7 +116,7 @@
         *
         */
         // 给打开的窗口命名
-        const windowName = '分享 Surmon.me'
+        const windowName = '分享 sycho.cn'
         // 窗口宽度,需要设置
         const awidth = screen.availWidth / 6 * 2
         // 窗口高度,需要设置
