@@ -50,6 +50,7 @@ module.exports = {
     'ant-design-vue/dist/antd.css',
     // 项目里要使用的 LESS 文件
     '@/assets/less/reset.less',
+    '@/assets/less/common.less',
   ],
 
   /*
