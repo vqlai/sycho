@@ -94,7 +94,7 @@ export default {
   // },
 
   fetch ({ store, params }) {
-    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 1 })
+    return store.dispatch('article/getArticle', { currentPage: this.currentPage, pageSize: this.pageSize })
     // return Promise.all([
     //   store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 }),
     //   store.dispatch('getArticle', { currentPage: 1, pageSize: 10 })
@@ -107,7 +107,9 @@ export default {
   },
 
   data () {
-    return { 
+    return {
+      currentPage: 1,
+      pageSize: 10
       // listData,
       // pagination: {
       //   onChange: (page) => {
@@ -167,7 +169,7 @@ export default {
     //   this.$router.push(`/article/${article.id}`)
     // },
     onPagination(page) {
-      this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
+      this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: this.pageSize })
     }
   }
 }

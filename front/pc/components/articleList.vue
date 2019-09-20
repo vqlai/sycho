@@ -5,16 +5,31 @@
       text-align: center;
     }
     @{deep} .ant-list{
-      .ant-list-item-extra-wrap{
-        flex-direction: row-reverse;
-        .ant-list-item-extra{
-          margin: 0 50px 0 0;
+      .ant-list-item{
+        transition: all .5s ease;
+        &:hover{
+          background-color: #eee;
+          .ant-list-item-extra{
+            img{
+              transform: scale(1.2);
+            }
+          }
         }
-        .ant-list-item-main{
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-start;
+        .ant-list-item-extra-wrap{
+          flex-direction: row-reverse;
+          .ant-list-item-extra{
+            margin: 0 16px 0;
+            overflow: hidden;
+            img{
+              transition: all 0.5s ease;
+            }
+          }
+          .ant-list-item-main{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+          }
         }
       }
     }
@@ -88,7 +103,7 @@
             // this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
             this.$emit('onPagination',page)
           },
-          pageSize: 1,
+          pageSize: this.$store.state.article.articleList.pagination.pageSize,
           total: this.$store.state.article.articleList.pagination.total
         }
       }
