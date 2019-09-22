@@ -5,6 +5,12 @@
       text-align: center;
     }
     @{deep} .ant-list{
+      .ant-spin-container{
+        min-height: 600px;
+        .ant-list-empty-text{
+          padding: 30% 0;
+        }
+      }
       .ant-list-item{
         transition: all .5s ease;
         &:hover{
@@ -37,7 +43,7 @@
 </style>
 <template>
   <section class="article">
-    <a-list :pagination="pagination" :data-source="articleList.list" item-layout="vertical" size="large" :loading="listLoading">
+    <a-list :pagination="articleList.list.length?pagination:false" :data-source="articleList.list" item-layout="vertical" size="large" :loading="listLoading">
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
         <div slot="extra">
           <nuxt-link :to="`/article/${item.id}`">
@@ -48,7 +54,7 @@
           <span :key="type"> <a-icon :type="type" style="margin-right: 8px" /> {{text}} </span>
         </template> -->
         <template slot="actions">
-          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span><a-icon type="like-o" style="margin-right: 8px" />{{item.meta.likes}}</span><span><a-icon type="message" style="margin-right: 8px" />{{item.meta.comments}}</span>
+          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span><a-icon type="like-o" style="margin-right: 8px" />{{item.meta.likes}}</span><span><a-icon type="dislike-o" style="margin-right: 8px" />{{item.meta.likes}}</span><span><a-icon type="message" style="margin-right: 8px" />{{item.meta.comments}}</span>
         </template>
         
         <a-list-item-meta :description="item.desc" @click="gotoDetail(item)">
@@ -75,8 +81,7 @@
       articleList: {
         type: Object,
         default: () => null // eslint对组件的属性设置默认值要通过function返回
-      },
-      // pagination: {}
+      }
     },
     data() {
       return {
@@ -103,6 +108,8 @@
             // this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
             this.$emit('onPagination',page)
           },
+          // size: 'small',
+          simple: true,
           pageSize: this.$store.state.article.articleList.pagination.pageSize,
           total: this.$store.state.article.articleList.pagination.total
         }
