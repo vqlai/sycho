@@ -13,7 +13,7 @@ class messageController {
 
   // 获取留言列表
   static async getMessage(ctx) {
-    let { currentPage = 1, pageSize = 10, keyword = '', state = '' } = ctx.query
+    let { currentPage = 1, pageSize = 10, keyword = '', state = '', hot} = ctx.query
 
     // 过滤条件
     const options = { 
@@ -31,6 +31,12 @@ class messageController {
     // 前台请求， 重置状态
     // if (!authIsVerified(ctx.request)) { querys.state = 1 }
 
+    // 按热度排行
+    // if (hot) {
+    //   options.sort = {
+    //     'likes': -1
+    //   }
+    // }
     // 查询
     const result = await Message
       .paginate(querys, options)

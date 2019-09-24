@@ -23,6 +23,8 @@ const messageSchema = new mongoose.Schema({
   city: { type: String },
   range: { type: String },
   country: { type: String },
+  // likes: { type: Number, default: 0 },
+  // disLikes: { type: Number, default: 0 },
   // 用户ua
   agent: { type: String, validate: /\S+/ },
   // 发布日期
