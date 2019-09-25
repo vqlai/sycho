@@ -11,7 +11,7 @@
         @click.prevent="shareWindow(social.name, social.url)"
       >
         <!-- <i :class="`icon-${social.icon || social.class || social.name}`" class="iconfont" ></i> -->
-        <a-icon :type="`${social.icon || social.class || social.name}`" />
+        <a-icon :type="`${social.icon || social.class || social.name}`" style="font-size: 26px;padding: 6px 4px;"/>
       </a>
       <span class="share-ejector link" @click="copyPageUrl">
         <i class="iconfont icon-link"></i>
@@ -168,7 +168,7 @@
           background-color: rgb(230, 22, 45);
         }
 
-        &.qzone:hover {
+        &.qzone:hover,&.qq:hover {
           background-color: rgb(43, 130, 217);
         }
 

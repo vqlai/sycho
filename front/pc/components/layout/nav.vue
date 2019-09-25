@@ -38,8 +38,12 @@
     },
     computed: {
     },
+    watch: {
+      $route(to, from){
+        this.current = [to.name] 
+      }
+    },
     mounted: function () {
-      console.log(this.$route)
       this.current = [this.$route.name] 
     }
   }

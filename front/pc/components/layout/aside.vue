@@ -56,13 +56,11 @@
 <template>
   <aside>
     <div class="search">
-      <a-input-search placeholder="请输入搜索内容..." @search="onSearch" enterButton />
+      <a-input-search v-model="keywords" placeholder="请输入搜索内容..." @search="onSearch" enterButton />
     </div>
     <section class="box">
       <h3><a-icon type="fire" /> 热度榜</h3>
-      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章1</section> </nuxt-link>
-      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章2</section> </nuxt-link>
-      <nuxt-link :to="`/article/${123}`" class="link"> <section>文章3</section> </nuxt-link>
+      <nuxt-link class="link" v-for="(item,index) in articleHotList" :key="index" :to="`/article/${item.id}`"> {{item.title}} </nuxt-link>
     </section>
     <a-carousel autoplay>
       <div>广告位1</div>
@@ -88,11 +86,27 @@
 <script>
   export default {
     name: 'Aside',
-    computed: {
+    data() {
+      return {
+        keywords: '',
+        articleHotList: []
+      }
     },
+    created() {
+      this.getHotArticle()
+    },
+    mounted() {},
     methods: {
       onSearch() {
-        
+        this.$router.push(`/search/${this.keywords}`)
+      },
+      getHotArticle() {
+        this.$axios.$get("/article?hot=true&currentPage=1&pageSize=10").then(res=>{
+          console.log(res)
+          if(res.success){
+            this.articleHotList = res.data.list
+          }
+        })
       }
     }
   }

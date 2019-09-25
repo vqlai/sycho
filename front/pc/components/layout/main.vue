@@ -7,7 +7,7 @@
     display: flex;
     width: 1200px;
     margin: 0 auto;
-    padding: 20px 0;
+    padding: 20px 0 0;
     .left-panel{
       flex: 1;
       padding: 20px;
@@ -23,9 +23,9 @@
   .share{
     position: fixed;
     top: 50%;
-    transform: translateY(-50%);
     left: 0;
-    width: 20px;
+    transform: translateY(-50%);
+    width: 30px;
     height: auto;
     display: flex;
     flex-direction: column;
