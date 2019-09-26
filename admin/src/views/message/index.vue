@@ -43,6 +43,15 @@
               <el-form-item label="系统：">
                 <span v-html="osParse(props.row.agent)"></span>
               </el-form-item>
+              <el-form-item label="点赞数：">
+                <span v-html="props.row.likes"></span>
+              </el-form-item>
+              <el-form-item label="吐槽数：">
+                <span v-html="props.row.disLikes"></span>
+              </el-form-item>
+              <el-form-item label="头像颜色：">
+                <span v-html="props.row.color"></span>
+              </el-form-item>
             </el-form>
           </template>
         </el-table-column>
@@ -138,6 +147,9 @@
         <el-form-item label="邮箱" required prop="email">
           <el-input v-model="messageForm.email" placeholder="请输入邮箱" clearable></el-input>
         </el-form-item>
+        <el-form-item label="URL" required prop="url">
+          <el-input v-model="messageForm.url" placeholder="请输入URL" clearable></el-input>
+        </el-form-item>
         <el-form-item label="内容" required prop="content" @keyup.enter.native="handleSubmitForm">
           <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="messageForm.content"> </el-input>
         </el-form-item>
@@ -153,7 +165,7 @@
 <script>
 import { UAParse, OSParse } from '@/assets/js/parse.js'
 import { formatterTime } from '@/assets/js/filter.js'
-import { checkEmail } from '@/assets/js/validate.js'
+import { checkEmail, validURL } from '@/assets/js/validate.js'
   export default {
     name: 'message',
     data(){
@@ -163,6 +175,16 @@ import { checkEmail } from '@/assets/js/validate.js'
           callback(new Error('请输入邮箱'))
         }else if (!checkEmail(value)) {
           callback(new Error('请正确输入邮箱'))
+        } else {
+          callback()
+        }
+      }
+      let validateURL = (rule, value, callback) => {
+        console.log(validURL(value))
+        if(value === ''){
+          callback(new Error('请输入URL'))
+        }else if (!validURL(value)) {
+          callback(new Error('请正确输入URL'))
         } else {
           callback()
         }
@@ -187,6 +209,7 @@ import { checkEmail } from '@/assets/js/validate.js'
           id: undefined,
           name: '',
           email: '',
+          url: '',
           content: ''
         },
         messageFormRules: {
@@ -197,6 +220,10 @@ import { checkEmail } from '@/assets/js/validate.js'
           email: [
             { validator: validateEmail, trigger: 'blur' },
             { validator: validateEmail, trigger: 'change' }
+          ],
+          url: [
+            { validator: validateURL, trigger: 'blur' },
+            { validator: validateURL, trigger: 'change' }
           ],
           content: [
             { required: true, message: '请输入内容', trigger: 'blur' },
@@ -260,6 +287,7 @@ import { checkEmail } from '@/assets/js/validate.js'
         this.messageForm.id = ''
         this.messageForm.name = ''
         this.messageForm.email = ''
+        this.messageForm.url = ''
         this.messageForm.content = ''
         // this.$refs['messageForm'].resetFields()
         this.dialogType = 1
@@ -270,20 +298,24 @@ import { checkEmail } from '@/assets/js/validate.js'
       },
       // 提交留言
       handleSubmitForm(){
-        let params = {
-          name: this.messageForm.name,
-          email: this.messageForm.email,
-          content: this.messageForm.content,
-          agent: navigator.userAgent
-        }
-        this.$store.dispatch('message/postMessage', params).then(res => {
-          // console.log(res)
-          if(res.success){
-            this._getMessage() // 刷新页面数据
-            this.dialogVisible = false
-            this.$message.success(res.msg)
-          }else{
-            this.$message.error(res.msg)
+        this.$refs.messageForm.validate((valid) => { // 表单校验
+          if (valid) {
+            let params = {
+              name: this.messageForm.name,
+              email: this.messageForm.email,
+              url: this.messageForm.url,
+              content: this.messageForm.content,
+              agent: navigator.userAgent
+            }
+            this.$store.dispatch('message/postMessage', params).then(res => {
+              if(res.success){
+                this._getMessage() // 刷新页面数据
+                this.dialogVisible = false
+                this.$message.success(res.msg)
+              }else{
+                this.$message.error(res.msg)
+              }
+            })
           }
         })
       },

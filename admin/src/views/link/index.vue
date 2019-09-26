@@ -127,7 +127,8 @@
         </el-form-item>
         <el-form-item label="URL" required prop="url">
           <el-input v-model="linkForm.url" placeholder="请输入链接地址" clearable
-          @keyup.enter.native="handleSubmitForm"></el-input>
+          @keyup.enter.native="handleSubmitForm">
+          </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -142,11 +143,22 @@
   // import moment from 'moment'
   import data from '@/assets/js/data'
   import { formatterTime } from '@/assets/js/filter.js'
+  import { validURL } from '@/assets/js/validate.js'
 
   export default {
     name: 'linkPage',
     data(){
       let linkTypes = data.linkTypes
+      let validateURL = (rule, value, callback) => {
+        console.log(validURL(value))
+        if(value === ''){
+          callback(new Error('请输入URL'))
+        }else if (!validURL(value)) {
+          callback(new Error('请正确输入URL'))
+        } else {
+          callback()
+        }
+      }
       return {
         keyword: '',
         linkTypes,
@@ -166,8 +178,8 @@
             { required: true, message: '请选择链接类型', trigger: 'change' }
           ],
           url: [
-            { required: true, message: '请输入链接地址', trigger: 'blur' },
-            { required: true, message: '请输入链接地址', trigger: 'change' }
+            { validator: validateURL, trigger: 'blur' },
+            { validator: validateURL, trigger: 'change' }
           ]
         },
         tableData: [],
