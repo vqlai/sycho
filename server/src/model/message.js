@@ -13,8 +13,14 @@ const messageSchema = new mongoose.Schema({
   // 名称
   name: { type: String, required: true },
   email: { type: String, required: true },
+  url: { type: String, required: true },
   // 内容
   content: { type: String, required: true, validate: /\S+/ },
+  avator: { type: String, default: '' }, // 头像背景图片
+  color: { type: String, default: '' }, // 头像背景颜色
+  likes: { type: Number, default: 0 }, // 点赞数
+  dislikes: { type: Number, default: 0 }, // 不点赞数
+  postId: { type: Number, default: 0 }, // 评论关联的评论id
   // 状态  0 待审核，1 审核通过， 2 审核不通过
   state: { type: Number, default: 0 },
   // ip
@@ -23,8 +29,6 @@ const messageSchema = new mongoose.Schema({
   city: { type: String },
   range: { type: String },
   country: { type: String },
-  // likes: { type: Number, default: 0 },
-  // disLikes: { type: Number, default: 0 },
   // 用户ua
   agent: { type: String, validate: /\S+/ },
   // 发布日期

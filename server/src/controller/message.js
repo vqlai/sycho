@@ -13,7 +13,8 @@ class messageController {
 
   // 获取留言列表
   static async getMessage(ctx) {
-    let { currentPage = 1, pageSize = 10, keyword = '', state = '', hot} = ctx.query
+    console.log(ctx.request.header.authorization)
+    let { currentPage = 1, pageSize = 10, keyword = '', state = '', postId, hot} = ctx.query
 
     // 过滤条件
     const options = { 
@@ -28,15 +29,21 @@ class messageController {
     // 审核状态查询
     if (['0', '1', '2'].includes(state)) { querys.state = Number(state) }
 
-    // 前台请求， 重置状态
-    // if (!authIsVerified(ctx.request)) { querys.state = 1 }
+    // 前台请求无token， 重置状态为1，只能看已通过的留言
+    if (!ctx.request.header.authorization) { querys.state = 1 }
 
     // 按热度排行
-    // if (hot) {
-    //   options.sort = {
-    //     'likes': -1
-    //   }
+    if (hot) {
+      options.sort = {
+        'likes': -1
+      }
+    }
+
+    // 通过postId过滤
+    // if (!Object.is(postId, undefined)) {
+    //   querys.postId = postId
     // }
+
     // 查询
     const result = await Message
       .paginate(querys, options)
