@@ -47,10 +47,13 @@
                 <span v-html="props.row.likes"></span>
               </el-form-item>
               <el-form-item label="吐槽数：">
-                <span v-html="props.row.disLikes"></span>
+                <span v-html="props.row.dislikes"></span>
               </el-form-item>
               <el-form-item label="头像颜色：">
-                <span v-html="props.row.color"></span>
+                <span v-text="props.row.color"></span>
+              </el-form-item>
+              <el-form-item label="头像图片：">
+                <span v-text="props.row.avator"></span>
               </el-form-item>
             </el-form>
           </template>

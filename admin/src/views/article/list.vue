@@ -104,6 +104,11 @@
             label="点赞数">
           </el-table-column>
           <el-table-column
+            prop="meta.dislikes"
+            align="center"
+            label="吐槽数">
+          </el-table-column>
+          <el-table-column
             prop="meta.views"
             align="center"
             label="浏览数">

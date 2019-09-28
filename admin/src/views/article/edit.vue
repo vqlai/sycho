@@ -43,6 +43,7 @@
             <el-radio v-model="articleForm.publish" label="2">私密</el-radio>
           </el-col>
           <el-col :span="4"><span>点赞数：</span><el-input-number v-model="articleForm.meta.likes" :min="0" :max="100000000" label="请输入点赞数" controls-position="right" ></el-input-number> </el-col>
+          <el-col :span="4"><span>吐槽数：</span><el-input-number v-model="articleForm.meta.dislikes" :min="0" :max="100000000" label="请输入吐槽数" controls-position="right" ></el-input-number> </el-col>
           <el-col :span="4"><span>浏览数：</span><el-input-number v-model="articleForm.meta.views" :min="0" :max="100000000" label="请输入浏览数" controls-position="right" ></el-input-number> </el-col>
         </el-row>
         <el-row type="flex" align="middle">
@@ -118,6 +119,7 @@
           meta: {
             views: 0,
             likes: 0,
+            dislikes: 0,
             comments: 0
           },
           thumb: ''
@@ -266,6 +268,9 @@
           return false
         }else if(typeof this.articleForm.meta.likes === 'undefined'){
           this.$message.error('请输入点赞数')
+          return false
+        }else if(typeof this.articleForm.meta.dislikes === 'undefined'){
+          this.$message.error('请输入吐槽数')
           return false
         }else if(typeof this.articleForm.meta.views === 'undefined'){
           this.$message.error('请输入浏览数')
