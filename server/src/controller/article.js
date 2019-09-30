@@ -263,6 +263,44 @@ class articleController{
 		else handleError({ ctx, msg: '更新文章状态失败' })
 	}
 
+	// 更新点赞数
+	static async patchArticleLikes(ctx) {
+		const { meta, _id } = ctx.request.body
+
+		if (typeof meta.likes === 'undefined') {
+			throw new CustomError(401, '参数无效')
+			return false
+		}
+		let result = await Article
+			.update({ _id }, { meta })
+			.catch(err => ctx.throw(500, '服务器内部错误'))
+
+		if (result) {
+			handleSuccess({ ctx, msg: '更新点赞数成功' })
+		} else {
+			handleError({ ctx, msg: '更新点赞数失败' })
+		}
+	}
+
+	// 更新吐槽数
+	static async patchArticleDislikes(ctx) {
+		const { meta, _id } = ctx.request.body
+
+		if (typeof meta.dislikes === 'undefined') {
+			throw new CustomError(401, '参数无效')
+			return false
+		}
+		let result = await Article
+			.update({ _id }, { meta })
+			.catch(err => ctx.throw(500, '服务器内部错误'))
+
+		if (result) {
+			handleSuccess({ ctx, msg: '更新吐槽数成功' })
+		} else {
+			handleError({ ctx, msg: '更新吐槽数失败' })
+		}
+	}
+
 	// 删除文章
 	static async deleteArticle(ctx) {
 		const _id = ctx.params.id

@@ -47,6 +47,8 @@ router.post('/article', checkToken, A.postArticle)														// 添加文章
 router.put('/article/:id', checkToken, A.putArticle)															// 修改文章	
 router.delete('/article/:id', checkToken, A.deleteArticle)										// 删除文章
 router.patch('/article/:id', checkToken, A.patchArticle)											// 修改文章状态
+router.patch('/articleLikes', A.patchArticleLikes)					// 修改点赞数
+router.patch('/articleDislikes', A.patchArticleDislikes)					// 修改吐槽数
 //upload.array设置多文件上传 20为限制上传数量
 router.post('/uploadArticlePics', checkToken, upload.array('file', 20), A.uploadArticlePics) // 上传文章图片
 // 注：delete方法只能再url上拼参数，无法将参数放在请求body里
@@ -57,7 +59,9 @@ router.post('/removeArticlePics', checkToken, A.removeArticlePics) // 删除文�
 // checkToken,
 router.get('/message', M.getMessage) 						// 获取留言
 router.post('/message', M.postMessage)					// 添加留言
-router.patch('/message', checkToken, M.patchMessage) 				// 修改留言墙状态	
+router.patch('/message', checkToken, M.patchMessage) 				// 修改留言墙状态
+router.patch('/messageLikes', M.patchMessageLikes)					// 修改点赞数
+router.patch('/messageDislikes', M.patchMessageDislikes)					// 修改吐槽数
 router.delete('/message/:id', checkToken, M.deleteMessage) 	// 删除留言
 // router.put('/message', checkToken, M.putMessage)	// 修改留言
 

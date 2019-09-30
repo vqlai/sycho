@@ -20,7 +20,11 @@ const messageSchema = new mongoose.Schema({
   color: { type: String, default: '' }, // 头像背景颜色
   likes: { type: Number, default: 0 }, // 点赞数
   dislikes: { type: Number, default: 0 }, // 不点赞数
-  postId: { type: Number, default: 0 }, // 评论关联的评论id
+  replyId: { type: String, default: '' }, // 回复关联的评论id
+  replyFloor: { type: String, default: ''}, //  回复编号
+  isReply: { type: Boolean, default: false }, // 是否回复
+  replyName: { type: String, required: false, default: '' },
+  replyContent: { type: String, required: false, default: '' },
   // 状态  0 待审核，1 审核通过， 2 审核不通过
   state: { type: Number, default: 0 },
   // ip
@@ -44,6 +48,12 @@ messageSchema.plugin(autoIncrement.plugin, {
   field: 'id',
   startAt: 1,
   incrementBy: 1
+})
+
+// 时间更新
+messageSchema.pre('findOneAndUpdate', function (next) {
+  this.findOneAndUpdate({}, { updateTime: Date.now() })
+  next()
 })
 
 // 留言模型

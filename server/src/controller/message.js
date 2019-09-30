@@ -134,6 +134,46 @@ class messageController {
     }
   }
 
+  // 更新点赞数
+  static async patchMessageLikes(ctx) {
+    const { likes, _id } = ctx.request.body
+
+    if (typeof likes === 'undefined') {
+      throw new CustomError(401, '参数无效')
+      return false
+    }
+    let result = await Message
+      .update({ _id }, { likes })
+      .catch(err => ctx.throw(500, '服务器内部错误'))
+
+    if (result) {
+      handleSuccess({ ctx, msg: '更新点赞数成功' })
+    } else {
+      handleError({ ctx, msg: '更新点赞数失败' })
+    }
+  }
+
+  // 更新吐槽数
+  static async patchMessageDislikes(ctx) {
+    const { dislikes, _id } = ctx.request.body
+
+    if (typeof dislikes === 'undefined') {
+      throw new CustomError(401, '参数无效')
+      return false
+    }
+    let result = await Message
+      .update({ _id }, { dislikes })
+      .catch(err => ctx.throw(500, '服务器内部错误'))
+
+    if (result) {
+      handleSuccess({ ctx, msg: '更新吐槽数成功' })
+    } else {
+      handleError({ ctx, msg: '更新吐槽数失败' })
+    }
+  }
+
+  // 用户进行回复
+
   // 编辑留言
   static async putMessage(ctx) { }
 
