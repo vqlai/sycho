@@ -60,7 +60,7 @@
     </div>
     <section class="box">
       <h3><a-icon type="fire" /> 热度榜</h3>
-      <nuxt-link class="link" v-for="(item,index) in articleHotList" :key="index" :to="`/article/${item.id}`"> {{item.title}} </nuxt-link>
+      <nuxt-link class="link" v-for="(item,index) in articleHotList" :key="index" :to="`/article/${item.id}`"> {{item.title.slice(0,20)}} </nuxt-link>
     </section>
     <a-carousel autoplay>
       <div>广告位1</div>

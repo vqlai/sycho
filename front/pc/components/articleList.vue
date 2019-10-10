@@ -22,6 +22,7 @@
           }
         }
         .ant-list-item-extra-wrap{
+          width: 100%;
           flex-direction: row-reverse;
           .ant-list-item-extra{
             margin: 0 16px 0;
@@ -31,10 +32,15 @@
             }
           }
           .ant-list-item-main{
+            flex: 1;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
+            .ant-list-item-content{
+              width: 100%;
+            }
           }
         }
       }
@@ -54,16 +60,17 @@
           <span :key="type"> <a-icon :type="type" style="margin-right: 8px" /> {{text}} </span>
         </template> -->
         <template slot="actions">
-          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span><a-icon type="like-o" style="margin-right: 8px" />{{item.meta.likes}}</span><span><a-icon type="dislike-o" style="margin-right: 8px" />{{item.meta.likes}}</span><span><a-icon type="message" style="margin-right: 8px" />{{item.meta.comments}}</span>
+          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span @click="onLike(item)"><a-icon type="like-o" style="margin-right: 8px"/>{{item.meta.likes}}</span><span @click="onDislike(item)"><a-icon type="dislike-o" style="margin-right: 8px"/>{{item.meta.dislikes}}</span>
+          <!-- <span><a-icon type="message" style="margin-right: 8px" />{{item.meta.comments}}</span> -->
         </template>
         
-        <a-list-item-meta :description="item.desc" @click="gotoDetail(item)">
+        <a-list-item-meta :description="item.desc.slice(0,200)" @click="gotoDetail(item)">
           <!-- :href="item.href" -->
           <a slot="title">{{item.title}}</a>
           <!-- <a-avatar slot="avatar" :src="item.avatar" /> -->
         </a-list-item-meta>
         <nuxt-link :to="`/article/${item.id}`" tag="div">
-          {{item.content}}
+          {{item.content.slice(0,260)+'...'}}
         </nuxt-link>
       </a-list-item>
     </a-list>
@@ -118,6 +125,42 @@
     methods: {
       gotoDetail(article) {
         this.$router.push(`/article/${article.id}`)
+      },
+      onLike(item) {
+        
+        let meta = {...item.meta}
+        meta.likes = meta.likes+1
+        this.$axios.patch('/articleLikes',{_id: item._id, meta}).then(res=>{
+          if(res.data.success){
+            console.log(this.$route)
+            let params = { keyword: this.$route.params.keywords, currentPage: 1, pageSize: 10 }
+            if(this.$route.name == 'tech'){
+              params.type = 1
+            }else if(this.$route.name == 'life') {
+              params.type = 2
+            }
+            this.$store.dispatch('article/getArticle', params)
+          }else{
+            this.$message.info(res.data.msg)
+          }
+        })
+      },
+      onDislike(item) {
+        let meta = {...item.meta}
+        meta.dislikes = meta.dislikes+1
+        this.$axios.patch('/articleDislikes',{_id: item._id, meta}).then(res=>{
+          if(res.data.success){
+            let params = { keyword: this.$route.params.keywords, currentPage: 1, pageSize: 10 }
+            if(this.$route.name == 'tech'){
+              params.type = 1
+            }else if(this.$route.name == 'life') {
+              params.type = 2
+            }
+            this.$store.dispatch('article/getArticle', params)
+          }else{
+            this.$message.info(res.data.msg)
+          }
+        })
       }
     }
   }

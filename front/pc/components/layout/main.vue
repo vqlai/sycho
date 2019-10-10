@@ -10,6 +10,7 @@
     padding: 20px 0 0;
     .left-panel{
       flex: 1;
+      overflow: hidden;
       padding: 20px;
       background-color: #fff;
       border-radius: 2px;
@@ -76,6 +77,10 @@
       }
     },
     computed: {
+    },
+    mounted() {
+      console.clear()
+      console.log('%cTalk is cheap. Show me the code %c695850246@qq.com', 'color:#666;font-size:3em;', 'color:#666;font-size:13px;')
     },
     methods: {
     }
