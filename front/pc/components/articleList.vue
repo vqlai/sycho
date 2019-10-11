@@ -6,7 +6,7 @@
     }
     @{deep} .ant-list{
       .ant-spin-container{
-        min-height: 600px;
+        min-height: 480px;
         .ant-list-empty-text{
           padding: 30% 0;
         }
@@ -50,7 +50,7 @@
 <template>
   <section class="article">
     <a-list :pagination="articleList.list.length?pagination:false" :data-source="articleList.list" item-layout="vertical" size="large" :loading="listLoading">
-      <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
+      <a-list-item slot="renderItem" slot-scope="item, index" :key="index" @click="gotoDetail(item)">
         <div slot="extra">
           <nuxt-link :to="`/article/${item.id}`">
             <img width="272" alt="logo" :src="item.thumb"/>
@@ -60,11 +60,11 @@
           <span :key="type"> <a-icon :type="type" style="margin-right: 8px" /> {{text}} </span>
         </template> -->
         <template slot="actions">
-          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span @click="onLike(item)"><a-icon type="like-o" style="margin-right: 8px"/>{{item.meta.likes}}</span><span @click="onDislike(item)"><a-icon type="dislike-o" style="margin-right: 8px"/>{{item.meta.dislikes}}</span>
+          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span @click.stop="onLike(item)"><a-icon type="like-o" style="margin-right: 8px"/>{{item.meta.likes}}</span><span @click.stop="onDislike(item)"><a-icon type="dislike-o" style="margin-right: 8px"/>{{item.meta.dislikes}}</span>
           <!-- <span><a-icon type="message" style="margin-right: 8px" />{{item.meta.comments}}</span> -->
         </template>
         
-        <a-list-item-meta :description="item.desc.slice(0,200)" @click="gotoDetail(item)">
+        <a-list-item-meta :description="item.desc.slice(0,200)">
           <!-- :href="item.href" -->
           <a slot="title">{{item.title}}</a>
           <!-- <a-avatar slot="avatar" :src="item.avatar" /> -->
@@ -127,40 +127,64 @@
         this.$router.push(`/article/${article.id}`)
       },
       onLike(item) {
-        
-        let meta = {...item.meta}
-        meta.likes = meta.likes+1
-        this.$axios.patch('/articleLikes',{_id: item._id, meta}).then(res=>{
-          if(res.data.success){
-            console.log(this.$route)
-            let params = { keyword: this.$route.params.keywords, currentPage: 1, pageSize: 10 }
-            if(this.$route.name == 'tech'){
-              params.type = 1
-            }else if(this.$route.name == 'life') {
-              params.type = 2
+        if(!localStorage.getItem('user')){
+          this.$message.info('请先设置用户信息')
+          return false
+        }
+        let articleIds = JSON.parse(localStorage.getItem('articleIds'))
+        if(!articleIds||!articleIds.includes(item.id)){
+          let meta = {...item.meta}
+          meta.likes = meta.likes+1
+          this.$axios.patch('/articleLikes',{_id: item._id, meta}).then(res=>{
+            if(res.data.success){
+              // console.log(this.$route)
+              let arr = articleIds || []
+              arr.push(item.id)
+              localStorage.setItem('articleIds', JSON.stringify(arr))
+              let params = { keyword: this.$route.params.keywords, currentPage: 1, pageSize: 10 }
+              if(this.$route.name == 'tech'){
+                params.type = 1
+              }else if(this.$route.name == 'life') {
+                params.type = 2
+              }
+              this.$store.dispatch('article/getArticle', params)
+            }else{
+              this.$message.info(res.data.msg)
             }
-            this.$store.dispatch('article/getArticle', params)
-          }else{
-            this.$message.info(res.data.msg)
-          }
-        })
+          })
+        }else{
+          this.$message.info('您已操作，请不要贪心哦')
+        }
       },
       onDislike(item) {
-        let meta = {...item.meta}
-        meta.dislikes = meta.dislikes+1
-        this.$axios.patch('/articleDislikes',{_id: item._id, meta}).then(res=>{
-          if(res.data.success){
-            let params = { keyword: this.$route.params.keywords, currentPage: 1, pageSize: 10 }
-            if(this.$route.name == 'tech'){
-              params.type = 1
-            }else if(this.$route.name == 'life') {
-              params.type = 2
+        if(!localStorage.getItem('user')){
+          this.$message.info('请先设置用户信息')
+          return false
+        }
+        let articleIds = JSON.parse(localStorage.getItem('articleIds'))
+        if(!articleIds||!articleIds.includes(item.id)){
+          let meta = {...item.meta}
+          meta.dislikes = meta.dislikes+1
+          this.$axios.patch('/articleDislikes',{_id: item._id, meta}).then(res=>{
+            if(res.data.success){
+              let arr = articleIds || []
+              arr.push(item.id)
+              localStorage.setItem('articleIds', JSON.stringify(arr))
+              let params = { keyword: this.$route.params.keywords, currentPage: 1, pageSize: 10 }
+              if(this.$route.name == 'tech'){
+                params.type = 1
+              }else if(this.$route.name == 'life') {
+                params.type = 2
+              }
+              this.$store.dispatch('article/getArticle', params)
+            }else{
+              this.$message.info(res.data.msg)
             }
-            this.$store.dispatch('article/getArticle', params)
-          }else{
-            this.$message.info(res.data.msg)
-          }
-        })
+          })
+        }else{
+          this.$message.info('您已操作，请不要贪心哦')
+        }
+        
       }
     }
   }

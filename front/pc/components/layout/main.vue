@@ -24,7 +24,7 @@
   .share{
     position: fixed;
     top: 50%;
-    left: 0;
+    left: 10px;
     transform: translateY(-50%);
     width: 30px;
     height: auto;
