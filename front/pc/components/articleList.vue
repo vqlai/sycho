@@ -53,7 +53,8 @@
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index" @click="gotoDetail(item)">
         <div slot="extra">
           <nuxt-link :to="`/article/${item.id}`">
-            <img width="272" alt="logo" :src="item.thumb"/>
+            <!-- @onerror="onImgError()" :onerror="defaultImg" -->
+            <img width="272" alt="logo" :src="item.thumb?item.thumb:'/images/avator.jpg'"/>
           </nuxt-link>
         </div>
         <!-- <template slot="actions" v-for="{type, text} in actions">
@@ -99,6 +100,8 @@
         //   { type: 'like-o', text: '156' },
         //   { type: 'message', text: '2' },
         // ],
+        // defaultImg: `this.src=${require('@/assets/imgs/avator.jpg')}` // 默认图地址
+        // defaultImg: `this.src=${'/images/avator.jpg'}` // 默认图地址
       }
     },
     // fetch ({ store, params }) {
@@ -121,6 +124,9 @@
           total: this.$store.state.article.articleList.pagination.total
         }
       }
+    },
+    mounted() {
+      // console.log(require('@/assets/imgs/avator.jpg'))
     },
     methods: {
       gotoDetail(article) {
@@ -185,6 +191,12 @@
           this.$message.info('您已操作，请不要贪心哦')
         }
         
+      },
+      onImgError(e) {
+        console.log(e)
+        let img = event.srcElement;
+        img.src = this.defaultImg;
+        img.onerror = null; //防止闪图
       }
     }
   }
