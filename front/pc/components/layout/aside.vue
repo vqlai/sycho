@@ -58,7 +58,7 @@
     <div class="search">
       <a-input-search v-model="keywords" placeholder="请输入搜索内容..." @search="onSearch" enterButton />
     </div>
-    <section class="box">
+    <section class="box" v-if="articleHotList.length">
       <h3><a-icon type="fire" /> 热度榜</h3>
       <nuxt-link class="link" v-for="(item,index) in articleHotList" :key="index" :to="`/article/${item.id}`"> {{item.title.slice(0,20)}} </nuxt-link>
     </section>

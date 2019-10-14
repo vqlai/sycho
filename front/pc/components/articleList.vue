@@ -1,6 +1,7 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .article{
+    padding: 20px 0;
     @{deep} .ant-list-pagination{
       text-align: center;
     }
@@ -50,7 +51,7 @@
 <template>
   <section class="article">
     <a-list :pagination="articleList.list.length?pagination:false" :data-source="articleList.list" item-layout="vertical" size="large" :loading="listLoading">
-      <a-list-item slot="renderItem" slot-scope="item, index" :key="index" @click="gotoDetail(item)">
+      <a-list-item slot="renderItem" slot-scope="item, index" :key="index" @click="gotoDetail(item)" style="cursor: pointer;">
         <div slot="extra">
           <nuxt-link :to="`/article/${item.id}`">
             <!-- @onerror="onImgError()" :onerror="defaultImg" -->
