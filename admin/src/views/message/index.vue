@@ -28,104 +28,125 @@
           highlight-current-row
           style="width: 100%">
           <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" inline class="table-expand">
-              <el-form-item label="IP：">
-                <span>{{ props.row.ip }}</span>
-              </el-form-item>
-              <el-form-item label="地址：">
-                <span v-if="!props.row.country&&!props.row.city">{{ props.row.country }} {{ props.row.city }}</span>
-                <span v-else>暂无</span>
-              </el-form-item>
-              <el-form-item label="浏览器：">
-                <span v-html="uaParse(props.row.agent)"></span>
-              </el-form-item>
-              <el-form-item label="系统：">
-                <span v-html="osParse(props.row.agent)"></span>
-              </el-form-item>
-              <el-form-item label="点赞数：">
-                <span v-html="props.row.likes"></span>
-              </el-form-item>
-              <el-form-item label="吐槽数：">
-                <span v-html="props.row.dislikes"></span>
-              </el-form-item>
-              <el-form-item label="头像颜色：">
-                <span v-text="props.row.color"></span>
-              </el-form-item>
-              <el-form-item label="头像图片：">
-                <span v-text="props.row.avator"></span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column
-          type="index"
-          label="序号"
-          align="center"
-          width="50">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="昵称"
-          width="120px"
-          show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column
-          prop="email"
-          label="邮箱"
-          width="200px"
-          show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column
-          prop="content"
-          label="内容"
-          min-width="200px"
-          show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column
-          label="创建时间"
-          width="180">
-          <template slot-scope="scope">
-            <i class="iconfont icon-date mar"></i>
-            {{ scope.row.createDate | formatterTime}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="状态"
-          width="80">
-          <template slot-scope="scope">
-            {{ scope.row.state === 0 ? '待审核' : scope.row.state === 1 ? '通过' : '不通过' }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          width="380"
-          fixed="right">
-          <template slot-scope="scope">
-            <transition-group tag="span" name="btn">
-              <el-button
-                type="success"
-                size="small"
-                v-if="scope.row.state === 0 || scope.row.state === 2"
-                @click="handleState(scope.row, 1)"
-                key="1">通过</el-button>
-              <el-button
-                type="danger"
-                size="small"
-                v-if="scope.row.state === 0 || scope.row.state === 1"
-                @click="handleState(scope.row, 2)"
-                key="2">不通过</el-button>
-              <el-button
-                type="danger"
-                size="small"
-                key="3"
-                @click="handleDelete(scope.row)"
-                :disabled="scope.row.deleteing">{{ scope.row.deleteing ? '删除中' : '删 除' }}</el-button>
-              <!-- <el-button type="text" size="small" icon="el-icon-edit" key="4">编辑</el-button>
-              <el-button type="text" size="small" icon="el-icon-edit" key="5">回复</el-button> -->
-            </transition-group>
-          </template>
-        </el-table-column>
+            <template slot-scope="props">
+              <el-form label-position="left" inline class="table-expand">
+                <el-form-item label="IP：">
+                  <span>{{ props.row.ip }}</span>
+                </el-form-item>
+                <el-form-item label="地址：">
+                  <span v-if="!props.row.country&&!props.row.city">{{ props.row.country }} {{ props.row.city }}</span>
+                  <span v-else>暂无</span>
+                </el-form-item>
+                <el-form-item label="浏览器：">
+                  <span v-html="uaParse(props.row.agent)"></span>
+                </el-form-item>
+                <el-form-item label="系统：">
+                  <span v-html="osParse(props.row.agent)"></span>
+                </el-form-item>
+                <el-form-item label="点赞数：">
+                  <span v-html="props.row.likes"></span>
+                </el-form-item>
+                <el-form-item label="postId：">
+                  <span v-html="props.row.postId"></span>
+                </el-form-item>
+                <el-form-item label="isReply：">
+                  <span v-html="props.row.isReply"></span>
+                </el-form-item>
+                <el-form-item label="replyId：">
+                  <span v-html="props.row.replyId||'暂无'"></span>
+                </el-form-item>
+                <el-form-item label="replyName：">
+                  <span v-html="props.row.replyName||'暂无'"></span>
+                </el-form-item>
+                <el-form-item label="吐槽数：">
+                  <span v-html="props.row.dislikes"></span>
+                </el-form-item>
+                <el-form-item label="头像颜色：">
+                  <span v-text="props.row.color"></span>
+                </el-form-item>
+                <el-form-item label="头像图片：">
+                  <span v-text="props.row.avator||'暂无'"></span>
+                </el-form-item>
+                <el-form-item label="更新时间：">
+                  <span>{{props.row.updateDate | formatterTime}}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column
+            type="index"
+            label="序号"
+            align="center"
+            width="50">
+          </el-table-column>
+          <el-table-column
+            prop="postType"
+            label="类型"
+            align="center"
+            width="80">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="昵称"
+            width="120px"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            prop="email"
+            label="邮箱"
+            width="200px"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            prop="content"
+            label="内容"
+            min-width="200px"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            label="创建时间"
+            width="180">
+            <template slot-scope="scope">
+              <i class="iconfont icon-date mar"></i>
+              {{ scope.row.createDate | formatterTime}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="状态"
+            width="80">
+            <template slot-scope="scope">
+              {{ scope.row.state === 0 ? '待审核' : scope.row.state === 1 ? '通过' : '不通过' }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="380"
+            fixed="right">
+            <template slot-scope="scope">
+              <transition-group tag="span" name="btn">
+                <el-button
+                  type="success"
+                  size="small"
+                  v-if="scope.row.state === 0 || scope.row.state === 2"
+                  @click="handleState(scope.row, 1)"
+                  key="1">通过</el-button>
+                <el-button
+                  type="danger"
+                  size="small"
+                  v-if="scope.row.state === 0 || scope.row.state === 1"
+                  @click="handleState(scope.row, 2)"
+                  key="2">不通过</el-button>
+                <el-button
+                  type="danger"
+                  size="small"
+                  key="3"
+                  @click="handleDelete(scope.row)"
+                  :disabled="scope.row.deleteing">{{ scope.row.deleteing ? '删除中' : '删 除' }}</el-button>
+                <!-- <el-button type="text" size="small" icon="el-icon-edit" key="4">编辑</el-button>
+                <el-button type="text" size="small" icon="el-icon-edit" key="5">回复</el-button> -->
+              </transition-group>
+            </template>
+          </el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"

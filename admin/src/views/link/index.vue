@@ -130,6 +130,41 @@
           @keyup.enter.native="handleSubmitForm">
           </el-input>
         </el-form-item>
+        <el-form-item label="描述" required prop="desc">
+          <el-input v-model="linkForm.desc" placeholder="请输入链接描述" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="logo">
+          <div class="upload-box">
+            <el-upload
+              action=""
+              :auto-upload="true"
+              :show-file-list="false"
+              accept=".jpg, .jpeg, .png"
+              :limit="1"
+              :before-upload="beforeLogoUpload">
+              <div v-if="logoUrl" :class="['avatar-box',{'hover': logoHover}]"
+                @mouseenter="logoHover = true"
+                @mouseleave="logoHover = false">
+                <img :src="logoUrl" class="avatar">
+                <div v-if="logoHover" class="imgHoverBtns">
+                  <i class="el-icon-zoom-in" @click.stop="logoPreVisible=true"></i>
+                  <i class="el-icon-delete" @click.stop="handleRemoveLogo"></i>
+                </div>
+              </div>
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+            <ul class="upload-tip">
+              <li>每次只能上传1张图片。</li>
+              <li>每张图片大小不超过 200kb。</li>
+              <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
+            </ul>
+            <el-dialog :visible.sync="logoPreVisible" width="35%" append-to-body>
+              <div style="text-align: center;">
+                <img :src="logoUrl" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
+              </div>
+            </el-dialog>
+          </div>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -167,7 +202,8 @@
           _id: '',
           name: '',
           type: '',
-          url: ''
+          url: '',
+          desc: ''
         },
         linkFormRules: {
           name: [
@@ -180,6 +216,10 @@
           url: [
             { validator: validateURL, trigger: 'blur' },
             { validator: validateURL, trigger: 'change' }
+          ],
+          desc: [
+            { required: true, message: '请输入链接描述', trigger: 'blur' },
+            { required: true, message: '请输入链接描述', trigger: 'change' }
           ]
         },
         tableData: [],
@@ -189,6 +229,9 @@
         loading: false,
         dialogVisible: false,
         dialogType: 1,
+        logoUrl: '', // 头像路径
+        logoPreVisible: false, // 预览图片弹窗
+        logoHover: false
       }
     },
     filters: {
@@ -219,6 +262,8 @@
           this.loading = false
         })
       },
+      beforeLogoUpload() {},
+      handleRemoveLogo() {},
       handleSizeChange(val) {
         // console.log(`每页 ${val} 条`)
         this.pageSize = val
@@ -361,6 +406,77 @@
     .el-pagination{
       padding: 10px 0;
       text-align: right;
+    }
+    .upload-box{
+      display: flex;
+      justify-content: space-between;
+      // &.hidden{
+      //   /deep/ .el-upload {
+      //     display: none;
+      //   }
+      // }
+      /deep/ .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .el-upload:hover {
+        border-color: #409EFF;
+      }
+      .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 100px;
+        height: 100px;
+        line-height: 100px;
+        text-align: center;
+      }
+      .avatar-box{
+        position: relative;
+        &.hover{
+          &::after{
+            content: ' ';
+            position: absolute;
+            top:0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10;
+            background: rgba($color: #000000, $alpha: .5)
+          }
+          .imgHoverBtns{
+            position: absolute;
+            top:0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 11;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            i{
+              color: #fff;
+              font-size: 18px;
+              padding: 0 4px;
+            }
+          }
+        }
+        .avatar {
+          width: 100px;
+          height: 100px;
+          display: block;
+        }
+      }
+      ul.upload-tip{
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        li{
+          line-height: 30px;
+        }
+      }
     }
   }
 </style>

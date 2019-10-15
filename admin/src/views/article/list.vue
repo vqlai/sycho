@@ -132,12 +132,12 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="createTime"
+            prop="createDate"
             align="center"
             label="创建时间"
             width="160">
             <template slot-scope="scope">
-              {{ scope.row.createTime | formatterTime}}
+              {{ scope.row.createDate | formatterTime}}
             </template>
           </el-table-column>
           <el-table-column
@@ -145,7 +145,7 @@
             label="更新时间"
             width="160">
             <template slot-scope="scope">
-              {{ scope.row.updateTime | formatterTime}}
+              {{ scope.row.updateDate | formatterTime}}
             </template>
           </el-table-column>
           <!-- <el-table-column
