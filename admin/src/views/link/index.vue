@@ -40,29 +40,44 @@
             label="名称"
             sortable
             align="center"
-            width="180">
+            width="120">
           </el-table-column>
           <el-table-column
-            prop="desc"
+            prop="typeText"
             label="类型"
             align="center"
-            width="180">
+            width="120">
           </el-table-column>
           <el-table-column
             prop="url"
             align="center"
-            label="链接">
+            label="链接"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            prop="desc"
+            align="center"
+            label="描述"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            prop="logo"
+            align="center"
+            label="logo"
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             align="center"
-            label="创建时间">
+            label="创建时间"
+            width="160">
             <template slot-scope="scope">
               {{ scope.row.createDate | formatterTime}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="更新时间">
+            label="更新时间"
+            width="160">
             <template slot-scope="scope">
               {{ scope.row.updateDate | formatterTime}}
             </template>
@@ -133,37 +148,8 @@
         <el-form-item label="描述" required prop="desc">
           <el-input v-model="linkForm.desc" placeholder="请输入链接描述" clearable></el-input>
         </el-form-item>
-        <el-form-item label="logo">
-          <div class="upload-box">
-            <el-upload
-              action=""
-              :auto-upload="true"
-              :show-file-list="false"
-              accept=".jpg, .jpeg, .png"
-              :limit="1"
-              :before-upload="beforeLogoUpload">
-              <div v-if="logoUrl" :class="['avatar-box',{'hover': logoHover}]"
-                @mouseenter="logoHover = true"
-                @mouseleave="logoHover = false">
-                <img :src="logoUrl" class="avatar">
-                <div v-if="logoHover" class="imgHoverBtns">
-                  <i class="el-icon-zoom-in" @click.stop="logoPreVisible=true"></i>
-                  <i class="el-icon-delete" @click.stop="handleRemoveLogo"></i>
-                </div>
-              </div>
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            </el-upload>
-            <ul class="upload-tip">
-              <li>每次只能上传1张图片。</li>
-              <li>每张图片大小不超过 200kb。</li>
-              <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
-            </ul>
-            <el-dialog :visible.sync="logoPreVisible" width="35%" append-to-body>
-              <div style="text-align: center;">
-                <img :src="logoUrl" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
-              </div>
-            </el-dialog>
-          </div>
+        <el-form-item label="logo" prop="logo">
+          <el-input v-model="linkForm.logo" placeholder="请输入logo地址" clearable></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -203,7 +189,8 @@
           name: '',
           type: '',
           url: '',
-          desc: ''
+          desc: '',
+          logo: ''
         },
         linkFormRules: {
           name: [
@@ -228,10 +215,7 @@
         total: 0,
         loading: false,
         dialogVisible: false,
-        dialogType: 1,
-        logoUrl: '', // 头像路径
-        logoPreVisible: false, // 预览图片弹窗
-        logoHover: false
+        dialogType: 1
       }
     },
     filters: {
@@ -262,8 +246,6 @@
           this.loading = false
         })
       },
-      beforeLogoUpload() {},
-      handleRemoveLogo() {},
       handleSizeChange(val) {
         // console.log(`每页 ${val} 条`)
         this.pageSize = val
@@ -307,20 +289,23 @@
         this.$refs.linkForm.validate((valid) => {
           if (valid) {
             // console.log(this.$refs.linkForm)
-            let desc = ''
+            let typeText = ''
             for(let item of this.linkTypes){
               if(item.value === this.linkForm.type){
-                desc = item.label
+                typeText = item.label
               }
             }
             let action = ''
             let params = {
               name: this.linkForm.name,
               type: this.linkForm.type,
+              typeText: typeText,
               url: this.linkForm.url,
-              desc: desc
+              desc: this.linkForm.desc,
+              logo: this.linkForm.logo
             }
             if (this.linkForm._id) {
+              // 编辑
               action = 'link/putLink'
               params._id = this.linkForm._id
               // params = Object.assign({}, {
@@ -331,8 +316,10 @@
               //   desc
               // })
             } else {
+              // 新增
               action = 'link/postLink'
               // params = { ...this.linkForm }
+              params.color = this.randomColor() // 随机颜色
             }
             this.$store.dispatch(action, params).then(res => {
               // console.log(res)
@@ -380,7 +367,14 @@
         // console.log(this.linkForm)
         this.dialogVisible = false
       },
-    },
+      // 随机颜色
+      randomColor(){
+        let r = Math.floor(Math.random() * 256)
+        let g = Math.floor(Math.random() * 256)
+        let b = Math.floor(Math.random() * 256)
+        return `rgb(${r},${g},${b})`
+      }
+    }
   }
 </script>
 
