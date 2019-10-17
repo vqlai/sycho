@@ -78,7 +78,7 @@ app.use(router.routes()).use(router.allowedMethods())
 
 // 配置的静态文件夹地址, 用来访问图片，压缩后的前端代码等
 // 前端访问时可以省略static这个目录
-app.use(serve(__dirname + '/static/html'))
+app.use(serve(__dirname + '/static'))
 
 // (port, hostname[, callback])
 app.listen(config.app.port, '127.0.0.1', ()=>{
