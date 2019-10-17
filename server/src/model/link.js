@@ -12,13 +12,17 @@ autoIncrement.initialize(mongoose.connection)
 const linkSchema = new mongoose.Schema({
   name: { type: String, required: true, validate: /\S+/ },
   type: { type: String, required: true },
+  typeText: { type: String, required: true },
   url: { type: String, required: true }, 
   // 描述
-  desc: { type: String},
+  desc: { type: String, required: true },
+  // 链接图片地址
+  logo: { type: String},
+  color: { type: String, required: true },
   // 发布日期
-  createDate: { type: Date, default: Date.now() },
+  createDate: { type: Date, default: Date.now },
   // 最后修改日期
-  updateDate: { type: Date, default: Date.now() }
+  updateDate: { type: Date, default: Date.now }
 })
 
 // 翻页

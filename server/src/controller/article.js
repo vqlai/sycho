@@ -34,9 +34,9 @@ class articleController{
 		if (keyword) {
 			const keywordReg = new RegExp(keyword)
 			querys['$or'] = [
-				{ 'title': keywordReg },
+				{ 'title': keywordReg } // 关键词只搜标题 
 				// { 'content': keywordReg },
-				{ 'desc': keywordReg }
+				// { 'desc': keywordReg }
 			]
 		}
 

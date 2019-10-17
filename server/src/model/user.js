@@ -16,9 +16,9 @@ const userSchema = new mongoose.Schema({
 	desc: { type: String }, // 用户描述
 	avatar: { type: String }, // 用户头像
 	// 发布日期
-	createDate: { type: Date, default: Date.now() },
+	createDate: { type: Date, default: Date.now },
 	// 最后修改日期
-	updateDate: { type: Date, default: Date.now() }
+	updateDate: { type: Date, default: Date.now }
 })
 
 // 翻页 + 自增ID插件配置

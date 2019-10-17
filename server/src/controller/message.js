@@ -39,10 +39,10 @@ class messageController {
       }
     }
 
-    // 通过postId过滤
-    // if (!Object.is(postId, undefined)) {
-    //   querys.postId = postId
-    // }
+    // 通过postId过滤，传0加载留言板，传文章id加载文章评论留言，不传加载全部
+    if (!Object.is(postId, undefined)) {
+      querys.postId = postId
+    }
 
     // 查询
     const result = await Message

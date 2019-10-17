@@ -49,8 +49,8 @@ class linkController {
   // 新增链接
   static async postLink(ctx) {
     //es6对象解构赋值
-    const { name, type, desc, url } = ctx.request.body //请求参数放在请求体
-    const result = await new Link({ name, type, desc, url })
+    const { name, type, typeText, desc, url, logo, color } = ctx.request.body //请求参数放在请求体
+    const result = await new Link({ name, type, typeText, desc, url, logo, color })
       .save()
       .catch(err => {
         throw new CustomError(500, '服务器内部错误')
@@ -64,7 +64,7 @@ class linkController {
   static async putLink(ctx) {
     const _id = ctx.params.id
 
-    const { name, type, url, desc } = ctx.request.body
+    const { name, type, typeText, desc, url, logo } = ctx.request.body
 
     if (!_id) {
       throw new CustomError(500, '无效参数')
@@ -72,7 +72,7 @@ class linkController {
     }
 
     const result = await Link
-      .findByIdAndUpdate(_id, { name, type, url, desc }, { new: true }) // new: true ？？？
+      .findByIdAndUpdate(_id, { name, type, typeText, desc, url, logo }, { new: true }) // new: true ？？？
       .catch(err => {
         throw new CustomError(500, '服务器内部错误')
         return false

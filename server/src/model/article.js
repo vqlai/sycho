@@ -24,8 +24,8 @@ const articleSchema = new mongoose.Schema({
 	// releaseTime: { type: String, required: true },
 	thumb: String, // 文章缩略图 
 	content: { type: String, required: true },
-	updateTime: { type: Date, default: Date.now() },
-	createTime: { type: Date, default: Date.now() }, // 因为类型是Date，无法保存时间戳,废弃Date类型
+	createDate: { type: Date, default: Date.now }, // 因为类型是Date，无法保存时间戳,废弃Date类型
+	updateDate: { type: Date, default: Date.now },
 	// 其他元信息
 	meta: {
 		views: { type: Number, default: 0 },
@@ -49,7 +49,7 @@ articleSchema.plugin(autoIncrement.plugin, {
 
 // 时间更新
 articleSchema.pre('findOneAndUpdate', function (next) {
-	this.findOneAndUpdate({}, { updateTime: Date.now() })
+	this.findOneAndUpdate({}, { updateDate: Date.now() })
 	next()
 })
 
