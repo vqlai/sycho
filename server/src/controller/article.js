@@ -181,7 +181,8 @@ class articleController{
 
 			// 百度 seo push
 			// request.post({
-			// 	url: `http://data.zz.baidu.com/urls?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	// url: `http://data.zz.baidu.com/urls?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	url: 'http://data.zz.baidu.com/urls?site=www.sycho.cn&token=apWCcqnKsB92ozP3',
 			// 	headers: { 'Content-Type': 'text/plain' },
 			// 	body: `${config.INFO.site}/article/${res._id}`
 			// }, (error, response, body) => {

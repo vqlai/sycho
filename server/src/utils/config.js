@@ -30,22 +30,22 @@ let config = {
 		expiresIn: '3600s' //以秒为单位，token到期时间 3600s
 	},
 	// 本地使用（连接本地mongodb）
-	mongodb: {
-		host: '127.0.0.1',
-		database: 'sycho',
-		port: 27017,
-		user: '',
-		password: ''
-	},
-	// 本地使用（连接centos远程mongodb）
 	// mongodb: {
-	// 	host: '193.112.77.76',  // 本地连接远程centos的mongodb用外网ip-193.112.77.76
+	// 	host: '127.0.0.1',
 	// 	database: 'sycho',
-	// 	port: 26789,
-	// 	user: 'root',
-	// 	password: 'v901815Q' // 上一版密码
-	// 	password: 'c4371639S'
+	// 	port: 27017,
+	// 	user: '',
+	// 	password: ''
 	// },
+	// 本地使用（连接centos远程mongodb）
+	mongodb: {
+		host: '193.112.77.76',  // 本地连接远程centos的mongodb用外网ip-193.112.77.76
+		database: 'sycho',
+		port: 26789,
+		user: 'root',
+		password: 'v901815Q' // 上一版密码
+		// password: 'c4371639S'
+	},
 	// 线上使用
 	// mongodb: {
 	// 	host: '127.0.0.1', // 线上连接centos的mongodb用127.0.0.1/172.16.0.11   本地用127.0.0.1
