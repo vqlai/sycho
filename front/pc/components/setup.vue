@@ -3,18 +3,21 @@
 </style>
 <template>
   <div class="setup">
-    <a-row :gutter="16" v-if="!isUser" style="padding:10px 0;">
-      <a-col :span="isEdit?6:7">
+    <a-row :gutter="16" v-if="!isUser">
+      <!-- :span="isEdit?6:7" -->
+      <a-col :xs="12" :sm="12" :md="12" :lg="5" :xl="7" style="padding:10px;">
         <a-input placeholder="昵称*" v-model="user.name">
           <a-icon slot="prefix" type="user" />
         </a-input>
       </a-col>
-      <a-col :span="isEdit?6:7">
+      <!-- :span="isEdit?6:7" -->
+      <a-col :xs="12" :sm="12" :md="12" :lg="5" :xl="7" style="padding:10px;">
         <a-input placeholder="邮箱*" v-model="user.email">
           <a-icon slot="prefix" type="global" />
         </a-input>
       </a-col>
-      <a-col :span="isEdit?9:10">
+      <!-- :span="isEdit?9:10" -->
+      <a-col :xs="isEdit?20:24" :sm="isEdit?20:24" :md="isEdit?20:24" :lg="isEdit?11:14" :xl="isEdit?8:10" style="padding:10px;">
         <!-- <a-input placeholder="网址" v-model="user.url">
           <a-icon slot="prefix" type="chrome" />
         </a-input> -->
@@ -31,10 +34,10 @@
           </a-select>
         </a-input>
       </a-col>
-      <a-col :span="3" v-if="isEdit" @click="saveUser"><a-button icon="check" style="width:100%;"></a-button></a-col>
+      <a-col :xs="4" :sm="4" :md="4" :lg="3" :xl="2" v-if="isEdit" @click="saveUser" style="padding:10px;"><a-button icon="check" style="width:100%;"></a-button></a-col>
     </a-row>
     <a-row type="flex" justify="end" align="middle" style="padding:10px 0 0;" v-else>
-      {{user.name}}
+      你好，{{user.name}}
       <a-icon type="setting" style="padding: 0 10px;"/>
       <a-dropdown v-model="dropdownVisible">
         <a class="ant-dropdown-link" href="javascript:;"> 设置账户信息 </a>
@@ -56,16 +59,16 @@
             <a-textarea v-model="replyObj.content" :rows="3" disabled></a-textarea>
           </a-form-item>
         </div>
-        <a-form-item>
+        <a-form-item style="margin-bottom: 10px;">
           <!-- :value="textareaValue" -->
-          <a-textarea :rows="4" v-model="commentText" placeholder="愿你的想法与众不同..."></a-textarea>
+          <a-textarea :rows="4" v-model="commentText" :placeholder="pText"></a-textarea>
         </a-form-item>
-        <a-form-item style="text-align:right;">
+        <a-form-item style="text-align:right;margin:0;">
           <a-button html-type="submit" :loading="submitting" @click="handleSubmit" type="primary" icon="smile"> {{pageType=='MESSAGE'?'留言':'评论'}} </a-button>
         </a-form-item>
       </div>
     </a-row>
-    <a-divider dashed />
+    <a-divider dashed style="margin: 10px 0;"/>
   </div>
 </template>
 
@@ -112,6 +115,12 @@
         submitting: false
       }
     },
+    // 
+    computed: {
+      pText: function () {
+        return `愿你的${this.pageType=='MESSAGE'?'留言':'评论'}与众不同...`
+      }
+    },
     mounted: function () {
       this.$nextTick(()=>{
         console.log(this.pageType)
@@ -135,7 +144,8 @@
           name: '',
           email: '',
           url: '',
-          avatar: ''
+          avatar: '',
+          color: ''
         }
         this.user = {...user}
         localStorage.removeItem('user')
@@ -146,6 +156,7 @@
         this.isEdit = false
         this.isUser = true
       },
+      // 取消回复
       onClickUndo() {
         this.isReply = false
         this.replyObj = {
@@ -168,6 +179,7 @@
           content: this.commentText
         }
         this.submitting = true
+        this.isUser = true
         this.$emit('onSetupSubmit', this.user, obj)
       },
       randomColor(){

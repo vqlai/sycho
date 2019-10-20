@@ -5,7 +5,8 @@
   position: relative;
   .content{
     display: flex;
-    width: 1200px;
+    width: 72%;
+    // min-width: 1200px;
     margin: 0 auto;
     padding: 20px 0 0;
     .left-panel{
@@ -17,7 +18,7 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     .right-panel{
-      width: 280px;
+      width: 320px;
       margin-left: 20px;
     }
   }
@@ -33,6 +34,66 @@
     flex-wrap: wrap;
   }
 }
+@media screen and (max-width: 576px){
+  .container{
+    .content{
+      width: 100%;
+      .left-panel{
+        padding: 4px;
+      }
+      .right-panel{
+        display: none;
+      }
+    }
+  } 
+}
+@media (min-width: 577px) and (max-width: 768px){
+  .container{
+    .content{
+      width: 98%;
+      .left-panel{
+        padding: 6px;
+      }
+      .right-panel{
+        margin-left: 10px;
+        width: 240px;
+      }
+    }
+  } 
+}
+@media (min-width: 769px) and (max-width: 992px){
+  .container{
+    .content{
+      width: 98%;
+      .left-panel{
+        padding: 10px;
+      }
+      .right-panel{
+        width: 260px;
+      }
+    }
+  } 
+}
+@media (min-width: 993px) and (max-width: 1200px){
+  .container{
+    .content{
+      width: 92%;
+      .right-panel{
+        width: 280px;
+      }
+    }
+  } 
+}
+@media (min-width: 1201px) and (max-width: 1500px){
+  .container{
+    .content{
+      width: 90%;
+      .right-panel{
+        width: 300px;
+      }
+    }
+  } 
+}
 </style>
 
 <template>
@@ -47,7 +108,7 @@
         <section class="right-panel"> <Aside/> </section>
       </section>
     </a-locale-provider>
-    <ShareBox class="share"></ShareBox>
+    <!-- <ShareBox class="share"></ShareBox> -->
     <!-- <Footer/> -->
     <component :is="showWhat"></component>
     <a-back-top />
@@ -59,7 +120,7 @@
   import Nav from '~/components/layout/nav'
   import Footer from '~/components/layout/footer'
   import Aside from '~/components/layout/aside'
-  import ShareBox from '~/components/share'
+  // import ShareBox from '~/components/share'
   import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN'
   export default {
     name: 'Main',
@@ -67,8 +128,8 @@
       Header,
       Nav,
       Footer,
-      Aside,
-      ShareBox
+      Aside
+      // ShareBox
     },
     data(){
       return {
@@ -80,7 +141,8 @@
     },
     mounted() {
       console.clear()
-      console.log('%cTalk is cheap. Show me the code %c695850246@qq.com', 'color:#666;font-size:3em;', 'color:#666;font-size:13px;')
+      // console.log('%cTalk is cheap. Show me the code %c695850246@qq.com', 'color:#666;font-size:3em;', 'color:#666;font-size:13px;')
+      console.log('%c让这风吹，哀伤通通带走，管风里是谁，老铁，你呢？%ccontact me: 695850246@qq.com', 'color:#1890ff;font-size:26px;', 'color:#666;font-size:14px;')
     },
     methods: {
     }

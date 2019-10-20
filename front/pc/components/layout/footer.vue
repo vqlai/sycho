@@ -29,6 +29,7 @@
 <style lang="less" scoped>
   footer {
     width: 100%;
+    // min-width: 1200px;
     height: 100px;
     display: flex;
     flex-direction: row;

@@ -1,23 +1,26 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .article{
-    padding: 20px 0;
+    padding: 20px 0 0;
     @{deep} .ant-list-pagination{
       text-align: center;
     }
     @{deep} .ant-list{
       .ant-spin-container{
-        min-height: 480px;
+        min-height: 560px;
         .ant-list-empty-text{
           padding: 30% 0;
         }
       }
       .ant-list-item{
+        padding: 10px;
         transition: all .5s ease;
         &:hover{
-          background-color: #eee;
-          .ant-list-item-extra{
-            img{
+          background-color: rgba(205, 231, 255, 0.3);;
+        }
+        .ant-list-item-extra{
+          img{
+            &:hover{
               transform: scale(1.2);
             }
           }
@@ -33,6 +36,7 @@
             }
           }
           .ant-list-item-main{
+            padding-left: 20px;
             flex: 1;
             overflow: hidden;
             display: flex;
@@ -47,33 +51,85 @@
       }
     }
   }
+  @media screen and (max-width: 576px){
+    .article{
+      @{deep} .ant-list{
+        .ant-list-item{
+          padding: 6px;
+          .ant-list-item-extra-wrap{
+            .ant-list-item-main{
+              padding-left: 0;
+            }
+            .ant-list-item-extra{
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+  @media (min-width: 577px) and (max-width: 768px){
+    .article{
+      @{deep} .ant-list{
+        .ant-list-item{
+          padding: 6px;
+          .ant-list-item-extra-wrap{
+            .ant-list-item-main{
+              padding-left: 10px;
+            }
+            .ant-list-item-extra{
+              margin: 0!important;
+            }
+          }
+        }
+      }
+    }
+  }
+  @media (min-width: 769px) and (max-width: 1200px){
+    .article{
+      @{deep} .ant-list{
+        .ant-list-item{
+          padding: 6px;
+          .ant-list-item-extra-wrap{
+            .ant-list-item-main{
+              padding-left: 10px;
+            }
+            .ant-list-item-extra{
+              margin: 0!important;
+            }
+          }
+        }
+      }
+    }
+  }
 </style>
 <template>
   <section class="article">
-    <a-list :pagination="articleList.list.length?pagination:false" :data-source="articleList.list" item-layout="vertical" size="large" :loading="listLoading">
+    <a-list :pagination="articleList.list.length?pagination:false" :data-source="articleList.list" item-layout="vertical" size="small" :loading="listLoading">
       <a-list-item slot="renderItem" slot-scope="item, index" :key="index" @click="gotoDetail(item)" style="cursor: pointer;">
         <div slot="extra">
           <nuxt-link :to="`/article/${item.id}`">
             <!-- @onerror="onImgError()" :onerror="defaultImg" -->
-            <img width="272" alt="logo" :src="item.thumb?item.thumb:'/images/avator.jpg'"/>
+            <img width="120" alt="logo" :src="getThumb(item.thumb)"/>
           </nuxt-link>
         </div>
         <!-- <template slot="actions" v-for="{type, text} in actions">
           <span :key="type"> <a-icon :type="type" style="margin-right: 8px" /> {{text}} </span>
         </template> -->
         <template slot="actions">
-          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span><span @click.stop="onLike(item)"><a-icon type="like-o" style="margin-right: 8px"/>{{item.meta.likes}}</span><span @click.stop="onDislike(item)"><a-icon type="dislike-o" style="margin-right: 8px"/>{{item.meta.dislikes}}</span>
-          <!-- <span><a-icon type="message" style="margin-right: 8px" />{{item.meta.comments}}</span> -->
+          <!-- .format('YYYY-MM-DD HH:mm:ss') -->
+          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createDate).fromNow()}}</span><span @click.stop="onLike(item)"><a-icon type="like-o" style="margin-right: 8px"/>{{item.likes}}</span><span @click.stop="onDislike(item)"><a-icon type="dislike-o" style="margin-right: 8px"/>{{item.dislikes}}</span>
+          <!-- <span><a-icon type="message" style="margin-right: 8px" />{{item.comments}}</span> -->
         </template>
-        
-        <a-list-item-meta :description="item.desc.slice(0,200)">
+        <!-- .slice(0,100) -->
+        <a-list-item-meta :description="item.desc">
           <!-- :href="item.href" -->
           <a slot="title">{{item.title}}</a>
           <!-- <a-avatar slot="avatar" :src="item.avatar" /> -->
         </a-list-item-meta>
-        <nuxt-link :to="`/article/${item.id}`" tag="div">
-          {{item.content.slice(0,260)+'...'}}
-        </nuxt-link>
+        <!-- <nuxt-link :to="`/article/${item.id}`" tag="div">
+          <div v-html="item.content" style="max-height: 60px;overflow: hidden;"></div>
+        </nuxt-link> -->
       </a-list-item>
     </a-list>
   </section>
@@ -130,9 +186,14 @@
       // console.log(require('@/assets/imgs/avator.jpg'))
     },
     methods: {
+      getThumb(thumb) {
+        let url = process.env.NODE_ENV === 'production' ? 'https://admin.sycho.cn/' : 'http://127.0.0.1:1008/'
+        return `${url}${thumb}`
+      },
       gotoDetail(article) {
         this.$router.push(`/article/${article.id}`)
       },
+      // 点赞
       onLike(item) {
         if(!localStorage.getItem('user')){
           this.$message.info('请先设置用户信息')
@@ -140,9 +201,8 @@
         }
         let articleIds = JSON.parse(localStorage.getItem('articleIds'))
         if(!articleIds||!articleIds.includes(item.id)){
-          let meta = {...item.meta}
-          meta.likes = meta.likes+1
-          this.$axios.patch('/articleLikes',{_id: item._id, meta}).then(res=>{
+          let likes = item.likes+1
+          this.$axios.patch('/articleLikes',{_id: item._id, likes}).then(res=>{
             if(res.data.success){
               // console.log(this.$route)
               let arr = articleIds || []
@@ -155,6 +215,8 @@
                 params.type = 2
               }
               this.$store.dispatch('article/getArticle', params)
+              this.$message.info('点赞成功')
+              this.$store.commit('article/UPDATE_LIKE')
             }else{
               this.$message.info(res.data.msg)
             }
@@ -163,6 +225,7 @@
           this.$message.info('您已操作，请不要贪心哦')
         }
       },
+      // 吐槽
       onDislike(item) {
         if(!localStorage.getItem('user')){
           this.$message.info('请先设置用户信息')
@@ -170,9 +233,8 @@
         }
         let articleIds = JSON.parse(localStorage.getItem('articleIds'))
         if(!articleIds||!articleIds.includes(item.id)){
-          let meta = {...item.meta}
-          meta.dislikes = meta.dislikes+1
-          this.$axios.patch('/articleDislikes',{_id: item._id, meta}).then(res=>{
+          let dislikes = item.dislikes+1
+          this.$axios.patch('/articleDislikes',{_id: item._id, dislikes}).then(res=>{
             if(res.data.success){
               let arr = articleIds || []
               arr.push(item.id)
@@ -184,6 +246,8 @@
                 params.type = 2
               }
               this.$store.dispatch('article/getArticle', params)
+              this.$message.info('吐槽成功')
+              this.$store.commit('article/UPDATE_DISLIKE')
             }else{
               this.$message.info(res.data.msg)
             }
