@@ -2,13 +2,7 @@
 let config = {
 	admin: [{
 		username: 'admin',
-		password: 'v123456Q',
-		role: '3',
-		desc: '超级管理员',
-		avatar: 'upload/avatar/default.png'
-	},{
-		username: 'root',
-		password: 'v123456Q',
+		password: 'v4371639Q',
 		role: '3',
 		desc: '超级管理员',
 		avatar: 'upload/avatar/default.png'
@@ -38,23 +32,23 @@ let config = {
 	// 	password: ''
 	// },
 	// 本地使用（连接centos远程mongodb）
-	mongodb: {
-		host: '193.112.77.76',  // 本地连接远程centos的mongodb用外网ip-193.112.77.76
-		database: 'sycho',
-		port: 26789,
-		user: 'root',
-		password: 'v901815Q' // 上一版密码
-		// password: 'c4371639S'
-	},
-	// 线上使用
 	// mongodb: {
-	// 	host: '127.0.0.1', // 线上连接centos的mongodb用127.0.0.1/172.16.0.11   本地用127.0.0.1
+	// 	host: '193.112.77.76',  // 本地连接远程centos的mongodb用外网ip-193.112.77.76
 	// 	database: 'sycho',
 	// 	port: 26789,
 	// 	user: 'root',
-	// 	password: 'v901815Q'  // 上一版密码
+	// 	password: 'v901815Q' // 上一版密码
 	// 	// password: 'c4371639S'
 	// },
+	// 线上使用
+	mongodb: {
+		host: '127.0.0.1', // 线上连接centos的mongodb用127.0.0.1/172.16.0.11   本地用127.0.0.1
+		database: 'sycho',
+		port: 26789,
+		user: 'root',
+		password: 'v901815Q'  // 上一版密码
+		// password: 'c4371639S'
+	},
 	app: {
 		ip: process.env.ip,
 		port: process.env.PORT || 1008, // server端口

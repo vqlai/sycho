@@ -43,8 +43,10 @@ router.delete('/link/:id', checkToken, L.deleteLink)
 router.get('/article', A.getArticle)                                          // 文章列表
 router.get('/article/:id', A.getArticleById)																	// 文章详情
 router.get('/article2/:id', A.getArticleById2)																// 文章详情
-router.post('/article', checkToken, A.postArticle)														// 添加文章
-router.put('/article/:id', checkToken, A.putArticle)															// 修改文章	
+// router.post('/article', checkToken, A.postArticle)														// 添加文章
+router.post('/article', checkToken, upload.single('file'), A.postArticle)														// 添加文章
+// router.put('/article/:id', checkToken, A.putArticle)															// 修改文章	
+router.put('/article/:id', checkToken, upload.single('file'), A.putArticle)															// 修改文章	
 router.delete('/article/:id', checkToken, A.deleteArticle)										// 删除文章
 router.patch('/article/:id', checkToken, A.patchArticle)											// 修改文章状态
 router.patch('/articleLikes', A.patchArticleLikes)					// 修改点赞数

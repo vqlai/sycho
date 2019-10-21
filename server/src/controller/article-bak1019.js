@@ -7,7 +7,6 @@ const { handleSuccess, handleError } = require('../utils/handle')
 const { CustomError, HttpError } = require('../utils/customError.js')
 const fs = require('fs')
 const config = require('../utils/config')
-const request = require('request') // 向百度发起请求
 
 // ctx.req.files  ctx.req.body  文件上传
 // ctx.request.body POST/PUT
@@ -17,11 +16,11 @@ class articleController{
 
 	// 获取文章列表
 	static async getArticle(ctx) {
+		const { keyword = '', tag, type, publish = 1, state = 1, currentPage = 1, pageSize = 10, date, hot } = ctx.query
 		console.log(ctx.query)
-		const { keyword = '', tag, tagDesc, type, publish = 1, state = 1, currentPage = 1, pageSize = 10, date, hot } = ctx.query
 		// 过滤条件
 		const options = {
-			sort: { createDate: -1 },
+			sort: { createTime: -1 },
 			page: Number(currentPage),
 			limit: Number(pageSize),
 			// populate: ['tag'],
@@ -38,14 +37,6 @@ class articleController{
 				{ 'title': keywordReg } // 关键词只搜标题 
 				// { 'content': keywordReg },
 				// { 'desc': keywordReg }
-			]
-		}
-
-		// 搜标题关联文章
-		if (tagDesc) {
-			const tagDescReg = new RegExp(tagDesc)
-			querys['$or'] = [
-				{ 'tagDesc': tagDescReg }
 			]
 		}
 
@@ -67,22 +58,22 @@ class articleController{
 		// 按热度排行
 		if (hot) {
 			options.sort = {
-				'views': -1,
-				'likes': -1,
-				'comments': -1
+				'meta.views': -1,
+				'meta.likes': -1,
+				'meta.comments': -1
 			}
 		}
 
 		// 时间查询
-		// if (date) {
-		// 	const getDate = new Date(date)
-		// 	if (!Object.is(getDate.toString(), 'Invalid Date')) {
-		// 		querys.createDate = {
-		// 			"$gte": new Date((getDate / 1000 - 60 * 60 * 8) * 1000),
-		// 			"$lt": new Date((getDate / 1000 + 60 * 60 * 16) * 1000)
-		// 		}
-		// 	}
-		// }
+		if (date) {
+			const getDate = new Date(date)
+			if (!Object.is(getDate.toString(), 'Invalid Date')) {
+				querys.create_at = {
+					"$gte": new Date((getDate / 1000 - 60 * 60 * 8) * 1000),
+					"$lt": new Date((getDate / 1000 + 60 * 60 * 16) * 1000)
+				}
+			}
+		}
 
 		// if (tag) querys.tag = tag
 		if (tag) querys.tag = { $regex: tag }
@@ -139,7 +130,7 @@ class articleController{
 		// console.log(result)
 		if (result) {
 			// 每次请求，views 都增加一次
-			result.views += 1
+			result.meta.views += 1
 			result.save()
 			handleSuccess({ ctx, msg: '文章获取成功', data: result })
 		} else {
@@ -164,7 +155,7 @@ class articleController{
 		// console.log(result)
 		if (result) {
 			// 每次请求，views 都增加一次
-			result.views += 1
+			result.meta.views += 1
 			result.save()
 			handleSuccess({ ctx, msg: '文章获取成功', data: result })
 		} else {
@@ -172,15 +163,20 @@ class articleController{
 		}
 	}
 
-	// 发布文章&文字缩略图
+	// 根据标签获取文章
+	static async getArticleByTag(ctx) {
+
+	}
+
+	// 发布文章
 	static async postArticle(ctx) {
-		const file = ctx.req.file
 		//es6对象解构赋值
 		//请求参数放在请求体
-		const result = await new Article({ ...ctx.req.body, ...{ thumb: file ? `upload/article/${file.filename}` : 'upload/article/default.png'}})
+		// console.log(ctx.request.body)
+		const result = await new Article(ctx.request.body)
 			.save()
 			.catch(err => {
-				if (file) fs.unlinkSync(file.path)
+				// console.log(err)
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
@@ -189,26 +185,29 @@ class articleController{
 			handleSuccess({ ctx, msg: '添加文章成功', data: result })
 
 			// 百度 seo push
-			request.post({
-				// url: `http://data.zz.baidu.com/urls?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
-				url: 'http://data.zz.baidu.com/urls?site=www.sycho.cn&token=apWCcqnKsB92ozP3',
-				headers: { 'Content-Type': 'text/plain' },
-				// body: `${config.INFO.site}/article/${res._id}`
-				body: `https://www.sycho.cn/article/${result.id}`
-			}, (error, response, body) => {
-				console.log('百度推送结果：', body)
-			})
+			// request.post({
+			// 	// url: `http://data.zz.baidu.com/urls?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	url: 'http://data.zz.baidu.com/urls?site=www.sycho.cn&token=apWCcqnKsB92ozP3',
+			// 	headers: { 'Content-Type': 'text/plain' },
+			// 	body: `${config.INFO.site}/article/${res._id}`
+			// }, (error, response, body) => {
+			// 	console.log('推送结果：', body)
+			// })
 			
 		} else handleError({ ctx, msg: '添加文章失败' })
 	}
 
-	// 编辑文章&文字缩略图
+	// 编辑文章
 	static async putArticle(ctx) {
 		const _id = ctx.params.id
-		const file = ctx.req.file
-		const { title} = ctx.req.body
+
+		// const { title, keyword, tag } = ctx.request.body
+		const { title} = ctx.request.body
+		// console.log(ctx.request.body)
 		// 去除不更新的字段
-		// delete ctx.req.body.createDate
+		delete ctx.request.body.createTime
+		// delete ctx.request.body.update_at
+		// delete ctx.request.body.meta
 
 		if (!_id) {
 			handleError({ ctx, msg: '无效参数' })
@@ -220,100 +219,27 @@ class articleController{
 			handleError({ ctx, msg: 'title必填' })
 			return false
 		}
-		let oneArticle = await Article
-			.findOne({ '_id': _id })
-			.exec() // 执行sql语句
-			.catch(err => {
-				throw new CustomError(500, '服务器内部错误')
-				return false
-			})
-		if (file) {
-			ctx.req.body.thumb = `upload/article/${file.filename}`
-		}
+
 		const result = await Article
-			.findByIdAndUpdate(_id, {...ctx.req.body})
+			.findByIdAndUpdate(_id, ctx.request.body)
 			.catch(err => {
+				// ctx.throw(500, '服务器内部错误')
 				console.log(err)
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
 		if (result) {
-			// 有新图片上传 更新完毕后将老图删除
-			// 	要过滤掉默认图片，不然会被删除
-			if (file && !oneArticle.thumb.includes('default.png')) {
-				// 先读取头像看是否存在,确保头像不存在的去删除的异常
-				fs.readFile(`src/static/${oneArticle.thumb}`, (err, data) => {
-					// 读取文件失败/错误
-					if (err) {
-						throw new CustomError(500, '读取文件失败')
-						return false
-					} else {
-						// 读取文件成功
-						fs.unlinkSync(`src/static/${oneArticle.thumb}`)
-					}
-				})
-			}
 			handleSuccess({ ctx, msg: '更新文章成功', data: result })
 
 			// 百度推送
-			request.post({
-				// url: `http://data.zz.baidu.com/update?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
-				url: 'http://data.zz.baidu.com/update?site=www.sycho.cn&token=apWCcqnKsB92ozP3',
-				headers: { 'Content-Type': 'text/plain' },
-				// body: `${config.INFO.site}/article/${_id}`
-				body: `https://www.sycho.cn/article/${result.id}`
-			}, (error, response, body) => {
-				console.log('百度更新结果：', body);
-			})
+			// request.post({
+			// 	url: `http://data.zz.baidu.com/update?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	headers: { 'Content-Type': 'text/plain' },
+			// 	body: `${config.INFO.site}/article/${_id}`
+			// }, (error, response, body) => {
+			// 	console.log('百度删除结果：', body);
+			// })
 		} else handleError({ ctx, msg: '更新文章失败' })
-	}
-
-	// 删除文章&文字缩略图
-	static async deleteArticle(ctx) {
-		const _id = ctx.params.id
-
-		if (!_id) {
-			handleError({ ctx, msg: '无效参数' })
-			return false
-		}
-
-		const res = await Article
-			.findByIdAndRemove(_id)
-			.catch(err => {
-				// ctx.throw(500, '服务器内部错误')
-				throw new CustomError(500, '服务器内部错误')
-				return false
-			})
-		if (res) {
-			// 删除缩略图
-			if (res.thumb && !res.thumb.includes('default.png')) {
-				// 先读取头像看是否存在
-				fs.readFile(`src/static/${res.thumb}`, (err, data) => {
-					// 读取文件失败/错误
-					if (err) {
-						console.log(err)
-						throw new CustomError(500, '读取文件失败')
-						return false
-					} else {
-						// 读取文件成功
-						console.log(data)
-						fs.unlinkSync(`src/static/${res.thumb}`)
-					}
-				})
-			}
-			handleSuccess({ ctx, msg: '删除文章成功' })
-			console.log(res.id)
-			// 百度推送
-			request.post({
-				// url: `http://data.zz.baidu.com/del?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
-				url: 'http://data.zz.baidu.com/del?site=www.sycho.cn&token=apWCcqnKsB92ozP3',
-				headers: { 'Content-Type': 'text/plain' },
-				// body: `${config.INFO.site}/article/${_id}`
-				body: `https://www.sycho.cn/article/${res.id}`
-			}, (error, response, body) => {
-				console.log('百度删除结果：', body);
-			})
-		} else handleError({ ctx, msg: '删除文章失败' })
 	}
 
 	// 修改文章状态
@@ -345,14 +271,14 @@ class articleController{
 
 	// 更新点赞数
 	static async patchArticleLikes(ctx) {
-		const { likes, _id } = ctx.request.body
+		const { meta, _id } = ctx.request.body
 
-		if (!likes) {
+		if (typeof meta.likes === 'undefined') {
 			throw new CustomError(401, '参数无效')
 			return false
 		}
 		let result = await Article
-			.update({ _id }, { likes })
+			.update({ _id }, { meta })
 			.catch(err => ctx.throw(500, '服务器内部错误'))
 
 		if (result) {
@@ -364,14 +290,14 @@ class articleController{
 
 	// 更新吐槽数
 	static async patchArticleDislikes(ctx) {
-		const { dislikes, _id } = ctx.request.body
+		const { meta, _id } = ctx.request.body
 
-		if (!dislikes) {
+		if (typeof meta.dislikes === 'undefined') {
 			throw new CustomError(401, '参数无效')
 			return false
 		}
 		let result = await Article
-			.update({ _id }, { dislikes })
+			.update({ _id }, { meta })
 			.catch(err => ctx.throw(500, '服务器内部错误'))
 
 		if (result) {
@@ -380,6 +306,37 @@ class articleController{
 			handleError({ ctx, msg: '更新吐槽数失败' })
 		}
 	}
+
+	// 删除文章
+	static async deleteArticle(ctx) {
+		const _id = ctx.params.id
+
+		if (!_id) {
+			handleError({ ctx, msg: '无效参数' })
+			return false
+		}
+
+		const res = await Article
+			.findByIdAndRemove(_id)
+			.catch(err => {
+				// ctx.throw(500, '服务器内部错误')
+				throw new CustomError(500, '服务器内部错误')
+				return false
+			})
+		if (res) {
+			handleSuccess({ ctx, msg: '删除文章成功' })
+
+			// 百度推送
+			// request.post({
+			// 	url: `http://data.zz.baidu.com/del?site=${config.BAIDU.site}&token=${config.BAIDU.token}`,
+			// 	headers: { 'Content-Type': 'text/plain' },
+			// 	body: `${config.INFO.site}/article/${_id}`
+			// }, (error, response, body) => {
+			// 	console.log('百度删除结果：', body);
+			// })
+		} else handleError({ ctx, msg: '删除文章失败' })
+	}
+
 
 	// 批量上传文章图片
 	static async uploadArticlePics(ctx) {

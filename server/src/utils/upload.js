@@ -15,6 +15,8 @@ let storage = multer.diskStorage({
 			// 根据请求url将头像放到不同文件夹下
 			if (req.url.includes('user')){
 				path = './src/static/upload/avatar'
+			} else if (req.url.includes('article')) {
+				path = './src/static/upload/article'
 			} else if (req.url.includes('uploadArticlePics')){
 				path = './src/static/upload/article'
 			}

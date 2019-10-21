@@ -234,7 +234,6 @@ class userController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
-		console.log(result)
 		if (result) {
 			// 有新图片上传 更新完毕后将老图删除
 			// console.log(file.path)
@@ -245,12 +244,11 @@ class userController{
 					// 读取文件失败/错误
 					if (err) {
 						// throw err;
-						// console.log(err)
+						console.log(err)
 						throw new CustomError(500, '读取文件失败')
 						return false
 					} else {
 						// 读取文件成功
-						// console.log(data)
 						fs.unlinkSync(`src/static/${oneUser.avatar}`)
 					}
 				})
@@ -259,7 +257,7 @@ class userController{
 		} else handleError({ ctx, msg: '修改数据失败' })
 	}
 
-	// 删除用户
+	// 删除用户&删除图片
 	static async deleteUser(ctx) {
 		const _id = ctx.params.id
 		if (!_id) {
@@ -275,9 +273,9 @@ class userController{
 			})
 		if (result) {
 			// console.log(result)
-				// fs.unlinkSync(`./src/static/${result.avatar}`) // 删除头像
-				// 默认头像不删除
-			if (result.avatar & !result.avatar.includes('default.png')){
+			// fs.unlinkSync(`./src/static/${result.avatar}`) // 删除头像
+			// 默认头像不删除
+			if (result.avatar && !result.avatar.includes('default.png')){
 				// 先读取头像看是否存在
 				fs.readFile(`src/static/${result.avatar}`, (err, data) => {
 					// 读取文件失败/错误

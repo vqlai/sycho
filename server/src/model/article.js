@@ -15,6 +15,7 @@ const articleSchema = new mongoose.Schema({
 	author: { type: String, required: true },
 	type: { type: Number, required: true}, // 文章类型
 	tag: { type: String, required: true}, // 文章标签
+	tagDesc: { type: String, required: true}, // 文章标签描述
 	// likeNum: { type: Number, required: true },
 	// lookNum: { type: Number, required: true },
 	// 状态 1 发布 2 草稿
@@ -27,12 +28,10 @@ const articleSchema = new mongoose.Schema({
 	createDate: { type: Date, default: Date.now }, // 因为类型是Date，无法保存时间戳,废弃Date类型
 	updateDate: { type: Date, default: Date.now },
 	// 其他元信息
-	meta: {
-		views: { type: Number, default: 0 },
-		likes: { type: Number, default: 0 },
-		dislikes: { type: Number, default: 0 },
-		comments: { type: Number, default: 0 }
-	}
+	views: { type: Number, default: 0 },
+	likes: { type: Number, default: 0 },
+	dislikes: { type: Number, default: 0 },
+	comments: { type: Number, default: 0 }
 })
 
 // 转化成普通 JavaScript 对象
