@@ -22,7 +22,8 @@ module.exports = {
     "space-before-blocks": 0,
     "indent": 0,
     "no-return-await": 0,
-    "standard/no-callback-literal": 0
+    "standard/no-callback-literal": 0,
+    'eqeqeq': 0
   },
   parserOptions: {
     parser: 'babel-eslint'
