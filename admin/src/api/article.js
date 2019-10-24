@@ -25,9 +25,10 @@ export async function getArticle(params) {
 // 新增文章
 export async function postArticle(data) {
   return await request({
+    headers: { 'Content-Type': 'multipart/form-data' },
     url: '/article',
     method: 'post',
-    data: { ...data }
+    data: data // 注意formdata上传不能用解构赋值
   })
 }
 
@@ -43,9 +44,10 @@ export async function patchArticle(data) {
 // 修改文章
 export async function putArticle(data) {
   return await request({
-    url: `/article/${data._id}`,
+    headers: { 'Content-Type': 'multipart/form-data' },
+    url: `/article/${data.get('_id')}`, // 注意formdata要用get拿参数
     method: 'put',
-    data: { ...data }
+    data: data // 注意formdata上传不能用解构赋值
   })
 }
 

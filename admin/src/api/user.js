@@ -45,18 +45,17 @@ export async function postUser(data) {
     headers: { 'Content-Type': 'multipart/form-data' },
     url: '/user',
     method: 'post',
-    data: data
+    data: data // 注意formdata上传不能用解构赋值
   })
 }
 
 // 修改用户
 export async function putUser(data) {
-  console.log(data.get('_id'))
   return await request({
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: `/user/${data.get('_id')}`,
+    url: `/user/${data.get('_id')}`, // 注意formdata要用get拿参数
     method: 'put',
-    data: data
+    data: data // 注意formdata上传不能用解构赋值
   })
 }
 
