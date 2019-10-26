@@ -1,11 +1,12 @@
 <template>
   <div class="upload-container">
-    <el-button :style="{background:color,borderColor:color}" icon="el-icon-view" size="mini" type="primary" @click="previewDialog=true">
+    <!-- 因为图片存储成本高，故隐藏文章编辑上传图片功能 -->
+    <!-- <el-button :style="{background:color,borderColor:color}" icon="el-icon-view" size="mini" type="primary" @click="previewDialog=true">
       图片预览
     </el-button>
     <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click="uploadDialog=true">
       上传图片
-    </el-button>
+    </el-button> -->
     <el-dialog
       title="内容图片上传"
       :visible.sync="uploadDialog"
