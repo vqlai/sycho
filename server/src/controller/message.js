@@ -4,6 +4,7 @@
 
 // 留言控制器
 const Message = require('../model/message.js')
+const Article = require('../model/article.js')
 const { handleSuccess, handleError } = require('../utils/handle')
 const geoip = require('geoip-lite')
 const { CustomError, HttpError } = require('../utils/customError.js')
@@ -115,8 +116,8 @@ class messageController {
 
   // 修改留言状态
   static async patchMessage(ctx) {
-    const { state, _id } = ctx.request.body
-
+    const { state, _id, postId } = ctx.request.body
+    console.log(postId)
     if (!state) {
       // ctx.throw(401, '参数无效')
       throw new CustomError(401, '参数无效')
@@ -128,11 +129,72 @@ class messageController {
       .catch(err => ctx.throw(500, '服务器内部错误'))
 
     if (result){
+      if (postId) {
+        const article = await Article
+          .findOne({ id: Number(postId) }).exec()
+          .catch(err => {
+            console.log(err)
+            throw new CustomError(500, '服务器内部错误')
+            return false
+          })
+        if (article){
+          if(state ==  1){
+            // 文章评论通过，评论数+1，不通过或删除减1
+            article.comments += 1
+          }
+          if(state == 2){
+            article.comments = article.comments ? article.comments - 1 : 0
+          }
+          article.save()
+        }
+      }
       handleSuccess({ ctx, msg: '修改状态成功'})
     }else{
       handleError({ ctx, msg: '修改状态失败' })
     }
   }
+
+  // 删除留言
+  static async deleteMessage(ctx) {
+    let arr = ctx.params.id.split(',')
+    const _id = arr[0]
+    const postId = arr[1]
+    console.log(arr)
+    if (!_id) {
+      // handleError({ ctx, msg: '无效参数' })
+      throw new CustomError(401, '参数无效')
+      return false
+    }
+
+    let result = await Message
+      .findByIdAndRemove(_id)
+      .catch(err => {
+        // ctx.throw(500, '服务器内部错误')
+        throw new CustomError(500, '服务器内部错误')
+      })
+    if (result) {
+      if (postId) {
+        const article = await Article
+          .findOne({ id: Number(postId) }).exec()
+          .catch(err => {
+            console.log(err)
+            throw new CustomError(500, '服务器内部错误')
+            return false
+          })
+        console.log(article)
+        if (article) {
+          article.comments = article.comments ? article.comments - 1 : 0
+          article.save()
+        }
+      }
+      handleSuccess({ ctx, msg: '删除留言成功', data: result })
+    } else {
+      handleError({ ctx, msg: '删除留言失败' })
+    }
+  }
+
+  // 编辑留言
+  static async putMessage(ctx) { }
 
   // 更新点赞数
   static async patchMessageLikes(ctx) {
@@ -169,34 +231,6 @@ class messageController {
       handleSuccess({ ctx, msg: '更新吐槽数成功' })
     } else {
       handleError({ ctx, msg: '更新吐槽数失败' })
-    }
-  }
-
-  // 用户进行回复
-
-  // 编辑留言
-  static async putMessage(ctx) { }
-
-  // 删除留言
-  static async deleteMessage(ctx) {
-    const _id = ctx.params.id
-
-    if (!_id) {
-      // handleError({ ctx, msg: '无效参数' })
-      throw new CustomError(401, '参数无效')
-      return false
-    }
-
-    let result = await Message
-      .findByIdAndRemove(_id)
-      .catch(err => {
-        // ctx.throw(500, '服务器内部错误')
-        throw new CustomError(500, '服务器内部错误')
-      })
-    if (result){
-      handleSuccess({ ctx, msg: '删除留言成功', data: result })
-    }else{
-      handleError({ ctx,  msg: '删除留言失败' })
     }
   }
 }
