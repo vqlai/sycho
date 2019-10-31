@@ -1,9 +1,9 @@
 <template>
   <div class="list">
-    <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入标题or描述" v-model="keyword" clearable @keyup.enter.native="_getArticle"> </el-input> </el-col>
-      <el-col :span="3">
-        <el-select v-model="type" placeholder="请选择类别" style="display: block;" clearable>
+    <el-row type="flex" justify="space-between" class="header" :gutter="10">
+      <el-col :xs="winWidth>600?4:8" :sm="4" :md="4" :lg="4" :xl="4"><el-input placeholder="请输入标题or描述" v-model="keyword" clearable @keyup.enter.native="_getArticle" size="small"> </el-input> </el-col>
+      <el-col :xs="winWidth>600?4:8" :sm="4" :md="4" :lg="4" :xl="4">
+        <el-select v-model="type" placeholder="请选择类别" style="display: block;" clearable size="small">
           <el-option
             v-for="item in articleTypes"
             :key="item.value"
@@ -12,8 +12,8 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="3">
-        <el-select v-model="tag" placeholder="请选择标签" style="display: block;" clearable>
+      <el-col :xs="winWidth>600?4:8" :sm="4" :md="4" :lg="4" :xl="4">
+        <el-select v-model="tag" placeholder="请选择标签" style="display: block;" clearable size="small">
           <el-option
             v-for="item in articleTags"
             :key="item.value"
@@ -22,8 +22,8 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="3">
-        <el-select v-model="publish" placeholder="请选择公开状态" style="display: block;" clearable>
+      <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" v-if="winWidth>600">
+        <el-select v-model="publish" placeholder="请选择公开状态" style="display: block;" clearable size="small">
           <el-option
             v-for="item in articlePublishs"
             :key="item.value"
@@ -32,8 +32,8 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="3">
-        <el-select v-model="state" placeholder="请选择发布状态" style="display: block;" clearable>
+      <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" v-if="winWidth>600">
+        <el-select v-model="state" placeholder="请选择发布状态" style="display: block;" clearable size="small">
           <el-option
             v-for="item in articleStates"
             :key="item.value"
@@ -42,8 +42,33 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="6">
-        <el-button type="primary" icon="el-icon-search" round @click.native="_getArticle">搜索</el-button>
+      <el-col :xs="4" :sm="3" :md="2" :lg="2" :xl="2" v-if="winWidth>600">
+        <el-button type="primary" icon="el-icon-search" round @click.native="_getArticle" size="small">搜索</el-button>
+      </el-col>
+    </el-row>
+    <el-row v-if="winWidth<600" :gutter="10" style="padding: 0 10px;">
+      <el-col :xs="8">
+        <el-select v-model="publish" placeholder="请选择公开状态" style="display: block;" clearable size="small">
+          <el-option
+            v-for="item in articlePublishs"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :xs="8">
+        <el-select v-model="state" placeholder="请选择发布状态" style="display: block;" clearable size="small">
+          <el-option
+            v-for="item in articleStates"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-col>
+      <el-col :xs="8">
+        <el-button type="primary" icon="el-icon-search" round @click.native="_getArticle" size="small">搜索</el-button>
       </el-col>
     </el-row>
     <el-row class="content">
@@ -55,7 +80,8 @@
           height="560"
           stripe
           highlight-current-row
-          style="width: 100%">
+          style="width: 100%"
+          size="small">
           <el-table-column
             type="index"
             label="序号"
@@ -99,19 +125,24 @@
             label="标签">
           </el-table-column>
           <el-table-column
-            prop="meta.likes"
+            prop="likes"
             align="center"
             label="点赞数">
           </el-table-column>
           <el-table-column
-            prop="meta.dislikes"
+            prop="dislikes"
             align="center"
             label="吐槽数">
           </el-table-column>
           <el-table-column
-            prop="meta.views"
+            prop="views"
             align="center"
             label="浏览数">
+          </el-table-column>
+          <el-table-column
+            prop="comments"
+            align="center"
+            label="评论数">
           </el-table-column>
           <!-- <el-table-column
             prop="status"
@@ -152,8 +183,8 @@
             prop="address"
             label="脚踩数">
           </el-table-column> -->
+          <!-- fixed="right" -->
           <el-table-column
-            fixed="right"
             label="操作"
             align="center"
             min-width="200">
@@ -174,7 +205,7 @@
           :page-size="pageSize"
           :total="total"
           :page-sizes="[10, 30, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper">
+          layout="total, sizes, prev, pager, next">
         </el-pagination>
       </el-col>
     </el-row>
@@ -313,13 +344,11 @@
 <style lang="scss" scoped>
   $bg: #fff;
   .list{
-    padding: 10px;
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    background-color: $bg;
     .header{
       padding: 10px;
-      background-color: $bg;
-      >.el-col{
-        margin-right: 20px;
-      }
     }
     .content{
       padding: 10px;

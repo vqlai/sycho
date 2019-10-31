@@ -2,13 +2,17 @@
   <div class="create">
     <div class="v-container">
       <div class="v-header">
-        <el-row> <span>标题：</span><el-input placeholder="请输入标题" v-model="articleForm.title" clearable style="width: 81.8%;"> </el-input> </el-row>
-        <el-row style="display:flex;align-items:center;"> <span>描述：</span><el-input placeholder="请输入描述" v-model="articleForm.desc" type="textarea" :rows="2" clearable style="width: 81.8%;"> </el-input> </el-row>
-        <el-row type="flex" align="middle">
-          <el-col :span="4"> <span>作者：</span> <el-input placeholder="请输入作者" v-model="articleForm.author" clearable style="width: 75%;"> </el-input> </el-col>
-          <el-col :span="4">
+        <el-row >
+          <el-col :xs="24" :sm="18" :md="18" :lg="18" :xl="18"> <span>作者：</span> <el-input placeholder="请输入标题" v-model="articleForm.title" clearable size="small"> </el-input> </el-col>
+        </el-row>
+        <el-row>
+          <el-col :xs="24" :sm="18" :md="18" :lg="18" :xl="18"> <span>描述：</span> <el-input placeholder="请输入描述" v-model="articleForm.desc" type="textarea" :rows="2" clearable size="small"> </el-input></el-col>
+        </el-row>
+        <el-row :gutter="10">
+          <el-col :xs="6" :sm="4" :md="4" :lg="5" :xl="4"> <span>作者：</span> <el-input placeholder="请输入作者" v-model="articleForm.author" clearable size="small"> </el-input> </el-col>
+          <el-col :xs="6" :sm="4" :md="4" :lg="5" :xl="4">
             <span>分类：</span>
-            <el-select v-model="articleForm.type" clearable placeholder="请选择文章类别">
+            <el-select v-model="articleForm.type" clearable placeholder="请选择文章类别" size="small" style="width: 100%;">
               <el-option
                 v-for="(item, index) in articleTypes"
                 :key="item.value"
@@ -18,9 +22,9 @@
               </el-option>
             </el-select>
           </el-col>
-          <el-col :span="13">
+          <el-col :xs="12" :sm="10" :md="10" :lg="10" :xl="8">
             <span>标签：</span>
-            <el-select v-model="articleForm.tag" multiple clearable placeholder="请选择文章标签" style="width: 90%;">
+            <el-select v-model="articleForm.tag" multiple clearable placeholder="请选择文章标签" size="small" style="width: 100%;">
               <el-option
                 v-for="item in articleTags"
                 :key="item.value"
@@ -31,36 +35,44 @@
             </el-select>
           </el-col>
         </el-row>
-        <el-row type="flex" align="middle">
-         <el-col :span="4">
-            <span>文章状态：</span>
-            <el-radio v-model="articleForm.state" label="1">发布</el-radio>
-            <el-radio v-model="articleForm.state" label="2">草稿</el-radio>
+        <el-row>
+         <el-col :xs="12" :sm="8" :md="8" :lg="6" :xl="3">
+            <span>状态：</span>
+            <div style="padding-top: 10px;">
+              <el-radio v-model="articleForm.state" label="1" size="small">发布</el-radio>
+              <el-radio v-model="articleForm.state" label="2" size="small">草稿</el-radio>
+            </div>
           </el-col>
-          <el-col :span="4">
-            <span>是否公开：</span>
-            <el-radio v-model="articleForm.publish" label="1">公开</el-radio>
-            <el-radio v-model="articleForm.publish" label="2">私密</el-radio>
+          <el-col :xs="12" :sm="8" :md="8" :lg="6" :xl="3">
+            <span>权限：</span>
+            <div style="padding-top: 10px;">
+              <el-radio v-model="articleForm.publish" label="1" size="small">公开</el-radio>
+              <el-radio v-model="articleForm.publish" label="2" size="small">私密</el-radio>
+            </div>
           </el-col>
-          <el-col :span="4"><span>点赞数：</span><el-input-number v-model="articleForm.meta.likes" @change="handleChange" :min="0" :max="100000000" label="请输入点赞数" controls-position="right" ></el-input-number> </el-col>
-          <el-col :span="4"><span>吐槽数：</span><el-input-number v-model="articleForm.meta.dislikes" @change="handleChange" :min="0" :max="100000000" label="请输入吐槽数" controls-position="right" ></el-input-number> </el-col>
-          <el-col :span="4"><span>浏览数：</span><el-input-number v-model="articleForm.meta.views" @change="handleChange" :min="0" :max="100000000" label="请输入浏览数" controls-position="right" ></el-input-number> </el-col>
         </el-row>
-        <el-row type="flex" align="middle">
-          <el-col :span="12" style="display:flex;align-items:center;">
+        <el-row :gutter="6">
+          <el-col :xs="8" :sm="8" :md="8" :lg="6" :xl="4"><span>点赞数：</span><el-input-number v-model="articleForm.likes" @change="handleChange" :min="0" :max="100000000" label="请输入点赞数" controls-position="right" size="small"></el-input-number> </el-col>
+          <el-col :xs="8" :sm="8" :md="8" :lg="6" :xl="4"><span>吐槽数：</span><el-input-number v-model="articleForm.dislikes" @change="handleChange" :min="0" :max="100000000" label="请输入吐槽数" controls-position="right" size="small"></el-input-number> </el-col>
+          <el-col :xs="8" :sm="8" :md="8" :lg="6" :xl="4"><span>浏览数：</span><el-input-number v-model="articleForm.views" @change="handleChange" :min="0" :max="100000000" label="请输入浏览数" controls-position="right" size="small"></el-input-number> </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24" style="display:flex;align-items:center;">
             <span>缩略图：</span>
             <!-- :on-success="handleThumbSuccess" -->
             <el-upload
               class="avatar-uploader"
               action=""
+              :auto-upload="true"
               :show-file-list="false"
               accept=".jpg, .jpeg, .png"
               :limit="1"
-              :before-upload="beforeThumbUpload">
-              <div v-if="articleForm.thumb" :class="['avatar-box',{'hover': thumbImgHover}]"
+              :before-upload="beforeThumbUpload"
+              size="small">
+              <div v-if="thumbImgUrl" :class="['avatar-box',{'hover': thumbImgHover}]"
                 @mouseenter="thumbImgHover = true"
                 @mouseleave="thumbImgHover = false">
-                <img :src="articleForm.thumb" class="avatar">
+                <img :src="thumbImgUrl" class="avatar">
                 <div v-if="thumbImgHover" class="imgHoverBtns">
                   <i class="el-icon-zoom-in" @click.stop="thumbVisible=true"></i>
                   <i class="el-icon-delete" @click.stop="handleThumbRemove"></i>
@@ -68,14 +80,14 @@
               </div>
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
-            <ul class="upload-tip">
+            <ul class="upload-tip" v-if="winWidth>500">
               <li>每次只能上传1张图片。</li>
               <li>每张图片大小不超过 200kb。</li>
               <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
             </ul>
-            <el-dialog :visible.sync="thumbVisible" width="35%">
+            <el-dialog :visible.sync="thumbVisible" :width="winWidth<500?'90%':winWidth<1200?'60%':'35%'">
               <div style="text-align: center;">
-                <img :src="articleForm.thumb" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
+                <img :src="thumbImgUrl" alt="" style="display: inline-block;width: auto;max-width: 100%;height: 600px;">
               </div>
             </el-dialog>
           </el-col>
@@ -88,8 +100,8 @@
       </div>
       <div class="v-footer">
         <el-row>
-          <!-- <el-button type="success" @click="handleSubmit(2)">草稿</el-button> -->
-          <el-button type="primary" @click="handleSubmit">保存</el-button>
+          <!-- <el-button type="success" @click="handleSubmit(2)" size="small">草稿</el-button> -->
+          <el-button type="primary" @click="handleSubmit" size="small">保存</el-button>
         </el-row>
       </div>
     </div>
@@ -99,7 +111,6 @@
 <script>
   import tinymce from '@/components/Tinymce'
   import data from '@/assets/js/data'
-  import COS from 'cos-js-sdk-v5'
   export default {
     name: 'create',
     data(){
@@ -117,17 +128,13 @@
           state: '1',
           publish: '1',
           content: '',
-          meta: {
-            views: 0,
-            likes: 0,
-            dislikes: 0,
-            comments: 0
-          },
-          thumb: ''
+          views: 0,
+          likes: 0,
+          dislikes: 0,
+          comments: 0
         },
-        cos: null,
-        // fileObj: null,
-        // thumbImgUrl: '', // 头像路径
+        fileObj: null,
+        thumbImgUrl: '', // 头像路径
         thumbVisible: false, // 预览图片弹窗
         thumbImgHover: false
       }
@@ -135,19 +142,6 @@
     computed: {
     },
     created(){
-      // let cos = new COS({
-      //   secretId: 'AKIDoW3yABjRWWO5n5D8qLQ1ScnmyvZ0arLb',
-      //   secretKey: 'CD0sUt3A4jAAwSlxyrUqcBIF3iFdQ6Zv',
-      // })
-      // 获取sts
-      // this.$store.dispatch('cos/getSts', {}).then(res => {
-      //     if(res.success){
-      //       let result = res.data
-      //       console.log(result)
-      //     }else{
-      //       console.log(res)
-      //     }
-      //   })
     },
     mounted(){},
     destroyed(){},
@@ -157,86 +151,55 @@
       //   this.imageUrl = URL.createObjectURL(file.raw)
       // },
       handleThumbRemove(){
-        // { Bucket: '', Region: '', Key: '' }
-        // this.cos.deleteObject(this.thumbParams, (err, data) => {
-        //   console.log(err || data)
-        //   let res = err || data
-        //   if(res.statusCode === 200 || res.statusCode === 204){
-        //     this.articleForm.thumb = ''
-        //     this.$message.success('成功删除预览图')
-        //   }else{
-        //     this.$message.error(res)
-        //   }
-        // })
-        this.articleForm.thumb = ''
+        this.thumbImgUrl = ''
         this.fileObj = null
       },
       beforeThumbUpload(file) {
-        // console.log(file)
         if(file.size > 200 * 1000){
           this.$message.warning(`文件${file.name}太大，不能超过 200kb`)
           return false
         }
-        this.articleForm.thumb = URL.createObjectURL(file)
+        this.thumbImgUrl = URL.createObjectURL(file)
         this.fileObj = file
         return false // 加了return false组件的action就不会发起post请求了
       },
+      // 新增文章与图片上传
       handleSubmit(){
         if(this.checkArticle()){
-          if(this.fileObj){
-            this.$store.dispatch('cos/getSts', {}).then(res => {
-              if(res.success){
-                let result = res.data
-                this.cos = new COS({ getAuthorization: (options, callback) => {
-                    callback({
-                      TmpSecretId: result.credentials.tmpSecretId,
-                      TmpSecretKey: result.credentials.tmpSecretKey,
-                      XCosSecurityToken: result.credentials.sessionToken,
-                      ExpiredTime: result.expiredTime
-                    })
-                  }
-                })
-                this.thumbParams = {
-                  Bucket: result.bucket,
-                  Region: result.region,
-                  Key: `/${result.dir}/${new Date().getTime()}.${this.fileObj.name.split('.')[1]}`
-                }
-                this.cos.putObject({
-                  Bucket: result.bucket,
-                  Region: result.region,
-                  Key: `/${result.dir}/${new Date().getTime()}.${this.fileObj.name.split('.')[1]}`,
-                  StorageClass: 'STANDARD',
-                  Body: this.fileObj, // 上传文件对象
-                  onProgress: (progressData) => {
-                      // console.log(JSON.stringify(progressData))
-                    }
-                  },
-                  (err, data) => {
-                    console.log(err || data)
-                    // console.log(data.Location)
-                    this.articleForm.thumb = 'https://' + data.Location
-                    this.handlePostArticle()
-                  })
-              }else{
-                console.log(res)
+          let formData = new FormData()
+          formData.append('file', this.fileObj)
+          formData.append('title', this.articleForm.title)
+          formData.append('desc', this.articleForm.desc)
+          formData.append('author', this.articleForm.author)
+          formData.append('type', this.articleForm.type)
+          formData.append('state', this.articleForm.state)
+          formData.append('tag', this.articleForm.tag)
+          formData.append('publish', this.articleForm.publish)
+          formData.append('content', this.articleForm.content)
+          formData.append('views', this.articleForm.views)
+          formData.append('likes', this.articleForm.likes)
+          formData.append('dislikes', this.articleForm.dislikes)
+          formData.append('comments', this.articleForm.comments)
+          let arr = []
+          for(let i of this.articleForm.tag){
+            for(let j of this.articleTags){
+              if(i == j.value){
+                arr.push(j.label)
               }
-            })
-          }else{
-            this.handlePostArticle()
+            }
           }
+          formData.append('tagDesc', arr)
+          this.$store.dispatch('article/postArticle', formData).then(res => {
+            if(res.success){
+              this.$message.success('发布成功！')
+              setTimeout(() => {
+                this.$router.push({ path: '/article/list' })
+              }, 500)
+            }else{
+              this.$message.error(res.msg)
+            }
+          })
         }
-      },
-      handlePostArticle(){
-        this.$store.dispatch('article/postArticle', this.articleForm).then(res => {
-          if(res.success){
-            this.$message.success('发布成功！')
-            setTimeout(() => {
-              this.$router.push({ path: '/article/list' })
-            }, 500)
-          }else{
-            this.$message.error(res.msg)
-          }
-        })
       },
       checkArticle(){
         if(!this.articleForm.title.trim()){
@@ -254,23 +217,24 @@
         }else if(!this.articleForm.tag.length){
           this.$message.error('请选择文章标签')
           return false
-        }else if(typeof this.articleForm.meta.likes === 'undefined'){
-          this.$message.error('请输入点赞数')
-          return false
-        }else if(typeof this.articleForm.meta.dislikes === 'undefined'){
-          this.$message.error('请输入吐槽数')
-          return false
-        }else if(typeof this.articleForm.meta.views === 'undefined'){
-          this.$message.error('请输入浏览数')
-          return false
         }else if(!this.articleForm.content.trim()){
           this.$message.error('请输入文章内容')
           return false
         }else{
           return true
         }
-        // else if(!this.articleForm.thumb){
+        // else if(!this.thumbImgUrl){
         //   this.$message.error('请选中缩略图')
+        //   return false
+        // }
+        // else if(typeof this.articleForm.likes === 'undefined'){
+        //   this.$message.error('请输入点赞数')
+        //   return false
+        // }else if(typeof this.articleForm.dislikes === 'undefined'){
+        //   this.$message.error('请输入吐槽数')
+        //   return false
+        // }else if(typeof this.articleForm.views === 'undefined'){
+        //   this.$message.error('请输入浏览数')
         //   return false
         // }
       },
@@ -283,10 +247,11 @@
 
 <style lang="scss" scoped>
   .create{
-    padding: 10px;
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    background-color: #fff;
     .v-container{
       padding: 5px 10px;
-      background: #fff;
       .el-row{
         padding: 5px 0;
         .avatar-uploader  {
