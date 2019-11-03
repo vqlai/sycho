@@ -1,9 +1,9 @@
 import req from './request.js'
 
 // 通用的api集合
-export async function getWxConfig (params) {
+export async function getWxConfig(params) {
   return await req({
-    url: '/mall/runway/initialization.ihtml',
+    url: `/mobile/annualGoodsFestival/wxShare.ihtml`,
     method: 'get',
     params: { ...params }
   })

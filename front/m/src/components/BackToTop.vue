@@ -1,8 +1,9 @@
 <template>
   <transition :name="transitionName">
     <div v-show="visible" :style="customStyle" class="back-to-ceiling" @click="backToTop">
-      <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-backtop"></use> </svg>
-      <div>顶部</div> 
+      <!-- <svg class="icon" aria-hidden="true"> <use xlink:href="#icon-backtop"></use> </svg> -->
+      <van-icon name="arrow-up" />
+      <div style="font-size: 2.5vw;">顶部</div> 
     </div>
   </transition>
 </template>
@@ -96,10 +97,10 @@ export default {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: rgba(255,255,255,.5);
   border-radius: 50%;
   font-size: 26px;
   line-height: 32px;
+  background-color: rgba(255,255,255,.5);
   color: #999b9d;
   border: 1px solid #999b9d;
 }

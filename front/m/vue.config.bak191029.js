@@ -21,7 +21,12 @@
 const path = require('path')
 function resolve (dir) { return path.join(__dirname, dir) }
 
-const name = '赛柯' // page title
+ // gzip压缩插件
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
+// 压缩删除js冗余代码插件
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+
+const name = '全棉时代' // page title
 const isProduction = process.env.NODE_ENV === 'production'
 const isDevelopment = process.env.NODE_ENV === 'development'
 
@@ -30,7 +35,7 @@ const cdn = {
   // 开发环境
   dev: {
     css: [
-      'https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css',
+      // 'https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css',
       // 'https://cdn.jsdelivr.net/npm/vant@2.1.4/lib/index.css'
       // 'https://cdn.bootcss.com/video.js/7.6.5/alt/video-js-cdn.min.css'
       // 'https://unpkg.com/driver.js/dist/driver.min.css'
@@ -39,13 +44,17 @@ const cdn = {
       // 'https://cdn.jsdelivr.net/npm/vant@2.1.4/lib/vant.min.js', // 暂未找到合适cdn，直接npm
       // 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js', // 直接npm
       // 'https://cdn.bootcss.com/vue-router/3.1.2/vue-router.min.js', // 直接npm
-      'https://cdn.bootcss.com/axios/0.19.0/axios.min.js',
-      'https://res.wx.qq.com/open/js/jweixin-1.4.0.js',
+      // 'https://cdn.bootcss.com/axios/0.19.0/axios.min.js',
+      'https://m.purcotton.com/wap/h5/lib/axios.min.js',
+      // 'https://res.wx.qq.com/open/js/jweixin-1.4.0.js',
+      'https://m.purcotton.com/wap/h5/lib/jweixin-1.4.0.js',
       // 'https://cdn.bootcss.com/moment.js/2.24.0/moment.min.js',
       // 'https://cdn.bootcss.com/pixi.js/5.1.1/pixi.min.js',
-      'https://cdn.bootcss.com/EaselJS/1.0.2/easeljs.min.js',
-      'https://cdn.bootcss.com/PreloadJS/1.0.1/preloadjs.min.js',
+      // 'https://cdn.bootcss.com/EaselJS/1.0.2/easeljs.min.js',
+      'https://m.purcotton.com/wap/h5/lib/easeljs.min.js',
       // 'https://cdn.bootcss.com/SoundJS/1.0.2/soundjs.min.js',
+      // 'https://cdn.bootcss.com/PreloadJS/1.0.1/preloadjs.min.js',
+      'https://m.purcotton.com/wap/h5/lib/preloadjs.min.js',
       // 'https://unpkg.com/driver.js/dist/driver.min.js'
       // 'https://cdn.bootcss.com/tween.js/r14/Tween.min.js' // 补间动画，缓动函数，测试后不怎么好用
       // 'https://cdn.bootcss.com/animejs/2.2.0/anime.min.js' // 补间动画
@@ -63,7 +72,7 @@ const cdn = {
   // 生产环境
   build: {
     css: [
-      'https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css',
+      // 'https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css',
       // 'https://cdn.jsdelivr.net/npm/vant@2.1.4/lib/index.css'
       // 'https://cdn.bootcss.com/video.js/7.6.5/alt/video-js-cdn.min.css'
       // 'https://unpkg.com/driver.js/dist/driver.min.css'
@@ -72,12 +81,16 @@ const cdn = {
       // 'https://cdn.jsdelivr.net/npm/vant@2.1.4/lib/vant.min.js', // 直接npm
       // 'https://cdn.bootcss.com/vue/2.6.10/vue.min.js', // 直接npm
       // 'https://cdn.bootcss.com/vue-router/3.1.2/vue-router.min.js', // 直接npm
-      'https://cdn.bootcss.com/axios/0.19.0/axios.min.js',
-      'https://res.wx.qq.com/open/js/jweixin-1.4.0.js', 
+      // 'https://cdn.bootcss.com/axios/0.19.0/axios.min.js',
+      'https://m.purcotton.com/wap/h5/lib/axios.min.js',
+      // 'https://res.wx.qq.com/open/js/jweixin-1.4.0.js', 
+      'https://m.purcotton.com/wap/h5/lib/jweixin-1.4.0.js',
       // 'https://cdn.bootcss.com/moment.js/2.24.0/moment.min.js',
       // 'https://cdn.bootcss.com/pixi.js/5.1.1/pixi.min.js',
-      'https://cdn.bootcss.com/EaselJS/1.0.2/easeljs.min.js',
-      'https://cdn.bootcss.com/PreloadJS/1.0.1/preloadjs.min.js',
+      // 'https://cdn.bootcss.com/EaselJS/1.0.2/easeljs.min.js',
+      'https://m.purcotton.com/wap/h5/lib/easeljs.min.js',
+      // 'https://cdn.bootcss.com/PreloadJS/1.0.1/preloadjs.min.js',
+      'https://m.purcotton.com/wap/h5/lib/preloadjs.min.js',
       // 'https://cdn.bootcss.com/SoundJS/1.0.2/soundjs.min.js',
       // 'https://unpkg.com/driver.js/dist/driver.min.js'
       // 'https://cdn.bootcss.com/tween.js/r14/Tween.min.js' // 补间动画，缓动函数，测试后没gsap好用
@@ -97,32 +110,30 @@ const cdn = {
 
 module.exports = {
   // pages, // 多页配置
-  // publicPath: isDevelopment ? '/' : '', // 部署应用包时的基本 URL。
-  publicPath: '/', // 注意：history模式时，这里必须设置/
+  publicPath: isDevelopment ? '/' : '', // 部署应用包时的基本 URL。
   outputDir: 'dist', // 当运行 vue-cli-service build 时生成的生产环境构建文件的目录。
   assetsDir: 'assets', // 放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录。
   // indexPath: 'index.html', // 指定生成的 index.html 的输出路径 (相对于 outputDir)。也可以是一个绝对路径。
   // filenameHashing: false, // 关闭资源文件添加hash值
   lintOnSave: isDevelopment, // 是否开启编译时不符合eslint提示
-  productionSourceMap: false, // 设置为true，打包文件含有map文件
+  productionSourceMap: false, // 打包时不生成.map文件
   css: {
     extract: true, // js提取css代码到文件
     sourceMap: isDevelopment, // 开启 CSS source maps? 配置true让样式找到源
     loaderOptions: { // css预设器配置项
-      scss: {
-        prependData: `
+      sass: {
+        data: `
               @import "@/assets/scss/normalize.scss";
               @import "@/assets/scss/common.scss";
             `
       }
     },
-    // 这个要设置为true，如为false的vant样式按需加载引入不进行来
-    requireModuleExtension: true // 启用 CSS modules for all css / pre-processor files
+    modules: false // 启用 CSS modules for all css / pre-processor files
   },
   // 代理服务
   devServer: {
     // host: '0.0.0.0',
-    port: 9529, // 修改默认端口
+    port: 9528, // 修改默认端口
     https: false, // https:{type:Boolean}
     open: false, // 配置自动启动浏览器
     overlay: {
@@ -131,8 +142,8 @@ module.exports = {
     },
     proxy: { // 配置开发代理
       '/api': {
-        // target: 'https://admin.sycho.cn/', // 代理线上
-        target: 'https://m.purcotton.com/', // 代理线上
+        target: 'https://m.purcotton.com/', // 代理线上wap接口
+        // target: 'https://app.purcotton.com/', // 代理线上app端接口
         ws: true,
         changeOrigin: true,
         pathRewrite: {
@@ -149,7 +160,9 @@ module.exports = {
   //     alias: {
   //       '@': resolve('src'),
   //       'assets': resolve('src/assets'),
-  //       'views': resolve('src/views')
+  //       'views': resolve('src/views'),
+  //       'api': resolve('src/api'),
+  //       'components': resolve('src/components')
   //     }
   //   },
   //   plugins: []
@@ -166,14 +179,48 @@ module.exports = {
       'api': resolve('src/api'),
       'components': resolve('src/components')
     }
-    if (isProduction) {
+    if(isProduction) {
       // 为生产环境修改配置...
-    } else {
+      // 上线压缩去除console等信息
+      config.plugins.push(
+        new UglifyJsPlugin({
+          uglifyOptions: {
+            warnings: false,
+            compress: {
+              drop_console: true,
+              drop_debugger: false,
+              pure_funcs: ['console.log'] // 移除console
+            }
+          },
+          sourceMap: false,
+          parallel: true
+        })
+      )
+      // 开启gzip压缩
+      const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i
+      config.plugins.push(
+        new CompressionWebpackPlugin({
+          filename: '[path].gz[query]',
+          algorithm: 'gzip',
+          test: productionGzipExtensions,
+          threshold: 10240,
+          minRatio: 0.8
+        })
+      )
+    }else{
       // 为开发环境修改配置...
     }
   },
-  // webpack自定义配置
+  // chainWebpack链式操作webpack自定义配置，允许对内部的 webpack 配置进行更细粒度的修改。
   chainWebpack: config => {
+    // 设置目录别名alias
+    // config.resolve.alias
+    //   .set('@', 'src')
+    //   .set('assets', 'src/assets')
+    //   .set('views', '@/views')
+    //   .set('api', '@/api')
+    //   .set('components', '@/components')
+
     // 压缩代码
     config.optimization.minimize(true)
     // 分割代码 （若为多页配置，会导致页面不渲染）
@@ -202,10 +249,10 @@ module.exports = {
      * 添加CDN参数到htmlWebpackPlugin配置中， 详见public/index.html 修改 （SPA打开）
      */
     config.plugin('html').tap(args => {
-      if (isProduction) {
+      if (process.env.NODE_ENV === 'production') {
         args[0].cdn = cdn.build
       }
-      if (isDevelopment) {
+      if (process.env.NODE_ENV === 'development') {
         args[0].cdn = cdn.dev
       }
       return args

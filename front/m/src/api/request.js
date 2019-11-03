@@ -4,7 +4,9 @@ const qs = require('qs')
 
 // 创建axios实例
 const Axios = axios.create({
-  baseURL: process.env.NODE_ENV === 'development' ? '/api' : '', // 开发使用代理,注意后台有没有基础路径
+  // v2线上代理全棉接口
+  baseURL: process.env.NODE_ENV === 'development' ? '/api' : '/v2', // 开发使用代理,注意后台有没有基础路径
+  // baseURL: '',
   timeout: 10000, // 请求超时时间
   responseType: 'json',
   withCredentials: true,

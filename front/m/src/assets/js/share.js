@@ -45,9 +45,11 @@ let random = parseInt(Math.random() * 3, 10);
 
 // 弹窗名必须为isShareDialog
 // let {appId, timestamp, nonceStr, signature} = await _getWxConfig()
-export default async function share(wxConfigStr,option,vm) {
+export default async function share(wxConfigStr, option, cb) {
+  // console.log(option)
+  // console.log(wxConfigStr)
   let {appId, timestamp, nonceStr, signature} = typeof wxConfigStr === 'string' ? evil(wxConfigStr.split("(")[1].split(")")[0]) : {...wxConfigStr}
-  console.log(shareText[random])
+  // console.log(shareText[random])
   wx.config({
     debug: false,
     appId: appId, // appId
@@ -73,33 +75,33 @@ export default async function share(wxConfigStr,option,vm) {
     ]
   })
   wx.ready( () => {
-    const title = option.title // 分享标题
-    const desc = option.desc // 分享描述
-    const link = option.link // 分享链接
-    const imgUrl = option.imgUrl // 分享图标
+    // const title = option.title // 分享标题
+    // const desc = option.desc // 分享描述
+    // const link = option.link // 分享链接
+    // const imgUrl = option.imgUrl // 分享图标
     //分享到朋友圈"
     wx.onMenuShareTimeline({
-      title: title, 
-      desc: desc,
-      link: link,
-      imgUrl: imgUrl,
+      title: option.title, 
+      desc: option.desc,
+      link: option.link,
+      imgUrl: option.imgUrl,
       success: () => {
         console.log('分享到朋友圈成功')
-        vm.isShareDialog = false
+        cb&&cb()
       },
       cancel: () => {
         console.log('分享到朋友圈失败')
       }
-    });
+    })
     //分享给朋友
     wx.onMenuShareAppMessage({
-      title: title,
-      desc: desc,
-      link: link,
-      imgUrl: imgUrl,
+      title: option.title,
+      desc: option.desc,
+      link: option.link,
+      imgUrl: option.imgUrl,
       success: () => {
         console.log('分享到朋友成功')
-        vm.isShareDialog = false
+        cb&&cb()
       },
       cancel: () => {
         console.log('分享到朋友失败')
@@ -108,13 +110,13 @@ export default async function share(wxConfigStr,option,vm) {
   })
   //分享到QQ
   wx.onMenuShareQQ({
-    title: title,
-    desc: desc,
-    link: link,
-    imgUrl: imgUrl,
+    title: option.title,
+    desc: option.desc,
+    link: option.link,
+    imgUrl: option.imgUrl,
     success: function () {
       // 用户确认分享后执行的回调函数
-      vm.isShareDialog = false
+      cb&&cb()
     },
     cancel: function () {
       // 用户取消分享后执行的回调函数
@@ -123,13 +125,13 @@ export default async function share(wxConfigStr,option,vm) {
   })
 
   wx.onMenuShareQZone({
-    title: title,
-    desc: desc,
-    link: link,
-    imgUrl: imgUrl,
+    title: option.title,
+    desc: option.desc,
+    link: option.link,
+    imgUrl: option.imgUrl,
     success: function () {
       // 用户确认分享后执行的回调函数
-      vm.isShareDialog = false
+      cb&&cb()
     },
     cancel: function () {
       // 用户取消分享后执行的回调函数
