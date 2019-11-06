@@ -1,9 +1,9 @@
 <template>
   <div class="tag">
-    <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入内容" v-model="searchText" clearable> </el-input> </el-col>
-      <el-col :span="4">
-        <el-select v-model="searchValue" placeholder="请选择" style="display: block;" clearable>
+    <el-row type="flex" justify="space-between" class="header" :gutter="10">
+      <el-col :span="5"><el-input placeholder="请输入内容" v-model="searchText" clearable size="small"> </el-input> </el-col>
+      <el-col :span="5">
+        <el-select v-model="searchValue" placeholder="请选择" style="display: block;" clearable size="small">
           <el-option
             v-for="item in searchType"
             :key="item.value"
@@ -12,9 +12,9 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round>搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" round>新增</el-button>
+      <el-col :span="14">
+        <el-button type="primary" icon="el-icon-search" round size="small">搜索</el-button>
+        <el-button type="primary" icon="el-icon-plus" round size="small">新增</el-button>
       </el-col>
     </el-row>
     <el-row class="content">
@@ -25,7 +25,8 @@
           height="560"
           stripe
           highlight-current-row
-          style="width: 100%">
+          style="width: 100%"
+          size="small">
           <el-table-column
             prop="date"
             label="日期"
@@ -56,7 +57,7 @@
           :current-page="currentPage"
           :page-sizes="[100, 200, 300, 400]"
           :page-size="100"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, sizes, prev, pager, next"
           :total="400">
         </el-pagination>
       </el-col>
@@ -120,13 +121,11 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
   $bg: #fff;
   .tag{
-    padding: 10px;
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    background-color: $bg;
     .header{
       padding: 10px;
-      background-color: $bg;
-      >.el-col{
-        margin-right: 20px;
-      }
     }
     .content{
       padding: 10px;

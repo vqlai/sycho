@@ -1,9 +1,9 @@
 <template>
   <div class="link">
-    <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入内容" v-model="keyword" clearable> </el-input> </el-col>
-      <el-col :span="4">
-        <el-select v-model="type" placeholder="请选择链接类型"  style="display: block;" clearable>
+    <el-row type="flex" justify="space-between" class="header" :gutter="10">
+      <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="4"><el-input placeholder="请输入内容" v-model="keyword" clearable size="small"> </el-input> </el-col>
+      <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="4">
+        <el-select v-model="type" placeholder="请选择链接类型"  style="display: block;" clearable size="small">
           <el-option
             v-for="item in linkTypes"
             :key="item.value"
@@ -12,10 +12,14 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round @click="_getLink()">搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button>
+      <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="16" v-if="winWidth>500">
+        <el-button type="primary" icon="el-icon-search" round @click="_getLink()" size="small">搜索</el-button>
+        <el-button type="primary" icon="el-icon-plus" round @click="handleAdd" size="small">新增</el-button>
       </el-col>
+    </el-row>
+    <el-row style="padding: 0 10px;" v-if="winWidth<=500" type="flex" justify="end">
+      <el-button type="primary" icon="el-icon-search" round @click="_getLink()" size="small">搜索</el-button>
+      <el-button type="primary" icon="el-icon-plus" round @click="handleAdd" size="small">新增</el-button>
     </el-row>
     <el-row class="content">
       <el-col :span="24">
@@ -28,7 +32,8 @@
           fit
           highlight-current-row
           :default-sort = "{prop: 'name'}"
-          style="width: 100%">
+          style="width: 100%"
+          size="small">
           <el-table-column
             type="index"
             label="序号"
@@ -82,8 +87,8 @@
               {{ scope.row.updateDate | formatterTime}}
             </template>
           </el-table-column>
+          <!-- fixed="right" -->
           <el-table-column
-            fixed="right"
             label="操作"
             align="center"
             width="150">
@@ -114,22 +119,22 @@
           :page-size="pageSize"
           :total="total"
           :page-sizes="[10, 30, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper">
+          layout="total, sizes, prev, pager, next">
         </el-pagination>
       </el-col>
     </el-row>
     <el-dialog
       :title="dialogType === 1 ? '新增' : '编辑'"
       :visible.sync="dialogVisible"
-      width="30%"
+      :width="winWidth<500?'90%':winWidth<1200?'60%':'30%'"
       :close-on-click-modal="false"
       @close="handleDialogClose">
       <el-form ref="linkForm" :model="linkForm" :rules="linkFormRules" label-width="80px" status-icon>
         <el-form-item label="名称" required prop="name">
-          <el-input v-model="linkForm.name" placeholder="请输入链接名称" clearable></el-input>
+          <el-input v-model="linkForm.name" placeholder="请输入链接名称" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="类型" required prop="type">
-          <el-select v-model="linkForm.type" placeholder="请选择链接类型" style="display: block;" clearable>
+          <el-select v-model="linkForm.type" placeholder="请选择链接类型" style="display: block;" clearable size="small">
             <!-- option的值是通过===严格判断的 -->
             <el-option
               v-for="(item, index) in linkTypes"
@@ -141,20 +146,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="URL" required prop="url">
-          <el-input v-model="linkForm.url" placeholder="请输入链接地址" clearable
+          <el-input v-model="linkForm.url" placeholder="请输入链接地址" clearable size="small"
           @keyup.enter.native="handleSubmitForm">
           </el-input>
         </el-form-item>
         <el-form-item label="描述" required prop="desc">
-          <el-input v-model="linkForm.desc" placeholder="请输入链接描述" clearable></el-input>
+          <el-input v-model="linkForm.desc" placeholder="请输入链接描述" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="logo" prop="logo">
-          <el-input v-model="linkForm.logo" placeholder="请输入logo地址" clearable></el-input>
+          <el-input v-model="linkForm.logo" placeholder="请输入logo地址" clearable size="small"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleSubmitForm">确 定</el-button>
+        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitForm" size="small">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -381,13 +386,11 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
   $bg: #fff;
   .link {
-    padding: 10px;
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    background-color: $bg;
     .header{
       padding: 10px;
-      background-color: $bg;
-      >.el-col{
-        margin-right: 20px;
-      }
     }
     .content{
       padding: 10px;

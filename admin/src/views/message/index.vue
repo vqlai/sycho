@@ -1,9 +1,9 @@
 <template>
   <div class="message">
-    <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入昵称" v-model="keyword" clearable @keyup.enter.native="_getMessage"> </el-input> </el-col>
-      <el-col :span="4">
-        <el-select v-model="state" placeholder="请选择留言状态" style="display: block;" clearable>
+    <el-row type="flex" justify="space-between" class="header" :gutter="6">
+      <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="4"><el-input placeholder="请输入昵称" v-model="keyword" clearable @keyup.enter.native="_getMessage" size="small"> </el-input> </el-col>
+      <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="4">
+        <el-select v-model="state" placeholder="请选择留言状态" style="display: block;" clearable size="small">
           <el-option
             v-for="item in stateList"
             :key="item.value"
@@ -12,10 +12,14 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round @click.native="_getMessage">搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button>
+      <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="16" v-if="winWidth>500">
+        <el-button type="primary" icon="el-icon-search" round @click.native="_getMessage" size="small">搜索</el-button>
+        <el-button type="primary" icon="el-icon-plus" round @click="handleAdd" size="small">新增</el-button>
       </el-col>
+    </el-row>
+    <el-row style="padding: 0 10px;" v-if="winWidth<=500" type="flex" justify="end">
+      <el-button type="primary" icon="el-icon-search" round @click.native="_getMessage" size="small">搜索</el-button>
+      <el-button type="primary" icon="el-icon-plus" round @click="handleAdd" size="small">新增</el-button>
     </el-row>
     <el-row class="content">
       <el-col :span="24">
@@ -26,7 +30,8 @@
           stripe
           fit
           highlight-current-row
-          style="width: 100%">
+          style="width: 100%"
+          size="small">
           <el-table-column type="expand">
             <template slot-scope="props">
               <el-form label-position="left" inline class="table-expand">
@@ -118,10 +123,10 @@
               {{ scope.row.state === 0 ? '待审核' : scope.row.state === 1 ? '通过' : '不通过' }}
             </template>
           </el-table-column>
+          <!-- fixed="right" -->
           <el-table-column
             label="操作"
-            width="380"
-            fixed="right">
+            width="250">
             <template slot-scope="scope">
               <transition-group tag="span" name="btn">
                 <el-button
@@ -155,32 +160,32 @@
           :page-size="pageSize"
           :total="total"
           :page-sizes="[10, 30, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper">
+          layout="total, sizes, prev, pager, next">
         </el-pagination>
       </el-col>
     </el-row>
     <el-dialog
       :title="dialogType === 1 ? '添加' : '编辑'"
       :visible.sync="dialogVisible"
-      width="30%"
+      :width="winWidth<500?'90%':winWidth<1200?'60%':'30%'"
       :close-on-click-modal="false">
       <el-form ref="messageForm" :model="messageForm" :rules="messageFormRules" label-width="80px" status-icon>
         <el-form-item label="昵称" required prop="name">
-          <el-input v-model="messageForm.name" placeholder="请输入昵称" clearable></el-input>
+          <el-input v-model="messageForm.name" placeholder="请输入昵称" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" required prop="email">
-          <el-input v-model="messageForm.email" placeholder="请输入邮箱" clearable></el-input>
+          <el-input v-model="messageForm.email" placeholder="请输入邮箱" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="URL" required prop="url">
-          <el-input v-model="messageForm.url" placeholder="请输入URL" clearable></el-input>
+          <el-input v-model="messageForm.url" placeholder="请输入URL" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="内容" required prop="content" @keyup.enter.native="handleSubmitForm">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="messageForm.content"> </el-input>
+          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="messageForm.content" size="small"> </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleSubmitForm">确 定</el-button>
+        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitForm" size="small">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -345,7 +350,7 @@ import { checkEmail, validURL } from '@/assets/js/validate.js'
       },
       // 修改状态
       handleState(row, code){
-        this.$store.dispatch('message/patchMessage', { _id: row._id, state: code }).then(res => {
+        this.$store.dispatch('message/patchMessage', { _id: row._id, state: code, postId: row.postId }).then(res => {
           console.log(res)
           if(res.success){
             this.$message({
@@ -369,7 +374,13 @@ import { checkEmail, validURL } from '@/assets/js/validate.js'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('message/deleteMessage', row._id).then(res => {
+          let id = ''
+          if(row.postId){
+            id = `${row._id},${row.postId}`
+          }else{
+            id = row._id
+          }
+          this.$store.dispatch('message/deleteMessage', id).then(res => {
             if(res.success){
               this.$message({
                 message: res.msg,
@@ -394,13 +405,11 @@ import { checkEmail, validURL } from '@/assets/js/validate.js'
 <style lang="scss" scoped>
   $bg: #fff;
   .message{
-    padding: 10px;
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    background-color: $bg;
     .header{
       padding: 10px;
-      background-color: $bg;
-      >.el-col{
-        margin-right: 20px;
-      }
     }
     .content{
       padding: 10px;

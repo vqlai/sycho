@@ -1,9 +1,9 @@
 <template>
   <div class="user">
-    <el-row type="flex" justify="space-between" class="header">
-      <el-col :span="4"><el-input placeholder="请输入内容" v-model="keyword" clearable> </el-input> </el-col>
-      <el-col :span="4">
-        <el-select v-model="role" placeholder="请选择权限类型" style="display: block;" clearable>
+    <el-row type="flex" justify="space-between" class="header" :gutter="10">
+      <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="4"><el-input placeholder="请输入内容" v-model="keyword" clearable  size="small"> </el-input> </el-col>
+      <el-col :xs="12" :sm="6" :md="6" :lg="6" :xl="4">
+        <el-select v-model="role" placeholder="请选择权限类型" style="display: block;" clearable  size="small">
           <el-option
             v-for="item in userTypes"
             :key="item.value"
@@ -12,10 +12,14 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="16">
-        <el-button type="primary" icon="el-icon-search" round @click="_getUser">搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" round @click="handleAdd">新增</el-button>
+      <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="16" v-if="winWidth>500">
+        <el-button type="primary" icon="el-icon-search" round @click="_getUser"  size="small">搜索</el-button>
+        <el-button type="primary" icon="el-icon-plus" round @click="handleAdd"  size="small">新增</el-button>
       </el-col>
+    </el-row>
+    <el-row style="padding: 0 10px;" v-if="winWidth<=500" type="flex" justify="end">
+      <el-button type="primary" icon="el-icon-search" round @click="_getUser"  size="small">搜索</el-button>
+      <el-button type="primary" icon="el-icon-plus" round @click="handleAdd"  size="small">新增</el-button>
     </el-row>
     <el-row class="content">
       <el-col :span="24">
@@ -28,7 +32,8 @@
           fit
           highlight-current-row
           :default-sort = "{prop: 'createTime', order: 'descending'}"
-          style="width: 100%">
+          style="width: 100%"
+          size="small">
           <el-table-column
             type="index"
             label="序号"
@@ -84,8 +89,8 @@
               {{ scope.row.updateDate | formatterTime}}
             </template>
           </el-table-column>
+          <!-- fixed="right" -->
           <el-table-column
-            fixed="right"
             label="操作"
             align="center"
             width="160">
@@ -104,14 +109,14 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :page-sizes="[10, 30, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper">
+          layout="total, sizes, prev, pager, next">
         </el-pagination>
       </el-col>
     </el-row>
     <el-dialog
       :title="dialogType === 1 ? '新增' : '编辑'"
       :visible.sync="dialogVisible"
-      width="30%"
+      :width="winWidth<500?'96%':winWidth<1200?'66%':'30%'"
       :close-on-click-modal="false">
       <el-form
         ref="userForm"
@@ -121,26 +126,26 @@
         label-width="80px"
         :close-on-click-modal="false">
         <el-form-item label="用户名" required prop="username" autocomplete="off">
-          <el-input v-model="userForm.username" placeholder="请输入用户名" clearable></el-input>
+          <el-input v-model="userForm.username" placeholder="请输入用户名" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="密码" required prop="curPwd" v-if="dialogType === 1" autocomplete="off">
-          <el-input v-model="userForm.curPwd" type="password" placeholder="请输入密码" clearable></el-input>
+          <el-input v-model="userForm.curPwd" type="password" placeholder="请输入密码" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" required prop="surePwd" v-if="dialogType === 1" >
-          <el-input v-model="userForm.surePwd" type="password" placeholder="请再次输入密码" clearable></el-input>
+          <el-input v-model="userForm.surePwd" type="password" placeholder="请再次输入密码" clearable size="small"></el-input>
         </el-form-item>
         <!-- required -->
         <el-form-item label="原始密码" prop="prePwd" v-if="dialogType === 2" autocomplete="off">
-          <el-input v-model="userForm.prePwd" type="password" placeholder="请输入原始密码" clearable></el-input>
+          <el-input v-model="userForm.prePwd" type="password" placeholder="请输入原始密码" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="新密码" prop="newPwd" v-if="dialogType === 2">
-          <el-input v-model="userForm.newPwd" type="password" placeholder="请输入新密码" clearable></el-input>
+          <el-input v-model="userForm.newPwd" type="password" placeholder="请输入新密码" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPwd" v-if="dialogType === 2">
-          <el-input v-model="userForm.confirmPwd" type="password" placeholder="请再次输入新密码" clearable></el-input>
+          <el-input v-model="userForm.confirmPwd" type="password" placeholder="请再次输入新密码" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="角色" required prop="role">
-          <el-select v-model="userForm.role" placeholder="请选择角色权限类型" style="display: block;" clearable>
+          <el-select v-model="userForm.role" placeholder="请选择角色权限类型" style="display: block;" clearable size="small">
             <el-option
               v-for="(item, index) in userTypes"
               :key="item.value"
@@ -151,7 +156,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="描述" required prop="desc">
-          <el-input v-model="userForm.desc" placeholder="请输入描述" clearable></el-input>
+          <el-input v-model="userForm.desc" placeholder="请输入描述" clearable size="small"></el-input>
         </el-form-item>
         <el-form-item label="头像">
           <div class="upload-box">
@@ -182,7 +187,7 @@
               </div>
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
-            <ul class="upload-tip">
+            <ul class="upload-tip" v-if="winWidth>500">
               <li>每次只能上传1张图片。</li>
               <li>每张图片大小不超过 200kb。</li>
               <li>文件必须是 jpg 、png 或 jpeg 格式的图片。</li>
@@ -196,8 +201,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleSubmitForm">确 定</el-button>
+        <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitForm" size="small">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -425,6 +430,29 @@
         this.dialogType = 2
         this.dialogVisible = true
       },
+      beforeAvatarUpload(file) {
+        if(file.size > 200 * 1000){
+          this.$message({ message: `文件${file.name}太大，不能超过 200kb`, type: 'warning' })
+          return false
+        }
+        console.log(file)
+        // // 读取文件对象
+        // let reader = new FileReader()
+        // // readAsDataURL 方法用于读取指定 Blob 或 File 的内容
+        // // 当读操作完成，readyState 变为 DONE，loadend 被触发，此时 result 属性包含数据：URL（以 base64 编码的字符串表示文件的数据）
+        // // 读取文件作为 URL 可访问地址
+        // reader.readAsDataURL(file)
+        // reader.onloadend = e => {
+        //   // console.log(e)
+        //   file.url = reader.result
+        //   this.avatarImgUrl = file.url
+        //   this.fileObj = file
+        //   // console.log(this.fileObj)
+        // }
+        this.avatarImgUrl = URL.createObjectURL(file)
+        this.fileObj = file
+        return false // 加了return false组件的action就不会发起post请求了
+      },
       handleSubmitForm(){
         this.$refs.userForm.validate((valid) => {
           if (valid) {
@@ -482,29 +510,6 @@
           console.log('取消删除')
         })
       },
-      beforeAvatarUpload(file) {
-        if(file.size > 200 * 1000){
-          this.$message({ message: `文件${file.name}太大，不能超过 200kb`, type: 'warning' })
-          return false
-        }
-        console.log(file)
-        // // 读取文件对象
-        // let reader = new FileReader()
-        // // readAsDataURL 方法用于读取指定 Blob 或 File 的内容
-        // // 当读操作完成，readyState 变为 DONE，loadend 被触发，此时 result 属性包含数据：URL（以 base64 编码的字符串表示文件的数据）
-        // // 读取文件作为 URL 可访问地址
-        // reader.readAsDataURL(file)
-        // reader.onloadend = e => {
-        //   // console.log(e)
-        //   file.url = reader.result
-        //   this.avatarImgUrl = file.url
-        //   this.fileObj = file
-        //   // console.log(this.fileObj)
-        // }
-        this.avatarImgUrl = URL.createObjectURL(file)
-        this.fileObj = file
-        return false // 加了return false组件的action就不会发起post请求了
-      },
       // handleUpload(file){
       //   console.log(file)
       // },
@@ -535,20 +540,15 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
   $bg: #fff;
   .user{
-    padding: 10px;
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    background-color: $bg;
     .header{
       padding: 10px;
-      background-color: $bg;
-      >.el-col{
-        margin-right: 20px;
-      }
     }
     .content{
       padding: 10px;
       background-color: $bg;
-      .el-table{
-        // min-height: 560px;
-      }
     }
     .el-pagination{
       padding: 10px 0;
@@ -556,7 +556,7 @@
     }
     .upload-box{
       display: flex;
-      justify-content: space-between;
+      // justify-content: space-between;
       // &.hidden{
       //   /deep/ .el-upload {
       //     display: none;
@@ -618,7 +618,7 @@
       }
       ul.upload-tip{
         list-style-type: none;
-        margin: 0;
+        margin: 0 0 0 20px;
         padding: 0;
         li{
           line-height: 30px;
