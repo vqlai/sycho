@@ -20,6 +20,7 @@ Vue.component('svg-icon', SvgIcon) // register globally
 
 // 注册全局函数和全局常量,在vue页面之间用this即可访问
 Vue.prototype.reUrl = config.reUrl
+Vue.prototype.winWidth = document.body.clientWidth
 
 // Vue.use(ElementUI, { locale }) // 英文版
 // 中文版
