@@ -3,6 +3,21 @@
   width: 100%;
   height: 100%;
   position: relative;
+  .search-btn{
+    display: none;
+    position: absolute;
+    top: 30px;
+    right: 20px;
+  }
+  .search-box{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 10px;
+    background-color: #fff;
+  }
   .content{
     display: flex;
     width: 72%;
@@ -36,6 +51,9 @@
 }
 @media screen and (max-width: 576px){
   .container{
+    .search-btn{
+      display: block;
+    }
     .content{
       width: 100%;
       .left-panel{
@@ -101,6 +119,11 @@
     <a-affix :offsetTop="0">
       <Header/>
       <Nav/>
+      <a-icon type="search" class="search-btn" @click="showSearch"/>
+      <a-row type="flex" justify="space-between" align="middle" class="search-box" v-if="isSearch">
+        <a-col :span="22"><a-input-search v-model="keywords" placeholder="请输入搜索内容..." style="width: 100%;" @search="onSearch" /></a-col>
+        <a-col :span="2" style="text-align: right;"><a-icon type="close" @click="isSearch=false"/></a-col>
+      </a-row>
     </a-affix>
     <a-locale-provider :locale="zh_CN">
       <section class="content">
@@ -134,7 +157,9 @@
     data(){
       return {
         showWhat: 'Footer',
-        zh_CN
+        zh_CN,
+        keywords: '',
+        isSearch: false
       }
     },
     computed: {
@@ -145,6 +170,13 @@
       console.log('%c让这风吹，哀伤通通带走，管风里是谁，老铁，你呢？%ccontact me: 695850246@qq.com', 'color:#1890ff;font-size:26px;', 'color:#666;font-size:14px;')
     },
     methods: {
+      showSearch() {
+        this.isSearch = !this.isSearch
+      },
+      onSearch() {
+        this.isSearch = false
+        this.$router.push(`/search/${this.keywords}`)
+      }
     }
   }
 </script>

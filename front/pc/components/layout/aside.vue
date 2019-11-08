@@ -48,14 +48,17 @@
     }
     .ant-carousel{
       width: 100%;
-      height: 100px;
-      line-height: 100px;
+      min-height: 80px;
+      // line-height: 100px;
       text-align: center;
       margin-bottom: 20px;
       color: #fff;
-      background-color: #1890ff;
       border-radius: 2px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      // background-color: #1890ff;
+      // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      img{
+        width: 100%;
+      }
     }
     .ant-calendar{
       width: 100%;
@@ -76,12 +79,16 @@
       <h3><a-icon type="fire" /> 热度榜</h3>
       <nuxt-link class="link" v-for="(item,index) in articleHotList" :key="index" :to="`/article/${item.id}`"> {{item.title.slice(0,20)}} </nuxt-link>
     </section>
-    <a-carousel autoplay>
-      <div>广告位1招租啦</div>
-      <div>广告位2</div>
-      <div>广告位3</div>
-      <div>广告位4</div>
-    </a-carousel>
+    <client-only>
+      <a-carousel autoplay>
+        <!-- 注意nuxt图片只能放在static/images下面，其他新建文件夹或assents文件夹下都无法引用图片 -->
+        <!-- <div><a style="display: block;" href="https://s.click.taobao.com/wczqYxv" target="_blank"><img src="/images/aliyun-300-100.jpg" alt=""></a></div> -->
+        <div><a style="display: block;" href="https://s.click.taobao.com/HSgoYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB1vONZjeT2gK0jSZFvXXXnFXXa-440-180.jpg" alt=""></a></div>
+        <div><a style="display: block;" href="https://s.click.taobao.com/0XjbYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB1EEeXLY2pK1RjSZFsXXaNlXXa-440-180.jpg" alt=""></a></div>
+        <div><a style="display: block;" href="https://s.click.taobao.com/u8XoYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tps/TB1ijqSPXXXXXX8XVXXXXXXXXXX-440-180.jpg" alt=""></a></div>
+        <div><a style="display: block;" href="https://s.click.taobao.com/mZRnYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB10iuki5_1gK0jSZFqXXcpaXXa-440-180.jpg" alt=""></a></div>
+      </a-carousel>
+    </client-only>
     <a-calendar :fullscreen="false" class="ant-calendar"/>
     <!-- <section class="box">
       <h3><a-icon type="cloud" /> 推荐榜</h3>
@@ -118,7 +125,9 @@
     data() {
       return {
         keywords: '',
-        articleHotList: []
+        articleHotList: [],
+        // url: require('~/assets/imgs/ad/aliyun-300-100.jpg')
+        // url: require('static/images/ad/aliyun-300-100.jpg')
       }
     },
     created() {

@@ -1,15 +1,15 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .article{
-    padding: 20px 0 0;
+    padding: 20px 0;
     @{deep} .ant-list-pagination{
       text-align: center;
     }
     @{deep} .ant-list{
       .ant-spin-container{
-        min-height: 560px;
+        min-height: 530px;
         .ant-list-empty-text{
-          padding: 30% 0;
+          padding: 30% 0 0;
         }
       }
       .ant-list-item{
@@ -118,7 +118,8 @@
         </template> -->
         <template slot="actions">
           <!-- .format('YYYY-MM-DD HH:mm:ss') -->
-          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createDate).fromNow()}}</span><span @click.stop="onLike(item)"><a-icon type="like-o" style="margin-right: 8px"/>{{item.likes}}</span><span @click.stop="onDislike(item)"><a-icon type="dislike-o" style="margin-right: 8px"/>{{item.dislikes}}</span>
+          <span><a-icon type="clock-circle" style="margin-right: 8px" />{{moment(item.createDate).fromNow()}}</span><span @click.stop="onLike(item)"><a-icon type="eye" style="margin-right: 8px"/>{{item.views}}</span><span @click.stop="onLike(item)"><a-icon type="like-o" style="margin-right: 8px"/>{{item.likes}}</span><span><a-icon type="message" style="margin-right: 8px" />{{item.comments}}</span>
+          <!-- <span @click.stop="onDislike(item)"><a-icon type="dislike-o" style="margin-right: 8px"/>{{item.dislikes}}</span> -->
           <!-- <span><a-icon type="message" style="margin-right: 8px" />{{item.comments}}</span> -->
         </template>
         <!-- .slice(0,100) -->
@@ -215,7 +216,7 @@
                 params.type = 2
               }
               this.$store.dispatch('article/getArticle', params)
-              this.$message.info('点赞成功')
+              this.$message.info('文章点赞成功')
               this.$store.commit('article/UPDATE_LIKE')
             }else{
               this.$message.info(res.data.msg)
@@ -246,7 +247,7 @@
                 params.type = 2
               }
               this.$store.dispatch('article/getArticle', params)
-              this.$message.info('吐槽成功')
+              this.$message.info('文章吐槽成功')
               this.$store.commit('article/UPDATE_DISLIKE')
             }else{
               this.$message.info(res.data.msg)

@@ -3,12 +3,14 @@
     <a-menu
       v-model="current"
       mode="horizontal">
-      <a-menu-item key="index"><nuxt-link to="/"><a-icon type="home" />首页</nuxt-link></a-menu-item>
-      <a-menu-item key="tech" ><nuxt-link to="/tech"><a-icon type="desktop" />技术</nuxt-link></a-menu-item>
-      <a-menu-item key="life" ><nuxt-link to="/life"><a-icon type="coffee" />生活</nuxt-link></a-menu-item>
-      <a-menu-item key="link" ><nuxt-link to="/link"><a-icon type="chrome" />导航</nuxt-link></a-menu-item>
-      <a-menu-item key="message" ><nuxt-link to="/message"><a-icon type="message" />留言墙</nuxt-link></a-menu-item>
-      <a-menu-item key="about"><nuxt-link to="/about"><a-icon type="user" />关于我</nuxt-link></a-menu-item>
+      <a-menu-item key="index"><nuxt-link to="/"><a-icon type="home" />赛柯围</nuxt-link></a-menu-item>
+      <a-menu-item key="tech" ><nuxt-link to="/tech"><a-icon type="code" />风雨浸</nuxt-link></a-menu-item>
+      <!-- <a-menu-item key="tech" ><nuxt-link to="/tech"><a-icon type="desktop" />风雨浸</nuxt-link></a-menu-item> -->
+      <a-menu-item key="life" ><nuxt-link to="/life"><a-icon type="coffee" />百感生</nuxt-link></a-menu-item>
+      <!-- 寻技斋 -->
+      <a-menu-item key="link" ><nuxt-link to="/link"><a-icon type="chrome" />寻技斋</nuxt-link></a-menu-item>
+      <a-menu-item key="message" ><nuxt-link to="/message"><a-icon type="message" />观言墙</nuxt-link></a-menu-item>
+      <a-menu-item key="about"><nuxt-link to="/about"><a-icon type="user" />独留我</nuxt-link></a-menu-item>
       <!-- disabled -->
       <!-- <a-sub-menu>
         <span 
@@ -51,6 +53,7 @@
 
 <style lang="less" scoped>
   nav {
+    position: relative;
     text-align: center;
     .ant-menu{
       opacity: .8;
