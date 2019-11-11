@@ -5,8 +5,8 @@ module.exports = {
   
   // 自定义端口号
   server: {
-    port: 9000, // default: 9000
-    host: '0.0.0.0' // default: localhost
+    port: 9527, // default: 9000
+    // host: '0.0.0.0' // default: localhost
   },
 
   /*
@@ -15,22 +15,23 @@ module.exports = {
   head: {
     // 获取到package.json的name值
     // title: pkg.name,
-    title: '前端，分享，自由',
-    titleTemplate: '%s | vqlai',
+    title: '赛柯-sycho | 前端，分享，自由',
+    titleTemplate: '%s | 赛柯-sycho | vqlai',
     meta: [
       { charset: 'utf-8' },
       { 'http-equiv': 'cleartype', content: 'on' },
       { 'http-equiv': 'x-dns-prefetch-control', content: 'on' },
-      { name: 'author', content: '695850246@qq.com' },
+      { name: 'author', content: 'vqlai，695850246@qq.com' },
       { name: 'MobileOptimized', content: '320' },
       { name: 'HandheldFriendly', content: 'True' },
       { name: 'apple-mobile-web-app-capable', content: 'yes' },
       { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
       { name: 'apple-mobile-web-app-title', content: 'sycho.cn' },
       { name: 'format-detection', content: 'telephone=no' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'keywords', name: 'keywords', content: 'vqlai，赖伟强，vue全家桶开发，小程序开发，前端工程师，javascript，js/es6技术' },
-      { hid: 'description', name: 'description', content: '打破平庸，欢喜生活，拥抱宇宙，递归升华。' }
+      { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover' },
+      { name: 'baidu-site-verification', content: 'PrDb8KaI82' }, // 百度站点配置
+      { hid: 'keywords', name: 'keywords', content: '赛柯-syhco，vqlai，vue全家桶开发，小程序开发，前端工程师，javascript，js/es6技术，html5/pixijs，wepy' },
+      { hid: 'description', name: 'description', content: '赛柯-syhco：打破平庸，欢喜生活，拥抱宇宙，递归升华。' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -40,7 +41,7 @@ module.exports = {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#0088f5' },
+  loading: { color: '#1890ff' },
 
   /*
   ** Global CSS
