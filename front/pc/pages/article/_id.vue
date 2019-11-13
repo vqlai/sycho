@@ -16,12 +16,14 @@
     }
     .ant-carousel{
       margin: 10px 0;
-      width: 860px;
-      height: 160px;
+      width: 100%;
+      min-height: 80px;
       text-align: center;
       color: #fff;
-      line-height: 160px;
-      background-color: #1890ff;
+      // background-color: #1890ff;
+      img{
+        width: 100%;
+      }
     }
   }
 </style>
@@ -30,42 +32,43 @@
   <section class="articel-detail">
     <h3 class="title">{{article.title}}</h3>
     <article v-html="article.content"></article>
-    <a-carousel autoplay class="ad">
-      <div>广告位1</div>
-      <div>广告位2</div>
-      <div>广告位3</div>
-      <div>广告位4</div>
-    </a-carousel>
-    <share-box key="share" class="share" id="share"/>
+    <client-only>
+      <a-carousel>
+        <div><a href="https://s.click.taobao.com/PWVcYxv" target="_blank" rel="noopener noreferrer" style="display: block;"><img src="/images/aliyun-1200-120.jpg" alt=""></a></div>
+        <!-- <div>广告位2</div> -->
+        <!-- <div>广告位3</div> -->
+      </a-carousel>
+    </client-only>
+    <!-- <share-box key="share" class="share" id="share"/> -->
     <div>
       <div>
-        本文于 {{moment(article.createTime).format('YYYY-MM-DD HH:mm:ss')}} 发布，作者 {{article.author}}
+        本文于 {{moment(article.createDate).format('YYYY-MM-DD HH:mm:ss')}} 发布，作者 {{article.author}}
       </div>
       <div>
-        <span>当前已被围观 {{article.meta.views}} 次 </span>
+        <span style="padding-right: 10px;">当前已被围观 {{article.views}} 次 </span>
         <span @click.stop="onLike(article)">
           <a-tooltip title="赞一个鸭">
             <a-icon type="like" />
           </a-tooltip>
-          <span style="padding-left: '8px';"> {{ article.meta.likes }} </span>
+          <span style="padding-right: 10px;"> {{ article.likes }} </span>
         </span>
         <span @click="onDislike(article)" >
           <a-tooltip title="兄得请不要这样">
             <a-icon type="dislike"/>
           </a-tooltip>
-          <span style="padding-left: '8px';"> {{ article.meta.dislikes }} </span>
+          <span style="padding-right: 10px;"> {{ article.dislikes }} </span>
         </span>
-        <a-tag color="#f50" @click="onShuang">赏</a-tag>
+        <!-- <a-tag color="#f50" @click="onShuang">赏</a-tag> -->
       </div>
-      <div>相关标签： {{filterTags(article.tag)}}</div>
+      <div>相关标签： {{article.tagDesc}}</div>
       <div>永久地址： https://sycho.cn/article/{{article.id}}</div>
       <div>版权声明： 自由转载-署名-非商业性使用 | 赛柯 | Sycho.cn</div>
       <setup ref="setup" :pageType="'ARTICLE'" :isReply="isReply" :replyObj="replyObj" @onSetupSubmit="onSetupSubmit" @onClickUndo="onClickUndo"/>
       <a-row type="flex" justify="space-between" align="middle">
         <a-col>
-          <a-tag>{{messageList.pagination.total?messageList.pagination.total+'条':'暂无'}}留言</a-tag>
+          <a-tag v-if="messageList.pagination.total">{{messageList.pagination.total}}条评论</a-tag>
           <!-- <a-tag><a-icon type="like" />100人觉得有点牛逼</a-tag> -->
-          <!-- <a-tag color="#f50" @click="onShuang">赏</a-tag> -->
+          <a-tag color="#f50" @click="onShuang">赏</a-tag>
         </a-col>
         <a-col>
           <a-radio-group v-model="radioValue" button-style="solid" @change="onRadioChange">
@@ -83,19 +86,19 @@
               <span class="ua" v-html="browserParse(item.agent)" v-if="item.agent"></span>
               <span>
                 <a-tooltip title="赞一个鸭">
-                  <a-icon type="like" :theme="action === 'liked' ? 'filled' : 'outlined'" @click="onLike(item)" />
+                  <a-icon type="like" :theme="action === 'liked' ? 'filled' : 'outlined'" @click="onCommentLike(item)" />
                 </a-tooltip>
                 <span style="padding-left: '5px';cursor: 'auto'"> {{ item.likes }} </span>
               </span>
               <span>
                 <a-tooltip title="胸弟真的要这样？">
-                  <a-icon type="dislike" :theme="action === 'disliked' ? 'filled' : 'outlined'" @click="onDislike(item)" />
+                  <a-icon type="dislike" :theme="action === 'disliked' ? 'filled' : 'outlined'" @click="onCommentDislike(item)" />
                 </a-tooltip>
                 <span style="padding-left: '5px';cursor: 'auto'"> {{ item.dislikes }} </span>
               </span>
               <span>
                 <a-tooltip title="说出来世界都是你的">
-                  <a-icon type="rocket" :theme="action === 'disliked' ? 'filled' : 'outlined'" @click="onDislike(item)" />
+                  <a-icon type="rocket" :theme="action === 'disliked' ? 'filled' : 'outlined'" @click="onCommentDislike(item)" />
                 </a-tooltip>
                 <span style="padding-left: '5px';cursor: 'auto'" @click="onReply(item)"> 回复 </span>
               </span>
@@ -122,11 +125,11 @@
             </a-tooltip>
           </a-comment>
         </a-row>
-        <a-row type="flex" justify="center" align="middle" style="padding-top: 20px;">
+        <a-row type="flex" justify="center" align="middle" style="padding: 20px 0;">
           <a-pagination simple :pageSize="messageList.pagination.pageSize" :total="messageList.pagination.total" @change="onPageChange"/>
         </a-row>
       </div>
-      <div v-else style="text-align: center;padding-top: 30px;"> 暂无评论 </div>
+      <div v-else style="text-align: center;padding: 30px 0;"> 暂无评论 </div>
     </div>
     <a-modal
       title="你的支持是我坚持的源泉"
@@ -142,7 +145,7 @@
 
 <script>
 // 文章详情
-import ShareBox from '~/components/share'
+// import ShareBox from '~/components/share'
 import setup from '~/components/setup'
 import moment from 'moment'
 import { browserParse, osParse } from '~/assets/js/ua-os-browser'
@@ -157,7 +160,7 @@ export default {
     }
   },
   components: {
-    ShareBox,
+    // ShareBox,
     setup
   },
   async fetch ({ store, params }) {
@@ -277,23 +280,26 @@ export default {
         this.$store.dispatch('message/getMessage', { currentPage: 1, pageSize: 10, postId: this.$route.params.id})
       }
     },
-    onLike(article) {
-      console.log(article)
-      if(!localStorage.getItem('user')){
+    // 评论点赞
+    onCommentLike(item) {
+      if(!this.$refs.setup.isUser){
+        this.$el.querySelector('#share').scrollIntoView()
         this.$message.info('请先设置用户信息')
         return false
       }
-      let articleIds = JSON.parse(localStorage.getItem('articleIds'))
-      if(!articleIds||!articleIds.includes(article.id)){
-        let meta = {...article.meta}
-        meta.likes = meta.likes+1
-        this.$axios.patch('/articleLikes',{_id: article._id, meta}).then(res=>{
+      let commentIds = JSON.parse(localStorage.getItem(`commentIds${this.$route.params.id}`))
+      if(!commentIds||!commentIds.includes(item.id)){
+        this.$axios.patch('/messageLikes',{_id: item._id, likes: item.likes+1}).then(res=>{
           if(res.data.success){
-            let arr = articleIds || []
-            arr.push(article.id)
-            localStorage.setItem('articleIds', JSON.stringify(arr))
-            this.$message.info('点赞成功')
-            window.location.reload()
+            let arr = JSON.parse(localStorage.getItem(`commentIds${this.$route.params.id}`)) || []
+            arr.push(item.id)
+            localStorage.setItem(`commentIds${this.$route.params.id}`, JSON.stringify(arr))
+            let params = { currentPage: this.currentPage, pageSize: 10, postId: this.$route.params.id}
+            if(this.radioValue=='hot'){
+              params.hot = true
+            }
+            this.$store.dispatch('message/getMessage', params)
+            this.$message.info('评论点赞成功')
           }else{
             this.$message.info(res.data.msg)
           }
@@ -302,6 +308,62 @@ export default {
         this.$message.info('您已操作，请不要贪心哦')
       }
     },
+    // 评论吐槽
+    onCommentDislike(item) {
+      if(!this.$refs.setup.isUser){
+        this.$el.querySelector('#share').scrollIntoView()
+        this.$message.info('请先设置用户信息')
+        return false
+      }
+      let commentIds = JSON.parse(localStorage.getItem(`commentIds${this.$route.params.id}`))
+      if(!commentIds||!commentIds.includes(item.id)){
+        this.$axios.patch('/messageDislikes',{_id: item._id, dislikes: item.dislikes+1}).then(res=>{
+          if(res.data.success){
+            let arr = JSON.parse(localStorage.getItem(`commentIds${this.$route.params.id}`)) || []
+            arr.push(item.id)
+            localStorage.setItem(`commentIds${this.$route.params.id}`, JSON.stringify(arr))
+            let params = { currentPage: this.currentPage, pageSize: 10, postId: this.$route.params.id}
+            if(this.radioValue=='hot'){
+              params.hot = true
+            }
+            this.$store.dispatch('message/getMessage', params)
+            this.$message.info('评论吐槽成功')
+          }else{
+            this.$message.info(res.data.msg)
+          }
+        })
+      }else{
+        this.$message.info('您已操作，请不要贪心哦')
+      }
+    },
+    // 文章点赞
+    onLike(article) {
+      // console.log(article)
+      if(!localStorage.getItem('user')){
+        this.$message.info('请先设置用户信息')
+        return false
+      }
+      let articleIds = JSON.parse(localStorage.getItem('articleIds'))
+      if(!articleIds||!articleIds.includes(article.id)){
+        let likes = article.likes+1
+        this.$axios.patch('/articleLikes',{_id: article._id, likes}).then(res=>{
+          if(res.data.success){
+            let arr = articleIds || []
+            arr.push(article.id)
+            localStorage.setItem('articleIds', JSON.stringify(arr))
+            this.$message.info('文章点赞成功')
+            // window.location.reload()
+            // article.likes+=1 // 错误操作修改vuex的值
+            this.$store.commit('article/UPDATE_LIKE')
+          }else{
+            this.$message.info(res.data.msg)
+          }
+        })
+      }else{
+        this.$message.info('您已操作，请不要贪心哦')
+      }
+    },
+    // 文章吐槽
     onDislike(article) {
       if(!localStorage.getItem('user')){
         this.$message.info('请先设置用户信息')
@@ -309,15 +371,16 @@ export default {
       }
       let articleIds = JSON.parse(localStorage.getItem('articleIds'))
       if(!articleIds||!articleIds.includes(article.id)){
-        let meta = {...article.meta}
-        meta.dislikes = meta.dislikes+1
-        this.$axios.patch('/articleDislikes',{_id: article._id, meta}).then(res=>{
+        let dislikes = article.dislikes+1
+        this.$axios.patch('/articleDislikes',{_id: article._id, dislikes}).then(res=>{
           if(res.data.success){
             let arr = articleIds || []
             arr.push(article.id)
             localStorage.setItem('articleIds', JSON.stringify(arr))
-            this.$message.info('吐槽成功')
-            window.location.reload()
+            this.$message.info('文章吐槽成功')
+            // window.location.reload()
+            // article.dislikes+=1 // 错误操作修改vuex的值
+            this.$store.commit('article/UPDATE_DISLIKE')
           }else{
             this.$message.info(res.data.msg)
           }
@@ -328,32 +391,6 @@ export default {
     },
     onShuang() {
       this.modalVisible = true
-    },
-    filterTags(tags) {
-      let articleTags = [
-        { value: '1', label: 'javascript' }, 
-        { value: '2', label: 'css&css3' }, 
-        { value: '3', label: 'html&html5' },
-        { value: '4', label: 'vue' },
-        { value: '5', label: 'canvas' },
-        { value: '6', label: 'express' },
-        { value: '7', label: 'koa2' }, 
-        { value: '8', label: 'node' },
-        { value: '9', label: '小程序' },
-        { value: '10', label: 'app' }
-      ]
-      let arr = []
-      for(let i of tags.split(',')){
-        console.log(i)
-        for(let j of articleTags){
-          if(j.value == i){
-            console.log(j)
-            arr.push(j.label)
-            break
-          }
-        }
-      }
-      return arr.join('，')
     }
   }
 }
