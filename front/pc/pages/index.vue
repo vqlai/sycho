@@ -8,9 +8,9 @@
       width: 100%;
       .slick-slide{
         text-align: center;
-        height: 160px;
-        line-height: 160px;
-        background: #364d79;
+        height: 260px;
+        line-height: 260px;
+        background-color: #2b9fff;
         overflow: hidden;
          h3 {
           color: #fff;
@@ -37,14 +37,13 @@
 <template>
   <section class="index">
     <client-only>
-      <a-carousel autoplay style="width: 860px;margin: 0 auto;">
-        <div><h3>welcome to sycho</h3></div>
-        <div><h3>精彩绝伦</h3></div>
-        <div><h3>无与伦比</h3></div>
-        <div><h3>闪爆你的eyes...</h3></div>
+      <a-carousel autoplay style="width: 100%;margin: 0 auto;">
+        <div><h3>一瞬三年五载</h3></div>
+        <div><h3>品粗茶 食淡饭</h3></div>
+        <div><h3>迷途知返 苦尽甘来</h3></div>
       </a-carousel>
     </client-only>
-    <a-divider dashed>热门文章</a-divider>
+    <!-- <a-divider dashed>热门文章</a-divider> -->
     <articleList :articleList="articleList" @onPagination="onPagination"></articleList>
   </section>
 </template>
@@ -69,7 +68,7 @@ export default {
   name: 'Index',
   head () {
     return {
-      title: 'sycho-首页',
+      title: '赛柯围 | Home',
       meta: [
         { hid: 'books custom title', name: 'books', content: 'books custom title description' }
       ]
@@ -94,7 +93,7 @@ export default {
   // },
 
   fetch ({ store, params }) {
-    return store.dispatch('article/getArticle', { currentPage: this.currentPage, pageSize: this.pageSize })
+    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 })
     // return Promise.all([
     //   store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 }),
     //   store.dispatch('getArticle', { currentPage: 1, pageSize: 10 })
@@ -108,8 +107,8 @@ export default {
 
   data () {
     return {
-      currentPage: 1,
-      pageSize: 10
+      // currentPage: 1,
+      // pageSize: 10
       // listData,
       // pagination: {
       //   onChange: (page) => {
@@ -148,11 +147,14 @@ export default {
   mounted: function () {
     this.$nextTick(()=>{
       // this.$message.info('welcome to sycho')
-      this.$notification.open({
-        message: 'halo gays',
-        description: 'welcome to the sycho',
-        // icon: <a-icon type="smile" style="color: #108ee9" />,
-      })
+      if(!sessionStorage.getItem('halo')){
+        this.$notification.open({
+          message: 'halo gays',
+          description: 'welcome to the sycho',
+          // icon: <a-icon type="smile" style="color: #108ee9" />,
+        })
+        sessionStorage.setItem('halo', 'gays')
+      }
       // console.log(this.aData)
       // console.log(this.$store)
       // 没写全路径无论测试环境还是正式环境都会走代理方式请求后台接口
@@ -169,7 +171,7 @@ export default {
     //   this.$router.push(`/article/${article.id}`)
     // },
     onPagination(page) {
-      this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: this.pageSize })
+      this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 10 })
     }
   }
 }
