@@ -27,7 +27,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^4.0.3",
     "md5": "^2.2.1",
-    "mongoose": "^5.2.22",
+    "mongoose": "^5.7.5",
     "mongoose-auto-increment": "^5.0.1",
     "mongoose-auto-increment-fix": "^5.0.2",
     "mongoose-paginate": "^5.0.3",
