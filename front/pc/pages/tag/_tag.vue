@@ -1,6 +1,6 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
-  .search{
+  .tag{
     .article{
       @{deep} .ant-list{
         .ant-spin-container{
@@ -11,7 +11,7 @@
   }
 </style>
 <template>
-  <div class="search container">
+  <div class="tag container">
     <articleList :articleList="articleList" @onPagination="onPagination"></articleList>
   </div>
 </template>
@@ -19,12 +19,12 @@
 <script>
   import articleList from '~/components/articleList'
   export default {
-    name: 'Search',
+    name: 'Tag',
     head(){
-      return { title: '搜索|Search' }
+      return { title: '搜索|Tag' }
     },
     fetch ({ store, params }) {
-      return store.dispatch('article/getArticle', { keyword: params.keywords, currentPage: 1, pageSize: 10 })
+      return store.dispatch('article/getArticle', { tagDesc: params.tag, currentPage: 1, pageSize: 10 })
     },
     components: {
       articleList
@@ -42,7 +42,7 @@
     },
     methods: {
       onPagination(page) {
-        this.$store.dispatch('article/getArticle', { keyword: this.$route.params.keywords, currentPage: page, pageSize: 10 })
+        this.$store.dispatch('article/getArticle', { tagDesc: this.$route.params.tag, currentPage: page, pageSize: 10 })
       }
     }
   }

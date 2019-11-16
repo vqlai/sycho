@@ -1,23 +1,65 @@
 <style lang="less" scoped>
   .link{
-    .ant-tag{
-      font-size: 14px;
-      border: 0;
-      background-color: #fff;
+    .content{
+      min-height: 480px;
+      .link-item{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80px;
+        border-radius: 6px;
+        background-color: #fff;
+        padding: 10px;
+        overflow: hidden;
+        box-sizing: border-box;
+        border: 1px solid #e4ecf3;
+        box-shadow: 1px 2px 3px #f2f6f8;
+        transition: all .3s ease;
+        &:hover{
+          transform: translateY(-6px);
+          -webkit-transform: translateY(-6px);
+        }
+        .logo{
+          width:40px;
+          height:40px;
+          border-radius: 50%;
+          margin-right: 10px;
+          vertical-align: middle;
+        }
+        .title{
+          font-size: 14px;
+          color: #1890ff;
+        }
+        .desc{
+          font-size: 12px;
+          color: #999;
+        }
+      }
     }
   }
 </style>
 <template>
   <div class="link container">
-    <!-- <ul>
-      <li v-for="(item,index) in link.list" :key="index">name:{{ item.name }},url:{{ item.url }}</li>
-    </ul> -->
-    <!-- <nuxt-link v-for="(item,index) in link.list" :key="index" :to="'https://'+item.url" tag="a" class="item">{{ item.name }}</nuxt-link> -->
-    <div v-for="(item,index) in link" :key="index">
-      <a-divider orientation="left">{{item[0].desc}}</a-divider>
-      <a-tag v-for="(i, j) in item" :key="j">
-        <a :href="'https://'+i.url" target="_blank">{{ i.name }}</a>
-      </a-tag>
+    <div class="content">
+      <div v-if="Object.keys(link).length">
+        <div v-for="(item,index) in link" :key="index">
+          <a-divider orientation="left">{{item[0].typeText}}</a-divider>
+          <a-row type="flex" justify="start" :gutter="10">
+            <a-col :xs="12" :sm="12" :md="12" :lg="8" :xl="6" v-for="(i, j) in item" :key="j">
+              <a class="link-item" style="margin-bottom: 10px;text-decoration:none;" :href="i.url" target="_blank">
+                <div v-if="i.logo"><img :src="i.logo" alt="" class="logo"></div>
+                <a-avatar shape="circle" size="large" :style="{backgroundColor: i.color, fontSize: '18px',verticalAlign: 'middle',marginRight: '10px'}" slot="avatar" v-else>
+                  {{i.name.slice(0,1)}}</a-avatar>
+                <div style="flex:1;">
+                  <div class="title">{{i.name}}</div>
+                  <div class="desc">{{i.desc}}</div>
+                </div>
+              </a>
+            </a-col>
+          </a-row>
+        </div>
+      </div>
+      <a-empty v-else style="padding-top: 30%;"/>
     </div>
   </div>
 </template>
@@ -26,24 +68,17 @@
   export default {
     name: 'Link',
     head(){
-      return { title: '导航|Link' }
+      return { title: '寻技斋 | Link' }
     },
     // fetch用来获取SSR数据，其他事件交互数据直接调用axios发起请求即可
-    fetch ({ store, params }) {
-      return store.dispatch('link/getLink', { currentPage: 1, pageSize: 100 })
+    async fetch ({ store, params }) {
+      await store.dispatch('link/getLink', { currentPage: 1, pageSize: 100 })
     },
-    // asyncData ({app}) {
-    //   return app.$axios.$get('https://app.sycho.cn/api/getLink?currentPage=1&pageSize=10')
-    //   .then((res) => {
-    //     console.log(res)
-    //     // callback(null, { title: res.data.title })
-    //     return { resData: res.data }
-    //   })
-    //   .catch((e) => {
-    //     // error({ statusCode: 404, message: 'Post not found' })
-    //     console.log(e)
-    //   })
-    // },
+    data() {
+      return {
+        defaultPic: "this.src='/images/avator.jpg'"
+      }
+    },
     computed: {
       link() {
         let obj = {}
@@ -57,8 +92,11 @@
         // return this.$store.state.link.link.list
       },
     },
-    mounted: function () {
-      console.log(this.resData)
+    mounted: function () {},
+    methods: {
+      onImgError(e) {
+        console.log(e)
+      }
     }
   }
 </script>
