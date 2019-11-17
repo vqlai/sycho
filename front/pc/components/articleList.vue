@@ -7,7 +7,7 @@
     }
     @{deep} .ant-list{
       .ant-spin-container{
-        min-height: 530px;
+        min-height: 580px;
         .ant-list-empty-text{
           padding: 30% 0 0;
         }
@@ -54,6 +54,9 @@
   @media screen and (max-width: 576px){
     .article{
       @{deep} .ant-list{
+        .ant-spin-container{
+          min-height: auto;
+        }
         .ant-list-item{
           padding: 6px;
           .ant-list-item-extra-wrap{
@@ -71,6 +74,9 @@
   @media (min-width: 577px) and (max-width: 768px){
     .article{
       @{deep} .ant-list{
+        .ant-spin-container{
+          min-height: 680px;
+        }
         .ant-list-item{
           padding: 6px;
           .ant-list-item-extra-wrap{
@@ -172,7 +178,7 @@
       pagination() {
         return {
           onChange: (page) => {
-            console.log(page)
+            // console.log(page)
             // this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 1 })
             this.$emit('onPagination',page)
           },
@@ -259,7 +265,7 @@
         
       },
       onImgError(e) {
-        console.log(e)
+        // console.log(e)
         let img = event.srcElement;
         img.src = this.defaultImg;
         img.onerror = null; //防止闪图

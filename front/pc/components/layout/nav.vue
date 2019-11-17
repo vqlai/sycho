@@ -56,7 +56,7 @@
     position: relative;
     text-align: center;
     .ant-menu{
-      opacity: .8;
+      // opacity: .8;
     }
   }
 </style>

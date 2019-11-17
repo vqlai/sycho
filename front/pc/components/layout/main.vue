@@ -1,4 +1,5 @@
 <style lang="less" scoped>
+@deep: ~'>>>'; 
 .container{
   width: 100%;
   height: 100%;
@@ -20,7 +21,7 @@
   }
   .content{
     display: flex;
-    width: 72%;
+    width: 68%;
     // min-width: 1200px;
     margin: 0 auto;
     padding: 20px 0 0;
@@ -58,6 +59,17 @@
       width: 100%;
       .left-panel{
         padding: 4px;
+        @{deep} .banner{
+          height: 180px;
+        }
+        @{deep} .index{
+          .ant-carousel{
+            .slick-slide{
+              height: 180px;
+              line-height: 180px;
+            }
+          }
+        }
       }
       .right-panel{
         display: none;
@@ -71,6 +83,17 @@
       width: 98%;
       .left-panel{
         padding: 6px;
+        @{deep} .banner{
+          height: 200px;
+        }
+        @{deep} .index{
+          .ant-carousel{
+            .slick-slide{
+              height: 200px;
+              line-height: 200px;
+            }
+          }
+        }
       }
       .right-panel{
         margin-left: 10px;
@@ -105,7 +128,7 @@
 @media (min-width: 1201px) and (max-width: 1500px){
   .container{
     .content{
-      width: 90%;
+      width: 80%;
       .right-panel{
         width: 300px;
       }
@@ -165,9 +188,9 @@
     computed: {
     },
     mounted() {
-      console.clear()
+      // console.clear()
       // console.log('%cTalk is cheap. Show me the code %c695850246@qq.com', 'color:#666;font-size:3em;', 'color:#666;font-size:13px;')
-      console.log('%c让这风吹，哀伤通通带走，管风里是谁，老铁，你呢？%ccontact me: 695850246@qq.com', 'color:#1890ff;font-size:26px;', 'color:#666;font-size:14px;')
+      console.log('%cOh I, I, I see you, see you, see you every time %ccontact me: 695850246@qq.com', 'color:#1890ff;font-size:26px;', 'color:#666;font-size:14px;')
     },
     methods: {
       showSearch() {

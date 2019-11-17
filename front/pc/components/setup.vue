@@ -49,7 +49,7 @@
       <a-button type="link" size="small" icon="undo" v-if="isReply" @click="onClickUndo"></a-button>
     </a-row>
     <a-row type="flex">
-      <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" alt="Han Solo" />
+      <a-avatar src="/images/logo1.png" alt="sycho" style="border-radius: 0;margin-right: 10px;"/>
       <div style="flex: 1;">
         <div v-if="isReply">
           <a-form-item style="padding: 0 0 6px;margin: 0;">
@@ -118,12 +118,12 @@
     // 
     computed: {
       pText: function () {
-        return `愿你的${this.pageType=='MESSAGE'?'留言':'评论'}与众不同...`
+        return `请输入你的${this.pageType=='MESSAGE'?'留言':'评论'}...`
       }
     },
     mounted: function () {
       this.$nextTick(()=>{
-        console.log(this.pageType)
+        // console.log(this.pageType)
         let userStr = localStorage.getItem('user')
         if(userStr){
           this.isUser = true
@@ -166,7 +166,7 @@
         this.$emit('onClickUndo')
       },
       handleSubmit() {
-        console.log(this.user)
+        // console.log(this.user)
         if(!this.user.name){ return this.$message.info('请输入昵称哟') }
         if(!this.user.email){ return this.$message.info('请输入邮箱哟') }
         if (!this.regexs.email.test(this.user.email)) { return this.$message.info('请正确输入邮箱哟') }

@@ -48,12 +48,13 @@
     }
     .ant-carousel{
       width: 100%;
-      min-height: 80px;
+      // min-height: 80px;
+      height: auto;
       // line-height: 100px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       color: #fff;
-      border-radius: 2px;
+      // border-radius: 2px;
       // background-color: #1890ff;
       // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       img{
@@ -83,10 +84,13 @@
       <a-carousel autoplay>
         <!-- 注意nuxt图片只能放在static/images下面，其他新建文件夹或assents文件夹下都无法引用图片 -->
         <!-- <div><a style="display: block;" href="https://s.click.taobao.com/wczqYxv" target="_blank"><img src="/images/aliyun-300-100.jpg" alt=""></a></div> -->
-        <div><a style="display: block;" href="https://s.click.taobao.com/HSgoYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB1vONZjeT2gK0jSZFvXXXnFXXa-440-180.jpg" alt=""></a></div>
+        <!-- <div><a style="display: block;" href="https://s.click.taobao.com/HSgoYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB1vONZjeT2gK0jSZFvXXXnFXXa-440-180.jpg" alt=""></a></div> -->
         <div><a style="display: block;" href="https://s.click.taobao.com/0XjbYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB1EEeXLY2pK1RjSZFsXXaNlXXa-440-180.jpg" alt=""></a></div>
+        <div><a style="display: block;" href="https://s.click.taobao.com/1HgZZvv" target="_blank" rel="noopener noreferrer"><img src="https://gtms02.alicdn.com/tps/i2/TB1t5YMIpXXXXXhXXXXQO4D5VXX-440-180.jpg" alt=""></a></div>
         <div><a style="display: block;" href="https://s.click.taobao.com/u8XoYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tps/TB1ijqSPXXXXXX8XVXXXXXXXXXX-440-180.jpg" alt=""></a></div>
-        <div><a style="display: block;" href="https://s.click.taobao.com/mZRnYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB10iuki5_1gK0jSZFqXXcpaXXa-440-180.jpg" alt=""></a></div>
+        <div><a style="display: block;" href="https://s.click.taobao.com/vnxZZvv" target="_blank" rel="noopener noreferrer"><img src="https://gw.alicdn.com/tfs/TB1QB.ag6ihSKJjy0FiXXcuiFXa-440-180.jpg" alt=""></a></div>
+        <div><a style="display: block;" href="https://s.click.taobao.com/EGZZZvv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/imgextra/i4/2549841410/O1CN010KnSlk1MHozsa3pKq_!!2549841410.png" alt=""></a></div>
+        <!-- <div><a style="display: block;" href="https://s.click.taobao.com/mZRnYxv" target="_blank" rel="noopener noreferrer"><img src="https://img.alicdn.com/tfs/TB10iuki5_1gK0jSZFqXXcpaXXa-440-180.jpg" alt=""></a></div> -->
       </a-carousel>
     </client-only>
     <a-calendar :fullscreen="false" class="ant-calendar"/>
@@ -140,7 +144,7 @@
       },
       getHotArticle() {
         this.$axios.$get("/article?hot=true&currentPage=1&pageSize=10").then(res=>{
-          console.log(res)
+          // console.log(res)
           if(res.success){
             this.articleHotList = res.data.list
           }

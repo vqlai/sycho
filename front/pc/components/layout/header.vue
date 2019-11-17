@@ -24,7 +24,7 @@
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    opacity: .8;
+    // opacity: .8;
     .v-logo{
       padding: 10px 0;
       width: 160px;

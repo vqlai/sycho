@@ -18,7 +18,7 @@
     methods: {
       testFn(){
         this.$axios.$get("/api/getLink?currentPage=1&pageSize=10").then(res => {
-          console.log(res)
+          // console.log(res)
           this.$message.info(res.msg);
         })
       }
