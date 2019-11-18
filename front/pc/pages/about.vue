@@ -41,7 +41,7 @@
       position: relative;
       > .iframe {
         width: 100%;
-        height: 300px;
+        height: 380px;
         border: 0;
       }
     }
@@ -81,11 +81,11 @@
       </ul>
     </a-row>
     <a-divider dashed>个人简介</a-divider>
-    <a-timeline mode="alternate" pending="搬砖中...">
-      <a-timeline-item style="padding: 0 6px 20px;"><a-icon type="environment" /> 目前就职于深圳稳健医疗&全棉时代</a-timeline-item>
-      <a-timeline-item color="green" style="padding: 0 6px 20px;"><a-icon type="heart" /> 跑步健身，足球，乒乓球，烹饪，编码，音乐电影...</a-timeline-item>
-      <a-timeline-item style="padding: 0 6px 20px;"><a-icon type="tags" /> vuejs全家桶，es6，pixijs，wepy，小程序，hybird app...</a-timeline-item>
-      <a-timeline-item color="green" style="padding: 0 6px 20px;"><a-icon type="fire" /> 吾生有涯愿无尽，心期填海力移山</a-timeline-item>
+    <a-timeline mode="alternate" pending="努力搬砖中...">
+      <a-timeline-item style="padding: 0 6px 20px;"><a-icon type="environment" /> 现就职于稳健医疗&全棉时代</a-timeline-item>
+      <a-timeline-item color="green" style="padding: 0 6px 20px;"><a-icon type="heart" /> 跑步健身，足球，乒乓球，烹饪，编程，音乐电影...</a-timeline-item>
+      <a-timeline-item style="padding: 0 6px 20px;"><a-icon type="tags" /> css3，es6，vuejs全家桶，phaserjs，pixijs，wepy，小程序，hybird app...</a-timeline-item>
+      <a-timeline-item color="green" style="padding: 0 6px 20px;"><a-icon type="fire" /> 豪情壮志心飞翔 有梦人在远方</a-timeline-item>
       <!-- <a-timeline-item>
         <a-icon slot="dot" type="clock-circle-o" style="font-size: 16px;" />
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.

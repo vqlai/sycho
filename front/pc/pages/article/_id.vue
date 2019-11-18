@@ -201,7 +201,7 @@ export default {
   },
   mounted: function () {
     this.$nextTick(()=>{
-      console.log(this.$route.params.id)
+      // console.log(this.$route.params.id)
       // console.log(this.article)
       // let userStr = localStorage.getItem('user')
       // if(userStr){
@@ -231,7 +231,7 @@ export default {
       obj.postId = this.$route.params.id
       obj.postType = 'article'
       this.$axios.post('/message',{...this.$refs.setup.user, ...obj}).then(res=>{
-        console.log(res)
+        // console.log(res)
         if(res.data.success){
           this.$refs.setup.isUser = true
           this.isReply = false
