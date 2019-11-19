@@ -10,10 +10,16 @@
         text-align: center;
         height: 260px;
         line-height: 260px;
-        background-color: #2b9fff;
+        // background-color: #2b9fff;
+        // background: url('/images/index.jpg') no-repeat;
+        // background-size: contain;
+        // background: 
+        // background-image: radial-gradient(red, yellow, green);
+        background-image: linear-gradient(#31f5fc,#3185ed);
         overflow: hidden;
          h3 {
           color: #fff;
+          letter-spacing: 2px;
         }
       }
     }
@@ -40,7 +46,7 @@
       <a-carousel autoplay style="width: 100%;margin: 0 auto;">
         <div><h3>一瞬三年五载</h3></div>
         <div><h3>品粗茶 食淡饭</h3></div>
-        <div><h3>迷途知返 苦尽甘来</h3></div>
+        <div><h3>曲终人散 苦尽甘来</h3></div>
       </a-carousel>
     </client-only>
     <!-- <a-divider dashed>热门文章</a-divider> -->
@@ -127,7 +133,7 @@ export default {
   },
   computed: {
     articleList() {
-      console.log(this.$store.state.article.articleList)
+      // console.log(this.$store.state.article.articleList)
       return this.$store.state.article.articleList
     },
     // pagination() {
@@ -147,14 +153,14 @@ export default {
   mounted: function () {
     this.$nextTick(()=>{
       // this.$message.info('welcome to sycho')
-      if(!sessionStorage.getItem('halo')){
-        this.$notification.open({
-          message: 'halo gays',
-          description: 'welcome to the sycho',
-          // icon: <a-icon type="smile" style="color: #108ee9" />,
-        })
-        sessionStorage.setItem('halo', 'gays')
-      }
+      // if(!sessionStorage.getItem('halo')){
+      //   this.$notification.open({
+      //     message: 'halo gays',
+      //     description: 'welcome to the sycho',
+      //     // icon: <a-icon type="smile" style="color: #108ee9" />,
+      //   })
+      //   sessionStorage.setItem('halo', 'gays')
+      // }
       // console.log(this.aData)
       // console.log(this.$store)
       // 没写全路径无论测试环境还是正式环境都会走代理方式请求后台接口
