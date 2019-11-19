@@ -1,5 +1,48 @@
 <style lang="less" scoped>
   .link{
+    .banner {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 260px;
+      border: 0;
+      background: url('/images/link.jpg') no-repeat;
+      background-size: cover;
+      background-position: center center;
+      text-align: center;
+      transition: all 1s;
+      &:hover {
+        transform: rotate(1deg) scale(0.95);
+        transition: all 1s;
+      }
+      // img {
+      //   // width: 100%;
+      //   // width: 100%;
+      //   height: 100%;
+      //   // margin-top: -5em;
+      //   transition: all 1s;
+      //   &:hover {
+      //     // margin-top: -6em;
+      //     transform: rotate(-2deg) scale(1.1);
+      //     transition: all 1s;
+      //   }
+      // }
+      span {
+        position: absolute;
+        right: 5%;
+        bottom: 10%;
+        display: block;
+        font-weight: 700;
+        opacity: .5;
+        cursor: progress;
+        padding: 0 .618em;
+        padding-left: 3rem;
+        height: 2em;
+        line-height: 2em;
+        color: #555;
+        background: linear-gradient(to left, hsla(0, 0%, 100%, .8), hsla(0, 0%, 77%, 0.4), transparent);
+      }
+    }
     .content{
       min-height: 480px;
       .link-item{
@@ -40,6 +83,10 @@
 </style>
 <template>
   <div class="link container">
+    <div class="banner">
+      <!-- <img src="/images/link.jpg"> -->
+      <span>日子匆匆，独留欢欣。</span>
+    </div>
     <div class="content">
       <div v-if="Object.keys(link).length">
         <div v-for="(item,index) in link" :key="index">
@@ -95,7 +142,7 @@
     mounted: function () {},
     methods: {
       onImgError(e) {
-        console.log(e)
+        // console.log(e)
       }
     }
   }
