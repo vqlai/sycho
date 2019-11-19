@@ -1,33 +1,31 @@
 <style lang="less" scoped>
   @deep: ~'>>>';
   .life{
-    .ant-carousel @{deep} .slick-slide {
-      text-align: center;
-      height: 160px;
-      line-height: 160px;
-      background: #364d79;
-      overflow: hidden;
-    }
-    .ant-carousel @{deep} .slick-slide h3 {
-      color: #fff;
-    }
-    .life-banner {
+    .banner {
       position: relative;
       overflow: hidden;
       width: 100%;
-      height: auto;
-      max-height: 260px;
+      height: 260px;
       border: 0;
-      img {
-        width: 100%;
-        // margin-top: -5em;
+      background: url('/images/life.jpg') no-repeat;
+      background-size: cover;
+      background-position: center center;
+      text-align: center;
+      transition: all 1s;
+      &:hover {
+        transform: rotate(-1deg) scale(0.95);
         transition: all 1s;
-        &:hover {
-          // margin-top: -6em;
-          transform: rotate(2deg) scale(1.1);
-          transition: all 1s;
-        }
       }
+      // img {
+      //   width: 100%;
+      //   // margin-top: -5em;
+      //   transition: all 1s;
+      //   &:hover {
+      //     // margin-top: -6em;
+      //     transform: rotate(2deg) scale(1.1);
+      //     transition: all 1s;
+      //   }
+      // }
       span {
         position: absolute;
         right: 5%;
@@ -54,8 +52,8 @@
       <div><h3>3</h3></div>
       <div><h3>4</h3></div>
     </a-carousel> -->
-    <div class="life-banner">
-      <img src="/images/life.jpg">
+    <div class="banner">
+      <!-- <img src="/images/life.jpg"> -->
       <span>那刹那，令我倒颠。</span>
       <!-- <span>咸鱼白菜，也好好味。</span> -->
     </div>
