@@ -1,25 +1,20 @@
 <style lang="less" scoped>
 @deep: ~'>>>';
   .message{
-    .message-banner {
+    .banner {
       position: relative;
       overflow: hidden;
       width: 100%;
-      height: auto;
-      max-height: 260px;
+      height: 260px;
       border: 0;
-      img {
-        width: 100%;
-        // margin-top: -5em;
+      background: url('/images/message.jpg') no-repeat;
+      background-size: cover;
+      background-position: center center;
+      text-align: center;
+      transition: all 1s;
+      &:hover {
+        transform: rotate(-1deg) scale(0.95);
         transition: all 1s;
-        // @include css3-prefix(transition, all 1s);
-
-        &:hover {
-          transform: rotate(2deg) scale(1.1);
-          transition: all 1s;
-          // @include css3-prefix(transform, rotate(2deg) scale(1.1));
-          // @include css3-prefix(transition, all 1s);
-        }
       }
 
       span {
@@ -56,9 +51,9 @@
 </style>
 <template>
   <div class="message container">
-    <div class="message-banner">
-      <img src="/images/message.jpg">
-      <span>日子匆匆，独留欢欣。</span>
+    <div class="banner">
+      <!-- <img src="/images/message.jpg"> -->
+      <span>为了找到你，从未放过任何蛛丝马迹。</span>
     </div>
     <setup ref="setup" :pageType="'MESSAGE'" :isReply="isReply" :replyObj="replyObj" @onSetupSubmit="onSetupSubmit" @onClickUndo="onClickUndo"></setup>
     <a-row type="flex" justify="space-between" align="middle">
@@ -76,7 +71,7 @@
     </a-row>
     <a-divider style="margin: 10px 0;">留言区</a-divider>
     <div v-if ="messageList.list.length">
-      <a-row style="min-height: 260px;">
+      <a-row style="min-height: 340px;" >
         <a-comment v-for="(item, index) in messageList.list" :key="index">
           <template slot="actions">
             <span class="os" v-html="osParse(item.agent)" v-if="item.agent"></span>
@@ -101,10 +96,12 @@
             </span>
           </template>
           <a slot="author">{{item.name}}</a>
+          <!-- https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png -->
           <a-avatar
             v-if="item.avator"
             slot="avatar"
-            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            src="/images/logo1.png"
+            style="border-radius: 0;margin-right: 10px;"
             :alt="item.name"
           />
           <a-avatar shape="circle" size="large" :style="{backgroundColor: item.color, fontSize: '20px',verticalAlign: 'middle'}" slot="avatar">{{item.name.slice(0,1)}}</a-avatar>
@@ -179,7 +176,7 @@
     mounted(){
       // console.info('user', localStorage.getItem('user'))
       // 用户已经保存在storage则直接获取用户信息
-      console.info('getMessage', this.$store.state.message.messageList)
+      // console.info('getMessage', this.$store.state.message.messageList)
       let userStr = localStorage.getItem('user')
       if(userStr){
         this.isUser = true
