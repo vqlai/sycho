@@ -19,6 +19,12 @@ export const mutations = {
   },
   SET_ARTICLE(state, data) {
     state.article = data
+  },
+  UPDATE_LIKE(state) {
+    state.article.likes += 1
+  },
+  UPDATE_DISLIKE(state) {
+    state.article.dislikes += 1
   }
 }
 
