@@ -61,7 +61,7 @@
       <p>Js Stack Developer</p>
       <ul class="contact">
         <li> <a href="https://github.com/vqlai" target="_blank" rel="noopener noreferrer"> <a-icon type="github"/> </a> </li>
-        <li> <a href="https://weibo.com/u/6251100324/home" target="_blank" rel="noopener noreferrer"> <a-icon type="weibo"/> </a> </li>
+        <!-- <li> <a href="https://weibo.com/u/6251100324/home" target="_blank" rel="noopener noreferrer"> <a-icon type="weibo"/> </a> </li> -->
         <li>
           <a-popover trigger="hover" placement="bottom">
             <template slot="content">
@@ -95,7 +95,7 @@
     <a-progress stroke-linecap="square" :percent="75" type="circle" />
     <a-progress stroke-linecap="square" :percent="75" type="dashboard" /> -->
     <div class="map">
-      <iframe class="iframe" src="/partials/map.html"></iframe>
+      <iframe class="iframe" src="/others/map.html"></iframe>
     </div>
   </div>
 </template>
