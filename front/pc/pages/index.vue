@@ -13,7 +13,6 @@
         // background-color: #2b9fff;
         // background: url('/images/index.jpg') no-repeat;
         // background-size: contain;
-        // background: 
         // background-image: radial-gradient(red, yellow, green);
         background-image: linear-gradient(#31f5fc,#3185ed);
         overflow: hidden;
@@ -23,20 +22,6 @@
         }
       }
     }
-    // @{deep} .ant-list{
-    //   .ant-list-item-extra-wrap{
-    //     flex-direction: row-reverse;
-    //     .ant-list-item-extra{
-    //       margin: 0 50px 0 0;
-    //     }
-    //     .ant-list-item-main{
-    //       display: flex;
-    //       flex-direction: column;
-    //       justify-content: center;
-    //       align-items: flex-start;
-    //     }
-    //   }
-    // }
   }
 </style>
 
