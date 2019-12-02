@@ -43,10 +43,7 @@ module.exports = {
       '/api': {
         // target: 'http://localhost:3002/api/', // 代理本地接口接口
         target: 'http://127.0.0.1:1008/', // 代理本地接口接口
-        // target: 'https://app.sycho.cn/api/', // 代理线上wap接口
-        // target: 'https://m-test.purcotton.com/', // 代理测试wap接口
-        // target: 'https://app.purcotton.com/',  // 代理线上app端接口
-        // target: 'https://app-test.purcotton.com/', // 代理测试app接口
+        // target: 'https://www.sycho.cn/api/', // 代理线上接口
         ws: true,
         changeOrigin: true,
         pathRewrite: {
