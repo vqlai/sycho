@@ -38,7 +38,7 @@ service.interceptors.request.use(
   },
   error => {
     // Do something with request error
-    console.log(error) // for debug
+    // console.log(error) // for debug
     Promise.reject(error)
   }
 )
@@ -89,7 +89,7 @@ service.interceptors.response.use(
   },
   error => {
     // 处理服务器抛出的异常,未知的异常
-    console.log('err' + error) // for debug
+    // console.log('err' + error) // for debug
     // Message({ message: error, type: 'error', duration: 3 * 1000 })
     Message({
       message: error.message,
