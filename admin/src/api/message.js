@@ -2,7 +2,6 @@ import request from '@/api/request'
 
 // 获取留言列表
 export function getMessage(params) {
-  console.log(params)
   return request({
     url: '/message',
     method: 'get',
