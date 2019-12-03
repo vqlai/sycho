@@ -1,51 +1,43 @@
 // 全局参数配置
 let config = {
 	admin: [{
-		username: 'admin',
-		password: 'v4371639Q',
+		username: 'test1',
+		password: '4371639',
 		role: '3',
 		desc: '超级管理员',
 		avatar: 'upload/avatar/default.png'
 	},{
-		username: 'sycho',
-		password: 'v123456Q',
+		username: 'test2',
+		password: '123456',
 		role: '2',
 		desc: '管理员',
 		avatar: 'upload/avatar/default.png'
 	},{
-		username: 'vqlai',
-		password: 'v123456Q',
+		username: 'test3',
+		password: '123456',
 		role: '1',
 		desc: '普通用户',
 		avatar: 'upload/avatar/default.png'
 	}],
 	jwt: {
-		secret: 'vq_lai&sycho_lai', //撒盐：加密的时候混淆
+		secret: '123456', //撒盐：加密的时候混淆
 		expiresIn: '10800s' //以秒为单位，token到期时间 3600s
 	},
 	// 本地使用（连接本地mongodb）
 	// mongodb: {
 	// 	host: '127.0.0.1',
-	// 	database: 'sycho',
+	// 	database: 'test',
 	// 	port: 27017,
 	// 	user: '',
 	// 	password: ''
 	// },
-	// 本地使用（连接centos远程mongodb）
-	mongodb: {
-		host: '193.112.77.76',  // 本地连接远程centos的mongodb用外网ip-193.112.77.76
-		database: 'sycho',
-		port: 26789,
-		user: 'admin',
-		password: 'c4371639S'
-	},
 	// 线上使用
 	// mongodb: {
 	// 	host: '127.0.0.1', // 线上连接centos的mongodb用127.0.0.1/172.16.0.11   本地用127.0.0.1
-	// 	database: 'sycho',
+	// 	database: 'test',
 	// 	port: 26789,
-	// 	user: 'admin',
-	// 	password: 'c4371639S'
+	// 	user: 'test',
+	// 	password: '123456'
 	// },
 	app: {
 		ip: process.env.ip,
