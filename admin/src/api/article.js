@@ -14,7 +14,6 @@ export async function getArticleById(params) {
 
 // 获取文章列表
 export async function getArticle(params) {
-  // console.log(params)
   return await request({
     url: '/article',
     method: 'get',
