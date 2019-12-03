@@ -16,17 +16,23 @@ const data = {
       value: '4',
       label: '前端'
     }, {
+      value: '5',
+      label: '设计'
+    }, {
       value: '6',
+      label: '项目'
+    }, {
+      value: '7',
       label: '小程序'
     },{
-      value: '7',
+      value: '8',
       label: '后端'
     }, {
-      value: '8',
+      value: '9',
       label: '友链'
     }, {
-      value: '9',
-      label: '个人项目'
+      value: '10',
+      label: '社区'
     }
   ],
   userTypes: [
@@ -159,8 +165,26 @@ const data = {
     }, {
       value: '33',
       label: '游戏'
-    },{
+    }, {
       value: '34',
+      label: '足球'
+    }, {
+      value: '35',
+      label: '感悟'
+    }, {
+      value: '36',
+      label: '爱情'
+    }, {
+      value: '37',
+      label: '哲学'
+    }, {
+      value: '38',
+      label: '社交'
+    }, {
+      value: '39',
+      label: '心得体会'
+    }, {
+      value: '40',
       label: '吃喝玩乐'
     }
   ]
