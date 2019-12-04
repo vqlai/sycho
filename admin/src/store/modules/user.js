@@ -39,11 +39,9 @@ const actions = {
         // commit('SET_TOKEN', data.token)
         // setToken(data.token)
         // resolve()
-        // console.log(res)
         if (res.success) {
           setToken(res.data.token) // 把token存在cookie
           commit('SET_TOKEN', res.data.token)
-          // console.log(res.data.token)
         }
         resolve(res)
       }).catch(error => {
