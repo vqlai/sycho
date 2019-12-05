@@ -154,13 +154,13 @@
     },
     methods: {
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`)
+        // console.log(`每页 ${val} 条`)
       },
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`)
+        // console.log(`当前页: ${val}`)
       },
       handleClick(row) {
-        console.log(row)
+        // console.log(row)
       },
       handleSearch(){},
       handleAdd(){
@@ -185,7 +185,6 @@
           client: navigator.userAgent
         }
         this.$store.dispatch('AddComment', params).then(res => {
-          console.log(res)
           if(res.success){
             // this._getLinks({ currentPage: 1, pageSize: this.pageSize })
             this.dialogVisible = false
