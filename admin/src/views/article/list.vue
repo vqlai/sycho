@@ -280,7 +280,6 @@
         this.$store.dispatch('article/getArticle', params).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
-            console.log(this.tableData)
             this.total = res.data.pagination.total
             this.pageSize = res.data.pagination.pageSize
             this.currentPage = res.data.pagination.currentPage
@@ -314,11 +313,9 @@
         })
       },
       handleEdit(row) {
-        console.log(row)
         this.$router.push({ path: `/article/edit/${row._id}` })
       },
       handleDelete(row) {
-        console.log(row)
         this.$confirm('此操作将删除该行, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
