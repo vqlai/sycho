@@ -19,7 +19,7 @@
             </router-link>
           </li>
           <li class="link-type">
-            <a href="https://www.taobao.com/">随便看看</a>
+            <a href="https://www.sycho.cn/">随便看看</a>
           </li>
           <li><a href="#" @click.prevent="dialogVisible=true">点我看图</a></li>
         </ul>
@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       errGif: errGif + '?' + +new Date(),
-      ewizardClap: 'https://wpimg.wallstcn.com/007ef517-bafd-4066-aae4-6883632d9646',
+      ewizardClap: require('@/assets/imgs/logo.png'),
       dialogVisible: false
     }
   },
