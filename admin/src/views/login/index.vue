@@ -98,7 +98,6 @@ export default {
           this.$store.dispatch('user/login', this.loginForm).then(data => {
             // debugger
             if(data.success){
-              console.log(data)
               this.$router.push({ path: this.redirect || '/' })
             }else{
               this.$message.error(data.msg)
@@ -109,7 +108,6 @@ export default {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
