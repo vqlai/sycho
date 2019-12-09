@@ -176,7 +176,6 @@
     data(){
       let linkTypes = data.linkTypes
       let validateURL = (rule, value, callback) => {
-        console.log(validURL(value))
         if(value === ''){
           callback(new Error('请输入URL'))
         }else if (!validURL(value)) {
@@ -240,7 +239,6 @@
         this.$store.dispatch('link/getLink', { currentPage: this.currentPage, pageSize: this.pageSize, keyword: this.keyword, type: this.type }).then(res => {
           if(res.success){
             this.tableData = [...res.data.list]
-            console.log(this.tableData)
             this.total = res.data.pagination.total
             this.pageSize = res.data.pagination.pageSize
             this.currentPage = res.data.pagination.currentPage
