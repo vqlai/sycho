@@ -199,7 +199,6 @@ import { checkEmail, validURL } from '@/assets/js/validate.js'
     name: 'message',
     data(){
       let validateEmail = (rule, value, callback) => {
-        console.log(checkEmail(value))
         if(value === ''){
           callback(new Error('请输入邮箱'))
         }else if (!checkEmail(value)) {
@@ -209,7 +208,6 @@ import { checkEmail, validURL } from '@/assets/js/validate.js'
         }
       }
       let validateURL = (rule, value, callback) => {
-        console.log(validURL(value))
         if(value === ''){
           callback(new Error('请输入URL'))
         }else if (!validURL(value)) {
@@ -351,7 +349,6 @@ import { checkEmail, validURL } from '@/assets/js/validate.js'
       // 修改状态
       handleState(row, code){
         this.$store.dispatch('message/patchMessage', { _id: row._id, state: code, postId: row.postId }).then(res => {
-          console.log(res)
           if(res.success){
             this.$message({
               message: res.msg,
@@ -368,7 +365,6 @@ import { checkEmail, validURL } from '@/assets/js/validate.js'
       },
       // 删除留言
       handleDelete(row){
-        console.log(row)
         this.$confirm('此操作将删除该行, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
