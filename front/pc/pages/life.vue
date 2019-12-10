@@ -18,10 +18,8 @@
       }
       // img {
       //   width: 100%;
-      //   // margin-top: -5em;
       //   transition: all 1s;
       //   &:hover {
-      //     // margin-top: -6em;
       //     transform: rotate(2deg) scale(1.1);
       //     transition: all 1s;
       //   }
