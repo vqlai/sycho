@@ -401,7 +401,7 @@
         this._getUser()
       },
       handleClick(row) {
-        console.log(row)
+        // console.log(row)
       },
       // handleSearch(){
       //   this._getUser({ currentPage: 1, pageSize: this.pageSize, queryName: this.queryName, queryRole: this.queryRole })
@@ -435,7 +435,6 @@
           this.$message({ message: `文件${file.name}太大，不能超过 200kb`, type: 'warning' })
           return false
         }
-        console.log(file)
         // // 读取文件对象
         // let reader = new FileReader()
         // // readAsDataURL 方法用于读取指定 Blob 或 File 的内容
