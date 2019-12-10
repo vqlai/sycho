@@ -13,7 +13,7 @@
         }
       }
       .ant-list-item{
-        padding: 10px;
+        padding: 30px 10px;
         transition: all .5s ease;
         &:hover{
           background-color: rgba(205, 231, 255, 0.3);;
