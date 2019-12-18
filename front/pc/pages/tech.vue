@@ -20,8 +20,6 @@
       //   width: 100%;
       //   transition: all 1s;
       //   &:hover {
-      //     // margin-top: -30px;
-      //     // transform: scale(1.1);
       //     transform: rotate(-2deg) scale(1.1);
       //     transition: all 1s;
       //   }
