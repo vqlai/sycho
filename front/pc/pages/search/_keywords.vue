@@ -37,9 +37,7 @@
         return this.$store.state.article.articleList
       }
     },
-    mounted(){
-      // console.log(this.$route.params)
-    },
+    mounted(){},
     methods: {
       onPagination(page) {
         this.$store.dispatch('article/getArticle', { keyword: this.$route.params.keywords, currentPage: page, pageSize: 10 })
