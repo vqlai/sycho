@@ -291,7 +291,6 @@
         obj.postId = 0
         obj.postType = 'message'
         this.$axios.post('/message',{...this.$refs.setup.user, ...obj}).then(res=>{
-          // console.log(res)
           if(res.data.success){
             this.isUser = true
             this.isReply = false
