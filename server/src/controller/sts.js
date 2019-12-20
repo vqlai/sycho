@@ -6,7 +6,6 @@ const { handleSuccess, handleError } = require('../utils/handle')
 class cosController {
 
   static async getSts(ctx) {
-    // handleSuccess({ ctx, msg: '获取成功', data: { 'asd':112 } })
     // 配置参数
     var config = {
       secretId: 'AKIDoW3yABjRWWO5n5D8qLQ1ScnmyvZ0arLb',
@@ -32,7 +31,6 @@ class cosController {
         'name/cos:CompleteMultipartUpload'
       ],
     };
-    // console.log(ctx)
     // TODO 这里根据自己业务需要做好放行判断
     // if (config.allowPrefix === '_ALLOW_DIR_/*') {
     //   console.log({ error: '请修改 allowPrefix 配置项，指定允许上传的路径前缀' });
@@ -62,7 +60,6 @@ class cosController {
         durationSeconds: config.durationSeconds,
         policy: policy,
       }, (err, tempKeys) => {
-        // console.log(JSON.stringify(err || tempKeys) || '')
         // let result = JSON.stringify(err || tempKeys) || ''
         // res.send(result)
         // return Promise.resolve(err || tempKeys || '')
@@ -72,7 +69,6 @@ class cosController {
     result.bucket = config.bucket
     result.region = config.region
     result.dir = 'article'
-    // ctx.body = { success: false, code: 200, msg: '获取成功', data: result } 
     handleSuccess({ ctx, msg: '获取成功', data: { ...result } })
   }
 }
