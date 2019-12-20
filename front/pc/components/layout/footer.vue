@@ -2,7 +2,8 @@
   <footer class="footer">
     <div class="container" @click="testFn"> 
       <div>©{{ year }} 赛柯 Sycho.cn</div>
-      <div>粤ICP备18084454号-1</div>
+      <!-- <div>粤ICP备18084454号</div> -->
+      <a href="http://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">粤ICP备18084454号</a>
     </div>
   </footer>
 </template>
