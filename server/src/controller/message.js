@@ -14,7 +14,7 @@ class messageController {
 
   // 获取留言列表
   static async getMessage(ctx) {
-    console.log(ctx.request.header.authorization)
+    // console.log(ctx.request.header.authorization)
     let { currentPage = 1, pageSize = 10, keyword = '', state = '', postId, hot} = ctx.query
 
     // 过滤条件
@@ -49,7 +49,6 @@ class messageController {
     const result = await Message
       .paginate(querys, options)
       .catch(err => {
-        // ctx.throw(500, '服务器内部错误')
         throw new CustomError(500, '服务器内部错误')
         return false
       })
@@ -101,12 +100,10 @@ class messageController {
       .save()
       .catch(err => {
         console.log(err)
-        // ctx.throw(500, '服务器内部错误')
         // throw new CustomError(500, '服务器内部错误!')
         throw new CustomError(500, err.ValidationError)
         return false
       })
-    // console.log(result)
     if (result) {
       handleSuccess({ ctx, msg: '留言已提交，请耐心等待审核~', data: result})
     } else {
@@ -117,9 +114,7 @@ class messageController {
   // 修改留言状态
   static async patchMessage(ctx) {
     const { state, _id, postId } = ctx.request.body
-    console.log(postId)
     if (!state) {
-      // ctx.throw(401, '参数无效')
       throw new CustomError(401, '参数无效')
       return false
     }
@@ -159,9 +154,7 @@ class messageController {
     let arr = ctx.params.id.split(',')
     const _id = arr[0]
     const postId = arr[1]
-    console.log(arr)
     if (!_id) {
-      // handleError({ ctx, msg: '无效参数' })
       throw new CustomError(401, '参数无效')
       return false
     }
@@ -169,7 +162,6 @@ class messageController {
     let result = await Message
       .findByIdAndRemove(_id)
       .catch(err => {
-        // ctx.throw(500, '服务器内部错误')
         throw new CustomError(500, '服务器内部错误')
       })
     if (result) {
@@ -177,11 +169,9 @@ class messageController {
         const article = await Article
           .findOne({ id: Number(postId) }).exec()
           .catch(err => {
-            console.log(err)
             throw new CustomError(500, '服务器内部错误')
             return false
           })
-        console.log(article)
         if (article) {
           article.comments = article.comments ? article.comments - 1 : 0
           article.save()
