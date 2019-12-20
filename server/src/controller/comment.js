@@ -1,6 +1,7 @@
 /**
  * Created by laiweiqang on 2019/04/26
  */
+
 // 评论控制器
 const Comment = require('../model/comment.js')
 const { response } = require('../utils/handle')
