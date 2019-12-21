@@ -4,12 +4,9 @@ const config = require('../utils/config.js')
 
 mongoose.Promise = global.Promise
 mongoose.set('useFindAndModify', false)
-// exports.mongoose = mongoose
-// exports.connect
 module.exports = () =>{
-	// const mongoUrl = `mongodb://${config.mongodb.user}:${config.mongodb.password}@${config.mongodb.host}:${config.mongodb.port}/${config.mongodb.database}`;
 	const mongoUrl = `mongodb://${config.mongodb.user}:${config.mongodb.password}@${config.mongodb.host}:${config.mongodb.port}/${config.mongodb.database}`;
-	//连接数据库
+	// 连接数据库
 	// 新版mongodb连接数据库要加{ useNewUrlParser:true }
 	mongoose.connect(mongoUrl, { 
 		useCreateIndex: true,
