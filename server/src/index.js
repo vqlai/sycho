@@ -1,6 +1,7 @@
 /**
  * Created by laiweiqang on 2019/04/26
  */
+
 // 因没有使用babel转换，故无法使用es6的import/export，只能用nodejs的commonjs规范使用
 // koa
 const koa = require('koa') // web开发框架
@@ -18,15 +19,12 @@ const mongodb = require('./mongodb')
 // const redis = require('./redis')
 
 // 处理自动抛出的异常
-// import { CustomError, HttpError } from './utils/customError'
 const { CustomError, HttpError } = require('./utils/customError.js')
-// const { format } = require('./utils/response')
 
 const app = new koa()
 
 // 连接数据库
 mongodb()
-// redis.connect()
 
 mongoosePaginate.paginate.options = {
 	limit: config.app.LIMIT
@@ -42,10 +40,6 @@ app.use(bodyParser())
 const logger = require('koa-logger')
 // 默认控制台输出logger
 app.use(logger())
-// 请求响应中间件(放在最前面)
-// app.use可以直接执行引人文件里的module.export内容
-// const response = require('./middlewares/response.js')
-// app.use(response);
 // 处理自动抛出的异常
 app.use((ctx, next) => {
 	return next().catch((err) => {
@@ -54,7 +48,6 @@ app.use((ctx, next) => {
 
 		if (err instanceof CustomError || err instanceof HttpError) {
 			const res = err.getCodeMsg()
-			// console.log(res)
 			ctx.status = err instanceof HttpError ? res.code : 200
 			code = res.code
 			msg = res.msg
@@ -62,8 +55,6 @@ app.use((ctx, next) => {
 			ctx.status = code
 			console.error('err', err)
 		}
-		// 格式化自定义异常返回信息
-		// ctx.body = format(false, code, msg, {})
 		ctx.body = { success: false, code, msg, data: {} } 
 	})
 })
