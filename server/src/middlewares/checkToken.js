@@ -22,16 +22,13 @@ module.exports = async (ctx, next) => {
 			if ('TokenExpiredError' === err.name) {
 				// invalid token token无效
 				// jwt expired token过期
-				// ctx.throw(401, err.message)
 				throw new CustomError(constants.HTTP_CODE.UNAUTHORIZED, err.message)
 			}
 			//token验证失败
-			// ctx.throw(401, 'invalid token')
 			throw new CustomError(constants.HTTP_CODE.UNAUTHORIZED, 'token验证失败')
 		}
 	}else{
 		// header缺少token
-		// ctx.throw(401, 'no token detected in http header Authorization')
 		throw new CustomError(constants.UNAUTHORIZED, 'no token detected in http header Authorization')
 	}
 	// 鉴权成功
