@@ -10,8 +10,8 @@ const { handleSuccess, handleError } = require('../utils/handle')
 const { CustomError, HttpError } = require('../utils/customError.js')
 const fs = require('fs')
 
-//返回数据格式
-//{ msg: '', success: boolean, data: {} }
+// 返回数据格式
+// { msg: '', success: boolean, data: {} }
 // 注意ctx.success在条件分支语句中需要加return不然继续往下执行
 // 注意ctx.response.body可以简写为ctx.body但ctx.request.body不可以简写
 // ctx.query获取GET请求url参数，ctx.params获取POST请求url参数,ctx.request.body获取请求体参数
@@ -21,7 +21,6 @@ class userController{
 	static async login(ctx){
 		// 获取参数，get通过ctx.query;post通过ctx.request.body
 		const {username, password} = ctx.request.body
-		// console.log(ctx.request.body)
 		if(!username){
 			throw new CustomError(500, '用户名不能为空')
 			// 需返回false，否则会往下执行
@@ -47,7 +46,6 @@ class userController{
 				// {expiresIn} === {expiresIn: config.jwt.expiresIn} 使用es6对象解构赋值
 				// 生成的token在node内存里，token过期jsonwebtoken插件会自动删除
 				let token = jwt.sign({id: result._id}, privateKey, {expiresIn})
-				// console.log(token)
 
 				handleSuccess({ ctx, msg: '登录成功', data: { token } })
 			}else{
@@ -60,15 +58,9 @@ class userController{
 
  	// 获取用户登录信息（头像/名称/角色/介绍等）
 	static async getUserInfo(ctx){
-		// console.log(ctx.header.authorization)
-		// console.log(ctx.query)
-		// const ip = ctx.request.get('X-Forwarded-For') || ctx.request.get('X-Real-IP')
-		// console.log(ip)
 		let token = ctx.header.authorization.split(' ')[1]
 		let decoded = jwt.verify(token, config.jwt.secret)
-		// console.log(decoded)
 		let result = await User.findOne({ _id: decoded.id  }).exec().catch(err => {
-			// ctx.throw(500, '内部错误-findUser错误！')
 			throw new CustomError(500, '服务器内部错误')
 			return false
 		})
@@ -84,7 +76,6 @@ class userController{
 	// 根据搜索条件获取用户，默认获取用户列表
 	static async getUser(ctx){
 		let { currentPage = 1, pageSize = 10, keyword = '', role = '' } = ctx.query
-		// console.log(ctx.query)
 		// 过滤条件
 		const options = {
 			sort: { createDate: -1 }, // 按时间倒序
@@ -105,7 +96,6 @@ class userController{
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
-		// console.log(result)
 		if (result) {
 			handleSuccess({
 				ctx, msg: '列表数据获取成功', data: {
@@ -174,15 +164,11 @@ class userController{
 		// const { username, role, desc, prePwd, newPwd, surePwd } = ctx.req.body
 		const { prePwd, newPwd, surePwd } = ctx.req.body
 		const file = ctx.req.file
-		// console.log(ctx.params.id)
-		// console.log(ctx.req.body)
-		// console.log(ctx.req.file)
 
 		// 去除不更新的字段
 		delete ctx.req.body.prePwd
 		delete ctx.req.body.newPwd
 		delete ctx.req.body.surePwd
-		console.log(prePwd, newPwd, surePwd)
 		if (!_id) {
 			throw new CustomError(500, '无效参数')
 			return false
@@ -236,15 +222,12 @@ class userController{
 			})
 		if (result) {
 			// 有新图片上传 更新完毕后将老图删除
-			// console.log(file.path)
-			// 	要过滤掉默认图片，不然会被删除
+			// 要过滤掉默认图片，不然会被删除
 			if (file && !oneUser.avatar.includes('default.png')) {
 				// 先读取头像看是否存在,确保头像不存在的去删除的异常
 				fs.readFile(`src/static/${oneUser.avatar}`, (err, data)=>{
 					// 读取文件失败/错误
 					if (err) {
-						// throw err;
-						console.log(err)
 						throw new CustomError(500, '读取文件失败')
 						return false
 					} else {
@@ -267,12 +250,10 @@ class userController{
 		const result = await User
 			.findByIdAndRemove(_id)
 			.catch(err => {
-				// ctx.throw(500, '服务器内部错误-deleteLink错误！')
 				throw new CustomError(500, '服务器内部错误')
 				return false
 			})
 		if (result) {
-			// console.log(result)
 			// fs.unlinkSync(`./src/static/${result.avatar}`) // 删除头像
 			// 默认头像不删除
 			if (result.avatar && !result.avatar.includes('default.png')){
@@ -280,13 +261,10 @@ class userController{
 				fs.readFile(`src/static/${result.avatar}`, (err, data) => {
 					// 读取文件失败/错误
 					if (err) {
-						// throw err;
-						console.log(err)
 						throw new CustomError(500, '读取文件失败')
 						return false
 					}else{
 						// 读取文件成功
-						console.log(data);
 						fs.unlinkSync(`src/static/${result.avatar}`)
 					}
 				})
@@ -302,8 +280,6 @@ class userController{
 
 	// 添加用户（废弃）
 	static async addUser(ctx) {
-		// console.log(ctx.request)
-		console.log(ctx.request.body)
 		//es6对象解构赋值
 		const { username, password, auth } = ctx.request.body //请求参数放在请求体
 		if (!username) {
@@ -324,7 +300,6 @@ class userController{
 			.catch(err => {
 				ctx.throw(500, '服务器内部错误-findOneUser错误！')
 			})
-		// console.log(hasOneUser)
 		if (hasOneUser === null) {
 			const user = new User({
 				username,
