@@ -24,13 +24,13 @@ let config = {
 		expiresIn: '10800s' //以秒为单位，token到期时间 3600s
 	},
 	// 本地使用（连接本地mongodb）
-	// mongodb: {
-	// 	host: '127.0.0.1',
-	// 	database: 'test',
-	// 	port: 27017,
-	// 	user: '',
-	// 	password: ''
-	// },
+	mongodb: {
+		host: '127.0.0.1',
+		database: 'test',
+		port: 27017,
+		user: '',
+		password: ''
+	},
 	// 线上使用
 	// mongodb: {
 	// 	host: '127.0.0.1', // 线上连接centos的mongodb用127.0.0.1/172.16.0.11   本地用127.0.0.1
