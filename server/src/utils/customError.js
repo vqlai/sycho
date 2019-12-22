@@ -13,10 +13,8 @@ const HTTP_CODE = constants.HTTP_CODE
 
 function CustomError(code, msg) {
   Error.call(this, '')
-  // console.log(util)
   this.code = code
   this.msg = msg || ERROR_MSG[code] || 'unknown error'
-  // console.log(this.msg)
   this.getCodeMsg = function () {
     return {
       code: this.code,
