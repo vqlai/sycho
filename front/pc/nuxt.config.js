@@ -31,7 +31,7 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover' },
       { name: 'baidu-site-verification', content: 'PrDb8KaI82' }, // 百度站点配置
       { hid: 'keywords', name: 'keywords', content: '赛柯-syhco，vqlai，vue全家桶开发，小程序开发，前端工程师，javascript，js/es6技术，html5/pixijs，wepy' },
-      { hid: 'description', name: 'description', content: '赛柯-syhco：打破平庸，欢喜生活，拥抱宇宙，递归升华。' }
+      { hid: 'description', name: 'description', content: '日子匆匆，独留欢欣，赛柯-syhco。' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
