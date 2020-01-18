@@ -16,14 +16,6 @@
         transform: rotate(-1deg) scale(0.95);
         transition: all 1s;
       }
-      // img {
-      //   width: 100%;
-      //   transition: all 1s;
-      //   &:hover {
-      //     transform: rotate(2deg) scale(1.1);
-      //     transition: all 1s;
-      //   }
-      // }
       span {
         position: absolute;
         right: 5%;
@@ -44,12 +36,6 @@
 </style>
 <template>
   <div class="life container">
-    <!-- <a-carousel vertical>
-      <div><h3>1</h3></div>
-      <div><h3>2</h3></div>
-      <div><h3>3</h3></div>
-      <div><h3>4</h3></div>
-    </a-carousel> -->
     <div class="banner">
       <!-- <img src="/images/life.jpg"> -->
       <span>那刹那，令我倒颠。</span>
@@ -67,7 +53,7 @@
       return { title: '百感生 | Life' }
     },
     fetch ({ store, params }) {
-      return store.dispatch('article/getArticle', { type: 2, currentPage: 1, pageSize: 10 })
+      return store.dispatch('article/getArticle', { type: 2, currentPage: 1, pageSize: 10, publish: 1, state: 1 })
     },
     components: {
       articleList
