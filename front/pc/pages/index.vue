@@ -14,9 +14,20 @@
         // background: url('/images/index.jpg') no-repeat;
         // background-size: contain;
         // background-image: radial-gradient(red, yellow, green);
-        background-image: linear-gradient(#31f5fc,#3185ed);
+        // background-image: linear-gradient(#31f5fc,#3185ed);
+        background: linear-gradient(135deg, #31f5fc,#3185ed, #3c9, #09f, #66f) left center/400% 400%;
         overflow: hidden;
-         h3 {
+        animation: move 5s infinite;
+        @keyframes move {
+          0%,
+          100% {
+            background-position-x: left;
+          }
+          50% {
+            background-position-x: right;
+          }
+        }
+        h3 {
           color: #fff;
           letter-spacing: 2px;
         }
@@ -84,7 +95,7 @@ export default {
   // },
 
   fetch ({ store, params }) {
-    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 })
+    return store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10, publish: 1, state: 1 })
     // return Promise.all([
     //   store.dispatch('article/getArticle', { currentPage: 1, pageSize: 10 }),
     //   store.dispatch('getArticle', { currentPage: 1, pageSize: 10 })
@@ -98,42 +109,12 @@ export default {
 
   data () {
     return {
-      // currentPage: 1,
-      // pageSize: 10
-      // listData,
-      // pagination: {
-      //   onChange: (page) => {
-      //     console.log(page);
-      //   },
-      //   pageSize: 5,
-      // },
-      // actions: [
-      //   { type: 'star-o', text: '156' },
-      //   { type: 'like-o', text: '156' },
-      //   { type: 'message', text: '2' },
-      // ],
-      // foo: 'bar',
-      // current: ['mail'],
     }
   },
   computed: {
     articleList() {
-      // console.log(this.$store.state.article.articleList)
       return this.$store.state.article.articleList
     },
-    // pagination() {
-    //   return {
-    //     onChange: (page) => {
-    //       console.log(page)
-    //       this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 10 })
-    //     },
-    //     pageSize: 10,
-    //     total: this.$store.state.article.articleList.pagination.total
-    //   }
-    // },
-    // artTest() {
-    //   return this.$store.state.art
-    // }
   },
   mounted: function () {
     this.$nextTick(()=>{
@@ -157,10 +138,6 @@ export default {
     })
   },
   methods: {
-    // gotoDetail(article) {
-    //   console.log(article)
-    //   this.$router.push(`/article/${article.id}`)
-    // },
     onPagination(page) {
       this.$store.dispatch('article/getArticle', { currentPage: page, pageSize: 10 })
     }
