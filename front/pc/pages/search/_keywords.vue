@@ -24,7 +24,7 @@
       return { title: '搜索|Search' }
     },
     fetch ({ store, params }) {
-      return store.dispatch('article/getArticle', { keyword: params.keywords, currentPage: 1, pageSize: 10 })
+      return store.dispatch('article/getArticle', { keyword: params.keywords, currentPage: 1, pageSize: 10, publish: 1, state: 1 })
     },
     components: {
       articleList
