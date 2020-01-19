@@ -16,14 +16,6 @@
         transform: rotate(1deg) scale(0.95);
         transition: all 1s;
       }
-      // img {
-      //   width: 100%;
-      //   transition: all 1s;
-      //   &:hover {
-      //     transform: rotate(-2deg) scale(1.1);
-      //     transition: all 1s;
-      //   }
-      // }
       span {
         position: absolute;
         right: 5%;
@@ -60,7 +52,7 @@
       return { title: '风雨浸 | Tech' }
     },
     fetch ({ store, params }) {
-      return store.dispatch('article/getArticle', { type: 1, currentPage: 1, pageSize: 10 })
+      return store.dispatch('article/getArticle', { type: 1, currentPage: 1, pageSize: 10, publish: 1, state: 1 })
     },
     components: {
       articleList
