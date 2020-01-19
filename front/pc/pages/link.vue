@@ -15,15 +15,6 @@
         transform: rotate(1deg) scale(0.95);
         transition: all 1s;
       }
-      // img {
-      //   height: 100%;
-      //   transition: all 1s;
-      //   &:hover {
-      //     margin-top: -6em;
-      //     transform: rotate(-2deg) scale(1.1);
-      //     transition: all 1s;
-      //   }
-      // }
       span {
         position: absolute;
         right: 5%;
