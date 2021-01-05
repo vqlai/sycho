@@ -21,7 +21,7 @@
     "url": "git+https://github.com/vqlai/sycho.git"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "core-js": "^2.6.5",
     "cos-js-sdk-v5": "^0.5.17",
     "echarts": "^4.2.1",
