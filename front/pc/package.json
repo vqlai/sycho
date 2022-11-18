@@ -17,7 +17,7 @@
     "ant-design-vue": "^1.4.0",
     "cross-env": "^5.2.0",
     "express": "^4.16.3",
-    "nuxt": "^2.9.2"
+    "nuxt": "^2.15.8"
   },
   "devDependencies": {
     "less": "^3.9.0",
